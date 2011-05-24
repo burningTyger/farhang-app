@@ -1,0 +1,46 @@
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %title Farhang
+    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/combo?3.3.0/build/cssreset/reset-min.css&3.3.0/build/cssfonts/fonts-min.css&3.3.0/build/cssgrids/grids-min.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/3.3.0/build/cssbase/base-context-min.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/assets/css/formalize.css"}
+    %script{:type => "text/javascript", :src => "/assets/js/jquery.js"}
+    %script{:type => "text/javascript", :src => "/assets/js/jquery.formalize.min.js"}
+    %link{:href => "/css/home.css", :rel => "stylesheet", :type => "text/css"}
+  %body#doc
+    #hd
+      %a{:href => '/', :alt => 'return to start page'}
+        %img{:alt => 'Farhang', :src => '/farhang.png'}/
+    #bd.yui3-g
+      .yui3-u-1-5
+      .yui3-u-4-5
+        .yui3-cssbase
+          .content
+            %form#search{:action => "/", :method => "get", :name => 'search'}
+              %fieldset
+                %p
+                  %label
+                    %b Einträge suchen
+                    %br/
+                    %input{:type => "text", :name => "search", :size => "20"}
+                    %input{:type => "submit", :value => "Suchen"}/
+            - unless entries.nil?
+              - entries.each do |e|
+                %b= e.term
+                %br
+                - e.trans.each_pair do |k,v|
+                  = k
+                  = v
+                  %br
+                %p
+            
+    #ft
+      Anmerkung: Momentan sind nur Buchstaben A-G in der Datenbank.
+      %p
+        Die Rohdaten sind hier zu finden:
+        %a{:href => 'https://github.com/ckh/farhang', :alt => 'ckh/farhang'}ckh/farhang.
+      %p
+      %p
+        farhang-app Version #{FARHANG_VERSION} – © 2011 bT –
+        %a{:href => 'https://github.com/burningTyger/farhang-app', :alt => 'farhang-app on Github'}fork me.

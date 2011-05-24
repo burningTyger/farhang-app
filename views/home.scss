@@ -1,0 +1,21 @@
+html {
+  font: 13 helvetica,arial,clean,sans-serif;
+  *font-size: small;
+  *font: x-small;
+}
+
+#doc{
+  margin:auto; /* center in viewport */
+  width: 970px; /* fix page width */
+}
+
+.yui3-g .content {
+  font-size: 182%;
+  margin-right:10px; /* "column" gutters */
+  padding: 0.5em;
+}
+
+#ft {
+  padding-left: 185px;
+  margin: 50px 0px;
+}
