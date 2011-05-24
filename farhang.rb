@@ -2,7 +2,8 @@
 #
 # Farhang-app
 #
-# Author:: burningTyger (github.com/burningTyger)
+# Author:: burningTyger (https://github.com/burningTyger)
+# Home:: https://github.com/burningTyger/farhang-app
 # Copyright:: Copyright (c) 2011 burningTyger
 # License:: MIT License
 #
@@ -51,7 +52,6 @@ end
 get '/' do
   unless params[:search].nil? or params[:search].empty?
     entries = Entry.all(:term => Regexp.new(params[:search]))
-    p entries
   end
   haml :home, :locals => { :entries => entries }
 end
