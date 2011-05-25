@@ -9,14 +9,13 @@
     %script{:type => "text/javascript", :src => "/assets/js/jquery.formalize.min.js"}
     %link{:href => "/css/home.css", :rel => "stylesheet", :type => "text/css"}
   %body#doc
-    #hd
-      %a{:href => '/', :alt => 'return to start page'}
-        %img{:alt => 'Farhang', :src => '/farhang.png'}/
     #bd.yui3-g
       .yui3-u-1-5
       .yui3-u-4-5
         .yui3-cssbase
           .content
+            %a{:href => '/', :alt => 'return to start page'}
+              %img{:alt => 'Farhang', :src => '/farhang.png'}/
             %form#search{:action => "/", :method => "get", :name => 'search'}
               %fieldset
                 %p
@@ -34,13 +33,21 @@
                   = v
                   %br
                 %p
-            
-    #ft
-      Anmerkung: Momentan sind nur Buchstaben A-G in der Datenbank.
-      %p
-        Die Rohdaten sind hier zu finden:
-        %a{:href => 'https://github.com/ckh/farhang', :alt => 'ckh/farhang'}ckh/farhang.
-      %p
-      %p
-        farhang-app Version #{FARHANG_VERSION} – © 2011 bT –
-        %a{:href => 'https://github.com/burningTyger/farhang-app', :alt => 'farhang-app on Github'}fork me.
+          #ft.content
+            %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"}
+              %img{:alt => "Creative Commons Lizenzvertrag", :src => "http://i.creativecommons.org/l/by-sa/3.0/80x15.png", :style => "border-width:0"}/
+            %br/
+            %span{:property => "dct:title", "xmlns:dct" => "http://purl.org/dc/terms/"} farhang
+            von
+            %span{:property => "cc:attributionName", "xmlns:cc" => "http://creativecommons.org/ns#"} ckh
+            steht unter einer
+            = succeed "." do
+              %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"} Creative Commons Namensnennung-Weitergabe unter gleichen Bedingungen 3.0 Unported Lizenz
+            %p
+            Aktueller Datenbestand: Buchstaben A-H (Stand 26.5.2011)
+            %br
+              Die Daten werden auf Github gehosted:
+            %a{:href => 'https://github.com/ckh/farhang', :alt => 'ckh/farhang'}github.com/ckh/farhang
+            %br
+            %a{:href => 'https://github.com/burningTyger/farhang-app', :alt => 'farhang-app on Github'}farhang-app
+            Version #{FARHANG_VERSION} – © 2011 bT
