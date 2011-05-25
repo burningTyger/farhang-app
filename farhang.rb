@@ -51,7 +51,7 @@ end
 
 get '/' do
   unless params[:search].nil? or params[:search].empty?
-    entries = Entry.all(:term => Regexp.new(params[:search]))
+    entries = Entry.all(:term => Regexp.new(/#{params[:search]}/i))
   end
   haml :home, :locals => { :entries => entries }
 end
