@@ -26,10 +26,18 @@ end
 
 FARHANG_VERSION = "0.1"
 
-class Entry
+class Lemma
   include MongoMapper::Document
-  key :term, String
-  key :trans, Hash
+  key :lemma, String
+  key :translation_ids, Array
+  many :translations, :in => :translation_ids
+  timestamps!
+end
+
+class Translation
+  include MongoMapper::Document
+  key :source, String
+  key :target, String
   timestamps!
 end
 
@@ -51,7 +59,7 @@ end
 
 get '/' do
   unless params[:search].nil? or params[:search].empty?
-    entries = Entry.all(:term => Regexp.new(/#{params[:search]}/i))
+    lemmas = Lemma.all(:lemma => Regexp.new(/#{params[:search]}/i))
   end
-  haml :home, :locals => { :entries => entries }
+  haml :home, :locals => { :lemmas => lemmas }
 end

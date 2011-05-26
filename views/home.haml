@@ -24,13 +24,13 @@
                     %br/
                     %input{:type => "text", :name => "search", :size => "20"}
                     %input{:type => "submit", :value => "Suchen"}/
-            - unless entries.nil?
-              - entries.each do |e|
-                %b= e.term
+            - unless lemmas.nil?
+              - lemmas.each do |l|
+                %b= l.lemma
                 %br
-                - e.trans.each_pair do |k,v|
-                  = k
-                  = v
+                - l.translations.each do |t|
+                  = t.source
+                  = t.target
                   %br
                 %p
           #ft.content
