@@ -13,6 +13,12 @@ html {
   font-size: 182%;
   margin-right:10px; /* "column" gutters */
   padding: 0.5em;
+  ul {
+    margin-left: 0px;
+    li {
+      list-style: none;
+    }
+  }
 }
 
 #ft {
