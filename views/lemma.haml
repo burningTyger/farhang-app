@@ -1,0 +1,46 @@
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %title Farhang
+    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/combo?3.3.0/build/cssreset/reset-min.css&3.3.0/build/cssfonts/fonts-min.css&3.3.0/build/cssgrids/grids-min.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/3.3.0/build/cssbase/base-context-min.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/assets/css/formalize.css"}
+    %script{:type => "text/javascript", :src => "/assets/js/jquery.js"}
+    %script{:type => "text/javascript", :src => "/assets/js/jquery.formalize.min.js"}
+    %link{:href => "/css/home.css", :rel => "stylesheet", :type => "text/css"}
+  %body#doc
+    #bd.yui3-g
+      .yui3-u-1-5
+      .yui3-u-4-5
+        .yui3-cssbase
+          .content
+            %a{:href => '/', :alt => 'return to start page'}
+              %img{:alt => 'Farhang', :src => '/farhang.png'}/
+            %form#search{:action => "/search", :method => "post", :name => 'search'}
+              %fieldset
+                %p
+                  %label
+                    %b Einträge suchen
+                    %br/
+                    %input{:type => "text", :name => "term", :size => "20"}
+                    %input{:type => "submit", :value => "Suchen"}/
+            -if lemmas
+              = lemmas.lemma
+          #ft.content
+            %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"}
+              %img{:alt => "Creative Commons Lizenzvertrag", :src => "http://i.creativecommons.org/l/by-sa/3.0/80x15.png", :style => "border-width:0"}/
+            %br/
+            %span{:property => "dct:title", "xmlns:dct" => "http://purl.org/dc/terms/"} farhang
+            von
+            %span{:property => "cc:attributionName", "xmlns:cc" => "http://creativecommons.org/ns#"} ckh
+            steht unter einer
+            = succeed "." do
+              %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"} Creative Commons Namensnennung-Weitergabe unter gleichen Bedingungen 3.0 Unported Lizenz
+            %p
+            Aktueller Datenbestand: Buchstaben A-Z, Korrekturstand A-G (Stand 26.5.2011)
+            %br
+              Die Daten werden auf Github gehosted:
+            %a{:href => 'https://github.com/ckh/farhang', :alt => 'ckh/farhang'}github.com/ckh/farhang
+            %br
+            %a{:href => 'https://github.com/burningTyger/farhang-app', :alt => 'farhang-app on Github'}farhang-app
+            Version #{FARHANG_VERSION} – © 2011 bT

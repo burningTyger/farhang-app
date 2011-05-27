@@ -40,5 +40,12 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('<b>Apfel</b>')
     assert last_response.body.include?('<b>Augapfel</b>')
   end
+
+  def test_show_lemma_id
+    l = Factory(:lemma)
+    get "/lemmas/#{l.id}"
+    assert last_response.body.include?('das_schweigende_lemma')
+    l.destroy
+  end
 end
   

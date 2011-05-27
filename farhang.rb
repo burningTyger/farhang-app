@@ -72,6 +72,13 @@ get '/search/:term' do
   haml :search, :locals => { :lemmas => lemmas }
 end
 
+get '/lemmas/:id' do
+  unless params[:id].nil? or params[:id].empty?
+    lemma = Lemma.find(params[:id])
+  end
+  haml :lemma, :locals => { :lemmas => lemma }
+end
+
 get '/' do
   haml :home
 end
