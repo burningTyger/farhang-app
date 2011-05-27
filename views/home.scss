@@ -1,5 +1,13 @@
+$graphite: #1D1D1F;
+$brown: #593325;
+$gray: #606362;
+$mint: #8AB29F;
+$beige: #F2E6CE;
+$black: #000000;
+
 html {
   font: 13 helvetica,arial,clean,sans-serif;
+  color: $graphite;
   *font-size: small;
   *font: x-small;
 }
@@ -13,6 +21,14 @@ html {
   font-size: 182%;
   margin-right:10px; /* "column" gutters */
   padding: 0.5em;
+  a {
+    text-decoration: none;
+    color: $graphite;
+    &:hover {
+      background: $beige;
+      color: $graphite;
+    }
+  }
   ul {
     margin-left: 0px;
     li {
@@ -24,4 +40,9 @@ html {
 #ft {
   font-size: 77%;
   margin: 50px 0px;
+  a {
+    text-decoration: none;
+    color: $graphite;
+    background: $beige;
+  }
 }

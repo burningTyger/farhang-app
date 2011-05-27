@@ -2,8 +2,8 @@
   %ul
     - lemmas.each do |l|
       %li
-        %b= l.lemma
-        %br
+        %b
+          %a{:href => "/lemmas/#{l.id}"}= l.lemma
         - l.translations.each do |t|
           %li
             = t.source
