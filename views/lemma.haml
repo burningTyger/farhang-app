@@ -1,2 +1,10 @@
 -if lemmas
-  = lemmas.lemma
+  %ul
+    %b
+      = lemmas.lemma
+    - lemmas.translations.each do |t|
+      %li
+        - if t.target
+          = t.source
+          = t.target unless t.target.empty?
+        

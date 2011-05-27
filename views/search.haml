@@ -1,12 +1,13 @@
 - unless lemmas.nil?
   %ul
     - lemmas.each do |l|
-      %li
-        %b
-          %a{:href => "/lemmas/#{l.id}"}= l.lemma
+      %p
+        %li
+          %b
+            %a{:href => "/lemmas/#{l.id}"}= l.lemma
         - l.translations.each do |t|
           %li
-            = t.source
-            = t.target
-        %p
+            - if t.target
+              = t.source
+              = t.target
               
