@@ -9,4 +9,5 @@ group :development, :test do
   gem 'sinatra-reloader'
   gem 'minitest'
   gem 'rack-test'
+  gem 'factory_girl'
 end
