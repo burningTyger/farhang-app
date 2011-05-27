@@ -19,16 +19,26 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('helvetica')
   end
 
-  def test_search_ok
-    get '/?search=Apfel'
+  def test_get_search_ok
+    get '/search/Apfel'
     assert last_response.body.include?('<b>Apfel</b>')
     assert last_response.body.include?('<b>Augapfel</b>')
     
-    get '/?search=apfel'
+    get '/search/apfel'
     assert last_response.body.include?('<b>Apfel</b>')
     assert last_response.body.include?('<b>Augapfel</b>')
-    
   end
 
+  def test_post_search_ok
+    post '/search?term=Apfel'
+    follow_redirect!
+    assert last_response.body.include?('<b>Apfel</b>')
+    assert last_response.body.include?('<b>Augapfel</b>')
+    
+    post '/search?term=apfel'
+    follow_redirect!
+    assert last_response.body.include?('<b>Apfel</b>')
+    assert last_response.body.include?('<b>Augapfel</b>')
+  end
 end
   

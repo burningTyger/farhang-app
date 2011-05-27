@@ -24,6 +24,15 @@
                     %br/
                     %input{:type => "text", :name => "term", :size => "20"}
                     %input{:type => "submit", :value => "Suchen"}/
+            - unless lemmas.nil?
+              - lemmas.each do |l|
+                %b= l.lemma
+                %br
+                - l.translations.each do |t|
+                  = t.source
+                  = t.target
+                  %br
+                %p
           #ft.content
             %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"}
               %img{:alt => "Creative Commons Lizenzvertrag", :src => "http://i.creativecommons.org/l/by-sa/3.0/80x15.png", :style => "border-width:0"}/

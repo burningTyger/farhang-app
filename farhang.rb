@@ -57,9 +57,21 @@ get '/css/:file.css' do
   scss params[:file].intern
 end
 
-get '/' do
-  unless params[:search].nil? or params[:search].empty?
-    lemmas = Lemma.all(:lemma => Regexp.new(/#{params[:search]}/i))
+post '/search' do
+  unless params[:term].nil? or params[:term].empty?
+    redirect "/search/#{params[:term]}"
+  else
+    redirect '/search'
   end
-  haml :home, :locals => { :lemmas => lemmas }
+end
+
+get '/search/:term' do
+  unless params[:term].nil? or params[:term].empty?
+    lemmas = Lemma.all(:lemma => Regexp.new(/#{params[:term]}/i))
+  end
+  haml :search, :locals => { :lemmas => lemmas }
+end
+
+get '/' do
+  haml :home
 end
