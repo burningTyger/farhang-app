@@ -10,6 +10,10 @@ html {
   color: $graphite;
   *font-size: small;
   *font: x-small;
+  a {
+    text-decoration: none;
+    color: $graphite;
+  }
 }
 
 #doc{
@@ -19,18 +23,15 @@ html {
 
 .yui3-g .content {
   font-size: 182%;
-  margin-right:10px; /* "column" gutters */
+  margin-right:1em; /* "column" gutters */
   padding: 0.5em;
   a {
-    text-decoration: none;
-    color: $graphite;
     &:hover {
       background: $beige;
-      color: $graphite;
     }
   }
   ul {
-    margin-left: 0px;
+    margin-left: 0em;
     li {
       list-style: none;
     }
@@ -38,19 +39,16 @@ html {
 }
 
 #disqus_thread {
+  margin: 5em 0em;
   a {
-    text-decoration: none;
-    color: $graphite;
     background: $beige;
   }
 }
 
 #ft {
   font-size: 77%;
-  margin: 50px 0px;
+  margin: 5em 0em;
   a {
-    text-decoration: none;
-    color: $graphite;
     background: $beige;
   }
 }

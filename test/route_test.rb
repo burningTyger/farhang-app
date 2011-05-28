@@ -15,7 +15,7 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
 
   def test_css
-    get '/css/home.css'
+    get '/css/layout.css'
     assert last_response.body.include?('helvetica')
   end
 
