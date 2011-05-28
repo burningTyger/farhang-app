@@ -15,6 +15,6 @@ Factory.sequence :translation_t do |n|
 end
 
 Factory.define :translation do |t|
-  t.source { Factory.next(:translation_s) }
-  t.target { Factory.next(:translation_t) }
+  t.source 'lemmatologie!'
+  t.target 'warum nicht?'
 end

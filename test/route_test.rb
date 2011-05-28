@@ -47,5 +47,12 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('das_schweigende_lemma')
     l.destroy
   end
+
+  def test_show_translation_id
+    t = Factory(:translation)
+    get "/translations/#{t.id}"
+    assert last_response.body.include?('warum nicht?')
+    t.destroy
+  end
 end
   

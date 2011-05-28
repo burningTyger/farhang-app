@@ -79,6 +79,13 @@ get '/lemmas/:id' do
   haml :lemma, :locals => { :lemmas => lemma }
 end
 
+get '/translations/:id' do
+  unless params[:id].nil? or params[:id].empty?
+    translation = Translation.find(params[:id])
+  end
+  haml :translation, :locals => { :translation => translation }
+end
+
 get '/' do
   haml :home
 end
