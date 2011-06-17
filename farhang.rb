@@ -67,7 +67,7 @@ end
 
 get '/search/:term' do
   unless params[:term].nil? or params[:term].empty?
-    lemmas = Lemma.all(:lemma => Regexp.new(/#{params[:term]}/i))
+    lemmas = Lemma.all(:lemma => Regexp.new(/^#{params[:term]}/i))
   end
   haml :search, :locals => { :lemmas => lemmas }
 end
