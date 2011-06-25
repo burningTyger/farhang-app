@@ -49,6 +49,13 @@ error do
   'error'
 end
 
+helpers do
+  #this method removes kasra, fatha and damma from lemma
+  def devowelize(str)
+    str.delete("\u064B-\u0655")
+  end
+end
+
 #sass style sheet generation
 get '/css/:file.css' do
   halt 404 unless File.exist?("views/#{params[:file]}.scss")
@@ -67,7 +74,8 @@ end
 
 get '/search/:term' do
   unless params[:term].nil? or params[:term].empty?
-    lemmas = Lemma.all(:lemma => Regexp.new(/^#{params[:term]}/i))
+    search_term = devowelize(params[:term])
+    lemmas = Lemma.all(:lemma => Regexp.new(/^#{search_term}/i))
   end
   haml :search, :locals => { :lemmas => lemmas }
 end
