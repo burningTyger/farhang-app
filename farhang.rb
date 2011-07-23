@@ -11,6 +11,7 @@ require 'sinatra'
 require 'haml'
 require 'sass'
 require 'mongo_mapper'
+require 'coffee-script'
 require 'sinatra/reloader' if development?
 
 configure do
@@ -62,6 +63,10 @@ get '/css/:file.css' do
   time = File.stat("views/#{params[:file]}.scss").ctime
   last_modified(time)
   scss params[:file].intern
+end
+
+get '/assets/js/application.js' do
+  coffee :application
 end
 
 post '/search' do
