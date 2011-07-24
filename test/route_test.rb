@@ -22,23 +22,23 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   def test_get_search_ok
     get '/search/Apfel'
     assert last_response.body.include?('Apfel')
-    assert last_response.body.include?('Augapfel')
+    refute last_response.body.include?('Augapfel')
     
     get '/search/apfel'
     assert last_response.body.include?('Apfel')
-    assert last_response.body.include?('Augapfel')
+    refute last_response.body.include?('Augapfel')
   end
 
   def test_post_search_ok
     post '/search?term=Apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
-    assert last_response.body.include?('Augapfel')
+    refute last_response.body.include?('Augapfel')
     
     post '/search?term=apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
-    assert last_response.body.include?('Augapfel')
+    refute last_response.body.include?('Augapfel')
   end
 
   def test_show_lemma_id

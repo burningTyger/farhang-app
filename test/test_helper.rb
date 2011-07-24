@@ -1,9 +1,11 @@
 # encoding: UTF-8
 ENV['RACK_ENV'] = 'test'
+gem "minitest"
 require 'require_relative' if RUBY_VERSION[0,3] == '1.8'
 require 'minitest/autorun'
 require 'rack/test'
 require 'factory_girl'
+require 'purdytest'
 #require 'database_cleaner'
 
 require_relative 'factories'
