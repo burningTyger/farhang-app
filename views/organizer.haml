@@ -1,0 +1,18 @@
+%script{:type => "text/javascript", :src => "/assets/js/jquery.tagsinput.min.js"}
+%link{:href => "/css/jquery.tagsinput.css", :rel => "stylesheet", :type => "text/css"}
+%script{:type => "text/javascript", :src => "/assets/js/organizer.js"}
+- unless translation.nil?
+  %ul
+    - translation.each do |t|
+      %p
+        %li{:class => ("fix" if t.fix)}
+          = t.source
+          = t.target
+          %br
+          %input{:name => "tags", :id => "tags_#{t.id}", :value => "#{t.lemmas.map{ |l| l.lemma }.join(' ')}"}
+  - if @prev_page
+    %button
+      %a{:href => @prev_page}vorherige Seite
+  - if @next_page
+    %button
+      %a{:href => @next_page}nächste Seite

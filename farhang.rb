@@ -39,6 +39,7 @@ class Translation
   include MongoMapper::Document
   key :source, String
   key :target, String
+  many :lemmas, :in => :lemma_ids
   timestamps!
 end
 
@@ -55,6 +56,31 @@ helpers do
   def devowelize(str)
     str.delete("\u064B-\u0655")
   end
+
+  def set_params_page
+    params[:page] = params.fetch("page"){1}.to_i
+    params[:per_page] = params.fetch("per_page"){20}.to_i
+  end
+
+  def set_pagination_buttons(data, options = {})
+    return if data.nil? || data.empty?
+
+    if data.next_page
+      params = {
+        :page     => data.next_page,
+        :per_page => data.per_page
+        }.merge(options)
+      @next_page = "?#{Rack::Utils.build_query params}"
+    end
+    
+    if data.previous_page
+      params = {
+        :page     => data.previous_page,
+        :per_page => data.per_page
+        }.merge(options)
+      @prev_page = "?#{Rack::Utils.build_query params}"
+    end
+  end
 end
 
 #sass style sheet generation
@@ -67,6 +93,10 @@ end
 
 get '/assets/js/application.js' do
   coffee :application
+end
+
+get '/assets/js/organizer.js' do
+  coffee :organizer
 end
 
 post '/search' do
@@ -97,6 +127,16 @@ get '/translations/:id' do
     translation = Translation.find(params[:id])
   end
   haml :translation, :locals => { :translation => translation }
+end
+
+get '/organizer' do
+  set_params_page
+  translation = Translation
+  translation = translation.sort(:source.desc)
+  translation = translation.paginate(:page => params[:page], :per_page => params[:per_page])
+
+  set_pagination_buttons(translation)
+  haml :organizer, :locals => { :translation => translation }
 end
 
 get '/' do
