@@ -19,8 +19,12 @@ html {
 }
 
 #doc{
-  margin:auto; /* center in viewport */
+  margin: auto; /* center in viewport */
   width: 970px; /* fix page width */
+}
+
+#searchform{
+  width: 20em  
 }
 
 .yui3-g .content {
