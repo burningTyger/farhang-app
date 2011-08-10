@@ -4,6 +4,8 @@ $gray: #606362;
 $mint: #8AB29F;
 $beige: #F2E6CE;
 $black: #000000;
+$green: #1D8823;
+$violet: #881D48;
 
 html {
   font: 13 helvetica,arial,clean,sans-serif;
@@ -35,6 +37,16 @@ html {
     li {
       list-style: none;
     }
+  }
+  .rtl {
+    direction: rtl;
+  }
+  .fix {
+    color: $violet;
+  }
+  .lemma {
+    font-size: 77%;
+    color: $green;
   }
 }
 

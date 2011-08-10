@@ -39,6 +39,7 @@ class Translation
   include MongoMapper::Document
   key :source, String
   key :target, String
+  key :lemma_ids, Array
   many :lemmas, :in => :lemma_ids
   timestamps!
 end
@@ -129,6 +130,20 @@ get '/translations/:id' do
   haml :translation, :locals => { :translation => translation }
 end
 
+put '/translations/:id/lemmas' do
+  t = Translation.find(params[:id])
+  l = Lemma.where(:lemma => params[:lemma]).first
+  l = Lemma.new if l.nil?
+  if t.lemmas.include?(l)
+    t.lemma_ids.delete(l.id)
+    l.translation_ids.delete(t.id)
+  else
+    l.translations << t
+    t.lemmas << l
+  end
+  l.save && t.save
+end
+
 get '/organizer' do
   set_params_page
   translation = Translation
@@ -137,6 +152,11 @@ get '/organizer' do
 
   set_pagination_buttons(translation)
   haml :organizer, :locals => { :translation => translation }
+end
+
+get '/organizer/autocomplete' do
+  lemmas = Lemma.all( :lemma => Regexp.new(/^#{params[:term]}/i)) #.limit(10)
+  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
 get '/' do
