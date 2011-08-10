@@ -4,7 +4,7 @@
       = lemmas.lemma
     - lemmas.translations.each do |t|
       %li
-        %a{:href => "/translations/#{t.id}"}
+        %a{:href => "/translation/#{t.id}"}
           - if t.target
             = t.source
             = t.target

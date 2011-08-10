@@ -1,7 +1,7 @@
 curry = (func, curryArgs...) -> (args...) -> func.apply this, curryArgs.concat args
 $(document).ready ->
   lemmaAdd = (id, value) ->
-    $.ajax "/translations/#{id}/lemmas",
+    $.ajax "/translation/#{id}/lemmas",
       data: "lemma=#{value}"
       type: 'PUT'  
   

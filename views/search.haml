@@ -4,7 +4,7 @@
       %p
         %li
           %b
-            %a{:href => "/lemmas/#{l.id}"}= l.lemma
+            %a{:href => "/lemma/#{l.id}"}= l.lemma
         - l.translations.each do |t|
           %li
             - if t.target

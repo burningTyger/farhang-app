@@ -13,6 +13,7 @@ require 'sass'
 require 'mongo_mapper'
 require 'coffee-script'
 require 'sinatra/reloader' if development?
+require 'awesome_print'
 
 configure do
   if ENV['MONGOLAB_URL']
@@ -85,7 +86,7 @@ helpers do
 end
 
 #sass style sheet generation
-get '/css/:file.css' do
+get '/assets/css/:file.css' do
   halt 404 unless File.exist?("views/#{params[:file]}.scss")
   time = File.stat("views/#{params[:file]}.scss").ctime
   last_modified(time)
@@ -116,24 +117,24 @@ get '/search/:term' do
   haml :search, :locals => { :lemmas => lemmas }
 end
 
-get '/lemmas/:id' do
+get '/lemma/:id' do
   unless params[:id].nil? or params[:id].empty?
     lemma = Lemma.find(params[:id])
   end
   haml :lemma, :locals => { :lemmas => lemma }
 end
 
-get '/translations/:id' do
+get '/translation/:id' do
   unless params[:id].nil? or params[:id].empty?
     translation = Translation.find(params[:id])
   end
   haml :translation, :locals => { :translation => translation }
 end
 
-put '/translations/:id/lemmas' do
+put '/translation/:id/lemmas' do
   t = Translation.find(params[:id])
-  l = Lemma.where(:lemma => params[:lemma]).first
-  l = Lemma.new if l.nil?
+  l = Lemma.first(:lemma => params[:lemma])
+  l ||= Lemma.new(:lemma => params[:lemma])
   if t.lemmas.include?(l)
     t.lemma_ids.delete(l.id)
     l.translation_ids.delete(t.id)
@@ -141,7 +142,9 @@ put '/translations/:id/lemmas' do
     l.translations << t
     t.lemmas << l
   end
-  l.save && t.save
+  ap l
+  ap t
+  p l.save && t.save
 end
 
 get '/translations' do
