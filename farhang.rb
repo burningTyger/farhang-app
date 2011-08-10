@@ -96,8 +96,8 @@ get '/assets/js/application.js' do
   coffee :application
 end
 
-get '/assets/js/organizer.js' do
-  coffee :organizer
+get '/assets/js/translations.js' do
+  coffee :translations
 end
 
 post '/search' do
@@ -144,17 +144,17 @@ put '/translations/:id/lemmas' do
   l.save && t.save
 end
 
-get '/organizer' do
+get '/translations' do
   set_params_page
   translation = Translation
   translation = translation.sort(:source.desc)
   translation = translation.paginate(:page => params[:page], :per_page => params[:per_page])
 
   set_pagination_buttons(translation)
-  haml :organizer, :locals => { :translation => translation }
+  haml :translations, :locals => { :translation => translation }
 end
 
-get '/organizer/autocomplete' do
+get '/lemmas/autocomplete' do
   lemmas = Lemma.all( :lemma => Regexp.new(/^#{params[:term]}/i)) #.limit(10)
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end

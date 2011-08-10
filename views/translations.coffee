@@ -16,6 +16,6 @@ $(document).ready ->
       placeholderColor: '#666666'
       onAddTag: curry lemmaAdd, id
       onRemoveTag: curry lemmaAdd, id
-      autocomplete_url: 'http://localhost:9292/organizer/autocomplete'
+      autocomplete_url: '/lemmas/autocomplete'
       autocomplete: 
         selectFirst: true
