@@ -13,7 +13,6 @@ require 'sass'
 require 'mongo_mapper'
 require 'coffee-script'
 require 'sinatra/reloader' if development?
-require 'awesome_print'
 
 configure do
   if ENV['MONGOLAB_URL']
@@ -142,9 +141,7 @@ put '/translation/:id/lemmas' do
     l.translations << t
     t.lemmas << l
   end
-  ap l
-  ap t
-  p l.save && t.save
+  l.save && t.save
 end
 
 get '/translations' do
