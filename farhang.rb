@@ -155,7 +155,7 @@ get '/translations' do
 end
 
 get '/lemmas/autocomplete' do
-  lemmas = Lemma.all( :lemma => Regexp.new(/^#{params[:term]}/i)) #.limit(10)
+  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
