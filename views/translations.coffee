@@ -18,4 +18,4 @@ $(document).ready ->
       onRemoveTag: curry lemmaAdd, id
       autocomplete_url: '/lemmas/autocomplete'
       autocomplete: 
-        selectFirst: true
+        autoFocus: true
