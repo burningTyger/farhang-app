@@ -5,4 +5,4 @@ $(document).ready ->
     autoFocus: true
     select: (event, ui) ->
       $("#searchform").val ui.item.label
-      $("#search").submit()      
+      $("#search").submit()

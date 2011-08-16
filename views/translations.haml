@@ -12,8 +12,6 @@
           %br
           %input{:name => "tags", :id => "tags_#{t.id}", :value => "#{t.lemmas.map{ |l| l.lemma }.join(', ')}"}
   - if @prev_page
-    %button
-      %a{:href => @prev_page}vorherige Seite
+    %a{:href => @prev_page, :class => "pageButton"}vorherige Seite
   - if @next_page
-    %button
-      %a{:href => @next_page}nächste Seite
+    %a{:href => @next_page, :class => "pageButton"}nächste Seite

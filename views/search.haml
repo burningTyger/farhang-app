@@ -1,4 +1,4 @@
-- unless lemmas.nil?
+- unless lemmas.empty?
   %ul
     - lemmas.each do |l|
       %p
@@ -10,3 +10,5 @@
             - if t.target
               = t.source
               = t.target
+- else
+  #unsuccessful Keinen Eintrag gefunden
