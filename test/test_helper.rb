@@ -1,5 +1,5 @@
 # encoding: UTF-8
-ENV['RACK_ENV'] = 'test'
+ENV['RACK_ENV'] = 'testing'
 gem "minitest"
 require 'require_relative' if RUBY_VERSION[0,3] == '1.8'
 require 'minitest/autorun'

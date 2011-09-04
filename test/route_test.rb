@@ -15,7 +15,7 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
 
   def test_css
-    get '/css/layout.css'
+    get '/assets/css/layout.css'
     assert last_response.body.include?('helvetica')
   end
 
@@ -43,14 +43,14 @@ class A_RoutingTest < MiniTest::Unit::TestCase
 
   def test_show_lemma_id
     l = Factory(:lemma)
-    get "/lemmas/#{l.id}"
+    get "/lemma/#{l.id}"
     assert last_response.body.include?('das_schweigende_lemma')
     l.destroy
   end
 
   def test_show_translation_id
     t = Factory(:translation)
-    get "/translations/#{t.id}"
+    get "/translation/#{t.id}"
     assert last_response.body.include?('warum nicht?')
     t.destroy
   end
