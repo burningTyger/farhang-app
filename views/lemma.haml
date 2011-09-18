@@ -1,10 +1,12 @@
--if lemmas
-  %ul
-    %b
-      = lemmas.lemma
-    - lemmas.translations.each do |t|
-      %li
-        %a{:href => "/translation/#{t.id}"}
+- if lemmas
+  - lemmas.each do |l|
+    %li.lemma
+      %b
+        %a{:href => "/lemma/#{l.id}"}= l.lemma
+      - l.translations.each do |t|
+        %li.translation
           - if t.target
             = t.source
             = t.target
+- else
+  #unsuccessful Keinen Eintrag gefunden

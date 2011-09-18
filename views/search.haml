@@ -1,14 +1,3 @@
-- unless lemmas.empty?
-  %ul
-    - lemmas.each do |l|
-      %p
-        %li
-          %b
-            %a{:href => "/lemma/#{l.id}"}= l.lemma
-        - l.translations.each do |t|
-          %li
-            - if t.target
-              = t.source
-              = t.target
-- else
-  #unsuccessful Keinen Eintrag gefunden
+%ul#lemmaList
+  %p
+    =haml :lemma, :locals => {:lemmas => lemmas}

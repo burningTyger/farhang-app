@@ -120,7 +120,7 @@ get '/lemma/:id' do
   unless params[:id].nil? or params[:id].empty?
     lemma = Lemma.find(params[:id])
   end
-  haml :lemma, :locals => { :lemmas => lemma }
+  haml :lemma, :locals => { :lemmas => Array(lemma) }
 end
 
 get '/translation/:id' do
