@@ -19,6 +19,11 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('helvetica')
   end
 
+  def test_js
+    get '/assets/js/application.js'
+    assert last_response.body.include?('$(document).ready')
+  end
+  
   def test_get_search_ok
     get '/search/Apfel'
     assert last_response.body.include?('Apfel')
@@ -53,6 +58,21 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     get "/translation/#{t.id}"
     assert last_response.body.include?('warum nicht?')
     t.destroy
+  end
+  
+  def test_change_many_translation_lemma
+    l = Factory(:lemma)
+    t = Factory(:translation)
+    put "/translation/#{t.id}/lemmas?lemma=#{l.lemma}"
+    assert last_response.body.include?('true')
+    l.destroy
+    t.destroy
+  end
+  
+  def test_autocomplete
+    get '/lemmas/autocomplete?term=a'
+    assert last_response.body.include?('Augapfel')
+    assert last_response.body.include?('Apfel')
   end
 end
   
