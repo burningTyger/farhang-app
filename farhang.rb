@@ -19,9 +19,12 @@ configure do
     MongoMapper.database = ENV['MONGOLAB_DATABASE']
     MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], 27107)
     MongoMapper.database.authenticate(ENV['MONGOLAB_USER'], ENV['MONGOLAB_PASS'])
-  else
+  elsif ENV['RACK_ENV'] == 'testing'
     MongoMapper.connection = Mongo::Connection.new('localhost')
     MongoMapper.database = "testing"
+  else
+    MongoMapper.connection = Mongo::Connection.new('localhost')
+    MongoMapper.database = "development"
   end
 end
 
@@ -84,7 +87,7 @@ helpers do
   end
 end
 
-#sass style sheet generation
+# sass style sheet generation
 get '/assets/css/:file.css' do
   halt 404 unless File.exist?("views/#{params[:file]}.scss")
   time = File.stat("views/#{params[:file]}.scss").ctime
@@ -92,12 +95,12 @@ get '/assets/css/:file.css' do
   scss params[:file].intern
 end
 
-get '/assets/js/application.js' do
-  coffee :application
-end
-
-get '/assets/js/translations.js' do
-  coffee :translations
+# coffeescript js generation
+get '/assets/js/:file.js' do
+  halt 404 unless File.exist?("views/#{params[:file]}.coffee")
+  time = File.stat("views/#{params[:file]}.coffee").ctime
+  last_modified(time)
+  coffee params[:file].intern
 end
 
 post '/search' do
@@ -141,7 +144,7 @@ put '/translation/:id/lemmas' do
     l.translations << t
     t.lemmas << l
   end
-  l.save && t.save
+  (l.save && t.save).to_json
 end
 
 get '/translations' do
