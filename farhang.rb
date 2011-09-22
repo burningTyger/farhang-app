@@ -126,6 +126,41 @@ get '/lemma/:id' do
   haml :lemma, :locals => { :lemmas => Array(lemma) }
 end
 
+post '/lemma' do
+  params.delete_if { |k, v| v.empty? }
+  
+  if params[:lemmaSource]
+    l = Lemma.create(:lemma => params[:lemmaSource])
+  else
+    halt 400
+  end
+  
+  if params[:lemmaTarget]
+    t0 = Translation.create(:source => params[:lemmaSource], :target => params[:lemmaTarget])
+    t0.lemmas << l
+    l.translations << t0
+    halt 400 unless t0.save
+  end
+  
+  i = 0
+  while true;
+    i += 1
+    break unless params[:"translationSource_#{i}"] && params[:"translationTarget_#{i}"]
+    t = Translation.create(:source => params[:"translationSource_#{i}"], :target => params[:"translationTarget_#{i}"])
+    t.lemmas << l
+    l.translations << t
+    halt 400 unless t.save
+  end
+  
+  if l.save
+    haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
+  else
+    halt 400
+  end
+    # refactor mit put '/translation/:id/lemmas'
+    # trans + lemma ist identisch
+end
+
 get '/translation/:id' do
   unless params[:id].nil? or params[:id].empty?
     translation = Translation.find(params[:id])

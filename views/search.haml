@@ -1,3 +1,24 @@
 %ul#lemmaList
-  %p
-    =haml :lemma, :locals => {:lemmas => lemmas}
+  =haml :lemma, :locals => {:lemmas => lemmas}
+
+#dialog.yui3-g{:title => "Lemma bearbeiten"}
+  %form#lemmaForm
+    %fieldset
+      .yui3-u-1-2
+        %label{:for => "lemmaSource"} Lemma
+        %input#lemmaSource.text.ui-widget-content.ui-corner-all{:name => "lemmaSource", :type => "text"}/
+      .yui3-u-1-2
+        %label{:for => "lemmaTarget"} Übersetzung
+        %input#lemmaTarget.text.ui-widget-content.ui-corner-all{:name => "lemmaTarget", :type => "text", :value => ""}/
+      .yui3-u-1-2
+        %label{:for => "translationSource_1"} Beispiel
+        %input#translationSource_1.text.ui-widget-content.ui-corner-all{:name => "translationSource_1", :type => "text"}/
+      .yui3-u-1-2
+        %label{:for => "translationTarget_1"} Beispiel Übersetzung
+        %input#translationTarget_1.text.ui-widget-content.ui-corner-all{:name => "translationTarget_1", :type => "text"}/
+      .yui3-u-1-2
+        %label{:for => "translationSource_2"} Beispiel 2
+        %input#translationSource_2.text.ui-widget-content.ui-corner-all{:name => "translationSource_2", :type => "text", :value => ""}/
+      .yui3-u-1-2
+        %label{:for => "translationTarget_2"} Beispiel Übersetzung 2
+        %input#translationTarget_2.text.ui-widget-content.ui-corner-all{:name => "translationTarget_2", :type => "text"}/

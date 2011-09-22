@@ -35,12 +35,12 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
 
   def test_post_search_ok
-    post '/search?term=Apfel'
+    post '/search', :term => 'Apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
     
-    post '/search?term=apfel'
+    post '/search', :term => 'apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
@@ -70,9 +70,36 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
   
   def test_autocomplete
-    get '/lemmas/autocomplete?term=a'
+    get '/lemmas/autocomplete', :term => 'a'
     assert last_response.body.include?('Augapfel')
     assert last_response.body.include?('Apfel')
+  end
+  
+  def test_new_lemma_wo_trans
+    post '/lemma', :lemmaSource => 'Traum',
+                   :lemmaTarget => 'dream'
+    assert last_response.body.include?('dream')
+    assert last_response.body.include?('Traum')
+  end
+
+  def test_new_lemma_w_trans
+    post '/lemma', :lemmaSource => 'Traum',
+                   :lemmaTarget => 'dream',
+                   :translationSource_1 => 'sommer',
+                   :translationTarget_1 => 'winter'
+    assert last_response.body.include?('dream')
+    assert last_response.body.include?('Traum')
+    assert last_response.body.include?('winter')
+  end
+
+  def test_new_lemma_w_trans_fail
+    post '/lemma', :lemmaSource => 'Traum',
+                   :lemmaTarget => 'dream',
+                   :translationSource_2 => 'sommer',
+                   :translationTarget_1 => 'winter'
+    assert last_response.body.include?('dream')
+    assert last_response.body.include?('Traum')
+    refute last_response.body.include?('winter')
   end
 end
   
