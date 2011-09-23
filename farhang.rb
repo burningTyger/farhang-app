@@ -87,6 +87,10 @@ helpers do
   end
 end
 
+before do
+  params.delete_if { |k, v| v.empty? }
+end
+
 # sass style sheet generation
 get '/assets/css/:file.css' do
   halt 404 unless File.exist?("views/#{params[:file]}.scss")
@@ -104,7 +108,7 @@ get '/assets/js/:file.js' do
 end
 
 post '/search' do
-  unless params[:term].nil? or params[:term].empty?
+  if params[:term]#.nil? or params[:term].empty?
     redirect "/search/#{params[:term]}"
   else
     redirect '/search'
@@ -112,7 +116,7 @@ post '/search' do
 end
 
 get '/search/:term' do
-  unless params[:term].nil? or params[:term].empty?
+  if params[:term]#.nil? or params[:term].empty?
     search_term = devowelize(params[:term])
     lemmas = Lemma.all(:lemma => Regexp.new(/^#{search_term}/i))
   end
@@ -120,20 +124,14 @@ get '/search/:term' do
 end
 
 get '/lemma/:id' do
-  unless params[:id].nil? or params[:id].empty?
-    lemma = Lemma.find(params[:id])
-  end
+  halt 404 unless params[:id]#.nil? or params[:id].empty?
+  lemma = Lemma.find(params[:id])
   haml :lemma, :locals => { :lemmas => Array(lemma) }
 end
 
 post '/lemma' do
-  params.delete_if { |k, v| v.empty? }
-  
-  if params[:lemmaSource]
-    l = Lemma.create(:lemma => params[:lemmaSource])
-  else
-    halt 400
-  end
+  halt 400 unless params[:lemmaSource]
+  l = Lemma.create(:lemma => params[:lemmaSource])
   
   if params[:lemmaTarget]
     t0 = Translation.create(:source => params[:lemmaSource], :target => params[:lemmaTarget])
@@ -152,19 +150,15 @@ post '/lemma' do
     halt 400 unless t.save
   end
   
-  if l.save
-    haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
-  else
-    halt 400
-  end
+  halt 400 unless l.save
+  haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
     # refactor mit put '/translation/:id/lemmas'
     # trans + lemma ist identisch
 end
 
 get '/translation/:id' do
-  unless params[:id].nil? or params[:id].empty?
-    translation = Translation.find(params[:id])
-  end
+  halt 404 unless params[:id]#.nil? or params[:id].empty?
+  translation = Translation.find(params[:id])
   haml :translation, :locals => { :translation => translation }
 end
 
