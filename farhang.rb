@@ -116,15 +116,20 @@ post '/search' do
 end
 
 get '/search/:term' do
-  if params[:term]#.nil? or params[:term].empty?
+  if params[:term]
     search_term = devowelize(params[:term])
     lemmas = Lemma.all(:lemma => Regexp.new(/^#{search_term}/i))
   end
   haml :search, :locals => { :lemmas => lemmas }
 end
 
+get '/lemma' do
+  content_type :json
+  Lemma.first(params).to_json
+end
+
 get '/lemma/:id' do
-  halt 404 unless params[:id]#.nil? or params[:id].empty?
+  halt 404 unless params[:id]
   lemma = Lemma.find(params[:id])
   haml :lemma, :locals => { :lemmas => Array(lemma) }
 end
@@ -139,6 +144,8 @@ post '/lemma' do
     l.translations << t0
     halt 400 unless t0.save
   end
+  
+  #check for doubles in trans and lemma
   
   i = 0
   while true;
@@ -157,22 +164,24 @@ post '/lemma' do
 end
 
 get '/translation/:id' do
-  halt 404 unless params[:id]#.nil? or params[:id].empty?
+  halt 404 unless params[:id]
   translation = Translation.find(params[:id])
   haml :translation, :locals => { :translation => translation }
 end
 
-put '/translation/:id/lemmas' do
-  t = Translation.find(params[:id])
-  l = Lemma.first(:lemma => params[:lemma])
-  l ||= Lemma.new(:lemma => params[:lemma])
-  if t.lemmas.include?(l)
-    t.lemma_ids.delete(l.id)
+put '/lemma/:id/translations' do
+  l = Lemma.find(params[:id])
+  t = Translation.find(params[:translation_id])
+
+  if l.translations.include?(t)
     l.translation_ids.delete(t.id)
+    t.lemma_ids.delete(l.id)
   else
     l.translations << t
     t.lemmas << l
   end
+  
+  content_type :json
   (l.save && t.save).to_json
 end
 
