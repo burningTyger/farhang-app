@@ -10,7 +10,18 @@ $(document).ready ->
         $.ajax "/lemma/#{data.id}/translations",
           data: "translation_id=#{translation_id}",
           type: 'PUT'
-  
+      error: ->
+
+  lemmaRemove = (translation_id, value) ->
+    $.ajax "/lemma",
+      data: "lemma=#{value}",
+      type: 'GET',
+      success: (data) ->
+        $.ajax "/lemma/#{data.id}/translations",
+          data: "translation_id=#{translation_id}",
+          type: 'DELETE'
+      error: ->
+      
   $("input[id^='tags_']").each ->
     translation_id = $(this).attr("id").replace("tags_","")
     $(this).tagsInput
@@ -21,7 +32,7 @@ $(document).ready ->
       removeWithBackspace: true
       placeholderColor: '#666666'
       onAddTag: curry lemmaAdd, translation_id
-      onRemoveTag: curry lemmaAdd, translation_id
+      onRemoveTag: curry lemmaRemove, translation_id
       autocomplete_url: '/lemmas/autocomplete'
       autocomplete:
         autoFocus: true

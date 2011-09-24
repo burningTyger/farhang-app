@@ -34,13 +34,13 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     refute last_response.body.include?('Augapfel')
   end
 
-  def test_post_search_ok
-    post '/search', :term => 'Apfel'
+  def test_search_ok
+    get '/search', :term => 'Apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
     
-    post '/search', :term => 'apfel'
+    get '/search', :term => 'apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
@@ -74,15 +74,41 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     t.destroy
   end
   
-  def test_change_many_translation_lemma
+  def test_change_many_translation_lemma_put
     l = Factory(:lemma)
     t = Factory(:translation)
     put "/lemma/#{l.id}/translations", :translation_id => t.id
     assert last_response.body.include?('true')
+    l.reload
+    assert l.translation_ids.include?(t.id)
     l.destroy
     t.destroy
   end
 
+  def test_change_many_translation_lemma_put_twice
+    l = Factory(:lemma)
+    t = Factory(:translation)
+    put "/lemma/#{l.id}/translations", :translation_id => t.id
+    put "/lemma/#{l.id}/translations", :translation_id => t.id
+    l.reload
+    assert l.translation_ids.include?(t.id)
+    assert l.translation_ids == l.translation_ids.uniq
+    l.destroy
+    t.destroy
+  end
+  
+  def test_change_many_translation_lemma_delete
+    l = Factory(:lemma)
+    t = Factory(:translation)
+    put "/lemma/#{l.id}/translations", :translation_id => t.id
+    delete "/lemma/#{l.id}/translations", :translation_id => t.id
+    assert last_response.body.include?('true')
+    l.reload
+    refute l.translation_ids.include?(t.id)
+    l.destroy
+    t.destroy
+  end
+  
   def test_change_many_translation_lemma_404
     l = Factory(:lemma)
     t = Factory(:translation)

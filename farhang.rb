@@ -107,8 +107,8 @@ get '/assets/js/:file.js' do
   coffee params[:file].intern
 end
 
-post '/search' do
-  if params[:term]#.nil? or params[:term].empty?
+get '/search' do
+  if params[:term]
     redirect "/search/#{params[:term]}"
   else
     redirect '/search'
@@ -153,8 +153,6 @@ post '/lemma' do
   
   halt 400 unless l.save
   haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
-    # refactor mit put '/translation/:id/lemmas'
-    # trans + lemma ist identisch
 end
 
 get '/translation/:id' do
@@ -168,14 +166,21 @@ put '/lemma/:id/translations' do
   t = Translation.find(params[:translation_id])
   halt 404 unless l && t
 
-  if l.translations.include?(t)
-    l.translation_ids.delete(t.id)
-    t.lemma_ids.delete(l.id)
-  else
-    l.translations << t
-    t.lemmas << l
-  end
+  l.translations << t
+  t.lemmas << l
   
+  content_type :json
+  (l.save && t.save).to_json
+end
+
+delete '/lemma/:id/translations' do
+  l = Lemma.find(params[:id])
+  t = Translation.find(params[:translation_id])
+  halt 404 unless l && t
+
+  l.translation_ids.delete(t.id)
+  t.lemma_ids.delete(l.id)
+
   content_type :json
   (l.save && t.save).to_json
 end
