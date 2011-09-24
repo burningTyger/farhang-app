@@ -125,7 +125,9 @@ end
 
 get '/lemma' do
   content_type :json
-  Lemma.first(params).to_json
+  l = Lemma.first(params)
+  halt 404 unless l
+  l.to_json
 end
 
 get '/lemma/:id' do
@@ -135,26 +137,18 @@ get '/lemma/:id' do
 end
 
 post '/lemma' do
-  halt 400 unless params[:lemmaSource]
-  l = Lemma.create(:lemma => params[:lemmaSource])
-  
-  if params[:lemmaTarget]
-    t0 = Translation.create(:source => params[:lemmaSource], :target => params[:lemmaTarget])
-    t0.lemmas << l
-    l.translations << t0
-    halt 400 unless t0.save
-  end
-  
+  halt 400 unless params[:lemma_input]
+  l = Lemma.create(:lemma => params[:lemma_input])
   #check for doubles in trans and lemma
   
   i = 0
   while true;
-    i += 1
     break unless params[:"translationSource_#{i}"] && params[:"translationTarget_#{i}"]
     t = Translation.create(:source => params[:"translationSource_#{i}"], :target => params[:"translationTarget_#{i}"])
     t.lemmas << l
     l.translations << t
     halt 400 unless t.save
+    i += 1
   end
   
   halt 400 unless l.save
@@ -172,6 +166,7 @@ end
 put '/lemma/:id/translations' do
   l = Lemma.find(params[:id])
   t = Translation.find(params[:translation_id])
+  halt 404 unless l && t
 
   if l.translations.include?(t)
     l.translation_ids.delete(t.id)

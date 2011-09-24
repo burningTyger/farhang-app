@@ -1,4 +1,8 @@
 $(document).ready ->
+  $("#lemma_input").change ->
+    str = $(this).val()
+    $("#translationSource_0").val(str)
+    
   $("#dialog").dialog
     # autoOpen: false
     height: 300
