@@ -25,6 +25,7 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
   
   def test_get_search_ok
+    l = Factory(:lemma, :lemma  => 'Apfel')
     get '/search/Apfel'
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
@@ -32,9 +33,11 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     get '/search/apfel'
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
+    l.destroy
   end
 
   def test_search_ok
+    l = Factory(:lemma, :lemma => 'Apfel')
     get '/search', :term => 'Apfel'
     follow_redirect!
     assert last_response.body.include?('Apfel')
@@ -44,6 +47,7 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     follow_redirect!
     assert last_response.body.include?('Apfel')
     refute last_response.body.include?('Augapfel')
+    l.destroy
   end
 
   def test_show_lemma_id
@@ -119,9 +123,13 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
   
   def test_autocomplete
+    l = Factory(:lemma, :lemma  => 'Apfel')
+    l2 = Factory(:lemma, :lemma  => 'Augapfel')
     get '/lemmas/autocomplete', :term => 'a'
     assert last_response.body.include?('Augapfel')
     assert last_response.body.include?('Apfel')
+    l.destroy
+    l2.destroy
   end
   
   def test_new_lemma_wo_trans
@@ -130,6 +138,8 @@ class A_RoutingTest < MiniTest::Unit::TestCase
                    :translationTarget_0 => 'dream'
     assert last_response.body.include?('dream')
     assert last_response.body.include?('Traum')
+    Lemma.first(:lemma => 'Traum').destroy
+    Translation.first(:source => 'Traum').destroy
   end
 
   def test_new_lemma_w_trans
@@ -141,6 +151,9 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('dream')
     assert last_response.body.include?('Traum')
     assert last_response.body.include?('winter')
+    Lemma.first(:lemma => 'Traum').destroy
+    Translation.first(:source => 'Traum').destroy
+    Translation.first(:source => 'sommer').destroy
   end
 
   def test_new_lemma_w_trans_fail
@@ -151,6 +164,7 @@ class A_RoutingTest < MiniTest::Unit::TestCase
     assert last_response.body.include?('Traum')
     assert last_response.body.include?('dream')
     refute last_response.body.include?('winter')
+    Lemma.first(:lemma => 'Traum').destroy
   end
 end
   

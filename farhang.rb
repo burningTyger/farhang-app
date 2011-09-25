@@ -32,7 +32,8 @@ FARHANG_VERSION = "0.1"
 
 class Lemma
   include MongoMapper::Document
-  key :lemma, String
+
+  key :lemma, String, :unique => true, :required => true
   key :translation_ids, Array
   many :translations, :in => :translation_ids
   timestamps!
@@ -40,6 +41,7 @@ end
 
 class Translation
   include MongoMapper::Document
+
   key :source, String
   key :target, String
   key :lemma_ids, Array
@@ -56,7 +58,8 @@ error do
 end
 
 helpers do
-  #this method removes kasra, fatha and damma from lemma
+  # this method removes kasra, fatha and damma from lemma
+  # by doing a unicode range check on the string
   def devowelize(str)
     str.delete("\u064B-\u0655")
   end
@@ -138,13 +141,12 @@ end
 
 post '/lemma' do
   halt 400 unless params[:lemma_input]
-  l = Lemma.create(:lemma => params[:lemma_input])
-  #check for doubles in trans and lemma
+  l = Lemma.find_or_create_by_lemma(params[:lemma_input])
   
   i = 0
   while true;
     break unless params[:"translationSource_#{i}"] && params[:"translationTarget_#{i}"]
-    t = Translation.create(:source => params[:"translationSource_#{i}"], :target => params[:"translationTarget_#{i}"])
+    t = Translation.find_or_create_by_source_and_target(params[:"translationSource_#{i}"], params[:"translationTarget_#{i}"])
     t.lemmas << l
     l.translations << t
     halt 400 unless t.save
