@@ -15,6 +15,7 @@ require 'coffee-script'
 require 'sinatra/reloader' if development?
 
 configure do
+  set :server, %w[puma thin]
   if ENV['MONGOLAB_URL']
     MongoMapper.database = ENV['MONGOLAB_DATABASE']
     MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], ENV['MONGOLAB_PORT'])
