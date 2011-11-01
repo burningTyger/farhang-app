@@ -18,7 +18,6 @@ module TestHelper
   end
   
   def setup
-
   end
 
   def teardown
@@ -32,6 +31,5 @@ module TestHelper
   end
   
   def content
-
   end
 end
