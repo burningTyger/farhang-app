@@ -7,30 +7,34 @@ $black: #000000;
 $green: #1D8823;
 $violet: #881D48;
 
-html {
-  font: 13 helvetica,arial,clean,sans-serif;
-  color: $graphite;
-  *font-size: small;
-  *font: x-small;
+body {
+  color: #1d1d1f;
   a {
     text-decoration: none;
-    color: $graphite;
+    color: #1d1d1f;
+    &:visited {
+      color: #1d1d1f;
+    }
   }
 }
 
-#doc{
-  margin: auto; /* center in viewport */
-  width: 970px; /* fix page width */
+#search {
+  label {
+    display:block;
+    font-weight:bold;
+  }
+  fieldset {
+    padding:0;
+    border:0;
+    margin-top:25px;
+  }
+  input[type="text"] {
+    width:20em;
+  }
 }
 
-#searchform{
-  width: 20em
-}
-
-.yui3-g .content {
-  font-size: 182%;
-  margin-right:1em; /* "column" gutters */
-  padding: 0.5em;
+.content {
+  font-size: 145%;
   a {
     &:hover {
       background: $beige;
@@ -38,12 +42,11 @@ html {
   }
   ul {
     margin-left: 0em;
+    padding-left: 0em;
     li {
       list-style: none;
+      line-height: 1.3em;
     }
-  }
-  .rtl {
-    direction: rtl;
   }
   .fix {
     color: $violet;
@@ -53,6 +56,7 @@ html {
   }
   .pageButton {
     font-size: 77%;
+    font-family: Arial;
   }
 }
 

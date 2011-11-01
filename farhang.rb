@@ -17,7 +17,7 @@ require 'sinatra/reloader' if development?
 configure do
   if ENV['MONGOLAB_URL']
     MongoMapper.database = ENV['MONGOLAB_DATABASE']
-    MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], 27107)
+    MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], ENV['MONGOLAB_PORT'])
     MongoMapper.database.authenticate(ENV['MONGOLAB_USER'], ENV['MONGOLAB_PASS'])
   elsif ENV['RACK_ENV'] == 'testing'
     MongoMapper.connection = Mongo::Connection.new('localhost')
@@ -91,11 +91,13 @@ helpers do
 end
 
 before do
+  # just get rid of all these empty params
+  # which makes checking them a lot easier
   params.delete_if { |k, v| v.empty? }
 end
 
 # sass style sheet generation
-get '/assets/css/:file.css' do
+get '/css/:file.css' do
   halt 404 unless File.exist?("views/#{params[:file]}.scss")
   time = File.stat("views/#{params[:file]}.scss").ctime
   last_modified(time)
@@ -103,7 +105,7 @@ get '/assets/css/:file.css' do
 end
 
 # coffeescript js generation
-get '/assets/js/:file.js' do
+get '/js/:file.js' do
   halt 404 unless File.exist?("views/#{params[:file]}.coffee")
   time = File.stat("views/#{params[:file]}.coffee").ctime
   last_modified(time)
@@ -121,9 +123,17 @@ end
 get '/search/:term' do
   if params[:term]
     search_term = devowelize(params[:term])
+    search_term.gsub!(/[%20]/, ' ')
+    #search_term.gsub!(/\*/, '\*')
+    # replace *: in conversion with Link to lemma
     lemmas = Lemma.all(:lemma => Regexp.new(/^#{search_term}/i))
   end
   haml :search, :locals => { :lemmas => lemmas }
+end
+
+get '/lemmas/autocomplete' do
+  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
+  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
 get '/lemma' do
@@ -157,6 +167,13 @@ post '/lemma' do
   haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
 end
 
+=begin
+put 'lemma/:id' do
+  halt 404 unless params[:id]
+  
+end
+
+=end
 get '/translation/:id' do
   halt 404 unless params[:id]
   translation = Translation.find(params[:id])
@@ -197,10 +214,7 @@ get '/translations' do
   haml :translations, :locals => { :translation => translation }
 end
 
-get '/lemmas/autocomplete' do
-  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
-  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
-end
+
 
 get '/' do
   haml :home

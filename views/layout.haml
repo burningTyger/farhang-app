@@ -3,38 +3,34 @@
   %head
     %title Farhang
     %link{:href => "/f.png", :rel => "icon", :type => "image/png"}/
-    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/combo?3.3.0/build/cssreset/reset-min.css&3.3.0/build/cssfonts/fonts-min.css&3.3.0/build/cssgrids/grids-min.css"}
-    %link{:rel => "stylesheet", :type => "text/css", :href => "http://yui.yahooapis.com/3.3.0/build/cssbase/base-context-min.css"}
-    %script{:type => "text/javascript", :src => "/assets/js/jquery.js"}
-    %link{:href => "/assets/css/jquery-ui-1.8.15.custom.css", :rel => "Stylesheet", :type => "text/css"}/
-    %script{:src => "/assets/js/jquery-ui-1.8.15.custom.min.js", :type => "text/javascript"}
-    %link{:rel => "stylesheet", :type => "text/css", :href => "/assets/css/formalize.css"}
-    %script{:type => "text/javascript", :src => "/assets/js/jquery.formalize.min.js"}
-    %script{:type => "text/javascript", :src => "/assets/js/application.js"}
-    %script{:type => "text/javascript", :src => "/assets/js/edit.js"}
-    %link{:rel => "stylesheet", :type => "text/css", :href => "/assets/css/layout.css"}
-  %body#doc
-    #bd.yui3-g
-      .yui3-u-1-5
-      .yui3-u-4-5
-        .yui3-cssbase
-          %a{:href => '/', :alt => 'return to start page'}
-            %img{:alt => 'Farhang', :src => '/farhang.png'}/
-          .content
-            %form#search{:action => "/search", :method => "get", :name => 'search'}
-              %fieldset
-                %p
-                  %label
-                    %b Einträge suchen
-                    %br/
-                    %input{:type => "text", :name => "term", :size => "20", :id => "searchform"}
-                    %input{:type => "submit", :value => "Suchen"}/
-            =yield
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/960.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/normalize.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/formalize.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-ui-1.8.16.custom.css", }/
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/layout.css"}
+    %script{:type => "text/javascript", :src => "/js/jquery.js"}
+    %script{:type => "text/javascript", :src => "/js/jquery-ui-1.8.16.custom.min.js"}
+    %script{:type => "text/javascript", :src => "/js/jquery.formalize.min.js"}
+    %script{:type => "text/javascript", :src => "/js/application.js"}
+  %body
+    .container_12
+      .grid_2
+        %p
+      .grid_9
+        %a{:href => '/', :alt => 'return to start page'}
+          %img{:alt => 'Farhang', :src => '/farhang.png'}/
+        .content
+          %form#search{:action => "/search", :method => "get", :name => 'search'}
+            %fieldset
+              %p
+                %label{:for => "term"} Einträge suchen
+                %input{:type => "text", :name => "term", :id => "searchform"}/
+                %input{:type => "submit", :value => "Suchen"}/
+          =yield
         -if production?
           =haml :disqus
         #ft
-          %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"}
-            %img{:alt => "Creative Commons Lizenzvertrag", :src => "http://i.creativecommons.org/l/by-sa/3.0/80x15.png", :style => "border-width:0"}/
+          %img{:alt => "Creative Commons Lizenzvertrag", :src => "http://i.creativecommons.org/l/by-sa/3.0/80x15.png", :style => "border-width:0"}/
           %br/
           %span{:property => "dct:title", "xmlns:dct" => "http://purl.org/dc/terms/"} farhang
           von
@@ -43,7 +39,7 @@
           = succeed "." do
             %a{:href => "http://creativecommons.org/licenses/by-sa/3.0/", :rel => "license"} Creative Commons Namensnennung-Weitergabe unter gleichen Bedingungen 3.0 Unported Lizenz
           %p
-          Aktueller Datenbestand: Buchstaben A-Z, Korrekturstand A-Z (Stand 18.9.2011)
+          Aktueller Datenstand: 16. Oktober 2011
           %br
             Die Daten werden auf Github gehosted:
           %a{:href => 'https://github.com/ckh/farhang', :alt => 'ckh/farhang'}github.com/ckh/farhang

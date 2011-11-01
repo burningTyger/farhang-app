@@ -15,12 +15,12 @@ class A_RoutingTest < MiniTest::Unit::TestCase
   end
 
   def test_css
-    get '/assets/css/layout.css'
-    assert last_response.body.include?('helvetica')
+    get '/css/layout.css'
+    assert last_response.body.include?('#disqus_thread')
   end
 
   def test_js
-    get '/assets/js/application.js'
+    get '/js/application.js'
     assert last_response.body.include?('$(document).ready')
   end
   
