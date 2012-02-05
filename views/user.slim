@@ -1,0 +1,16 @@
+.row
+  .span3
+    ==partial :partial_header, :text => "Benutzerprofil"
+    p
+      | Das bin ich. Hier stelle ich mich ein|um|an.
+  .span7
+    form.form-stacked action="/user/#{user.id}" method="POST"
+      input name="_method" type="hidden" value="PUT"
+      fieldset
+        label for="email" eMail
+        input.span5 name="email" type="text" value=(user.email)
+      .form-actions
+        input.btn.primary type="submit" value="Speichern"
+        ' 
+        input.btn type="reset" value="Abbrechen"
+

@@ -1,0 +1,20 @@
+.row
+  .span3
+    ==partial :partial_header, :text => "Benutzerliste"
+    p
+      | Eine Übersicht über alle angemeldeten Benutzer.
+  .span7
+    -if users
+      table.table
+        thead
+          tr
+            th &#x270e
+            th eMail
+        tbody
+          -users.each_with_index do |user, i|
+            tr
+              td
+                a href="/user/#{user.id}"
+                  | &#x270e
+              td= user.email
+

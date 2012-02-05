@@ -1,0 +1,6 @@
+/!
+em: b
+  | Suchergebnis für 
+  = "'#{params[:term]}'"
+dl
+  ==slim :lemma, :locals => {:lemmas => lemmas}

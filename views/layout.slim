@@ -1,0 +1,39 @@
+doctype transitional
+html lang="de"
+  head
+    meta charset="utf-8"
+    title Farhang
+    /![if lt IE 9]
+      | <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    /! Le styles
+    link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    link href="/css/app.css" rel="stylesheet"
+    link href="/images/f.png" rel="shortcut icon"
+
+    link href="http://fonts.googleapis.com/css?family=Overlock:900italic" rel="stylesheet" type="text/css"
+  body
+    .container
+      .page-header
+        .row
+          .span4
+            a.logo href='/' Farhang
+          .span7
+            h1 Das freie deutsch-persische Lexikon
+            form.form-horizontal action="/search" method="get" name="search"
+              input.span4.typeahead name="term" type="text"
+              input.btn type="submit" value="Suchen"
+      .content
+        .row
+          .span10.offset1
+            ==partial :partial_flash
+            ==yield
+      footer
+        p © 2012 ckh & bT
+        p: img alt="Creative Commons Lizenzvertrag" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" style="border-width:0"
+        /! /container
+
+  script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+  script src="/bootstrap/js/bootstrap-typeahead.js"
+  javascript:
+    $('.typeahead').typeahead({source: function(query) {$.get("/lemmas/autocomplete.json", {term: query})}})
+
