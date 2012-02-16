@@ -4,7 +4,7 @@
 #
 # Author:: burningTyger (https://github.com/burningTyger)
 # Home:: https://github.com/burningTyger/farhang-app
-# Copyright:: Copyright (c) 2011 burningTyger
+# Copyright:: Copyright (c) 2011 – 2012 burningTyger
 # License:: MIT License
 #
 require 'sinatra'
@@ -238,9 +238,13 @@ get '/lemmas/autocomplete.json' do
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
+get '/lemma/new' do
+  slim :lemma_new
+end
+
 get '/lemma/:id' do
-  halt 404 unless params[:id]
-  lemma = Lemma.find(params[:id])
+  #halt 404 unless params[:id]
+  halt 404 unless lemma = Lemma.find(params[:id])
   slim :lemma, :locals => { :lemmas => Array(lemma) }
 end
 
@@ -275,7 +279,7 @@ put '/lemma/:id/translations' do
 
   l.translations << t
   t.lemmas << l
-  
+
   content_type :json
   (l.save && t.save).to_json
 end

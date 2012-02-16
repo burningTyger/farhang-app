@@ -1,13 +1,1 @@
 /!
-- if lemmas
-  - lemmas.each do |l|
-    dt.lemma
-      a href="/lemma/#{l.id}"= l.lemma
-    - l.translations.each do |t|
-      dd.translation
-        - if t.target
-          = t.source
-          |  
-          = t.target
-- else
-  #unsuccessful Keinen Eintrag gefunden
