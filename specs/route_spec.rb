@@ -55,6 +55,13 @@ describe "routes" do
       last_response.body.wont_include 'Augapfel'
     end
 
+    it "can find a search term with parens in it" do
+      Factory(:lemma, :lemma => 'ca (*: cirka)')
+      get '/search', :term => 'ca%20(*:%20cirka)'
+      follow_redirect!
+      last_response.body.must_include 'cirka'
+    end
+
     after do
       Lemma.collection.remove
     end
