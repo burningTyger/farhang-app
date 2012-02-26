@@ -44,10 +44,9 @@ describe User do
     end
 
     it "can modify a User resource" do
-      u = Factory :user
       post '/user/login', :email => @u.email, :password => 'secret'
-      put "/user/#{u.id}", :email => "mine@example.org"
-      User.find(u.id).email.must_equal "mine@example.org"
+      put "/user/#{@u.id}", :email => "mine@example.org"
+      User.find(@u.id).email.must_equal "mine@example.org"
     end
 
     it "wont modify an unknown User resource" do
@@ -65,6 +64,13 @@ describe User do
       post '/user/login', :email => @u.email, :password => 'secret'
       u = Factory :user
       u.roles.must_equal Set.new([:user])
+    end
+
+    it "will not let other users edit users" do
+      u = Factory :user
+      post '/user/login', :email => @u.email, :password => 'secret'
+      delete "/user/#{u.id}"
+      User.find(u.id).must_equal u
     end
 
     after do

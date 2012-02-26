@@ -28,7 +28,11 @@ configure do
       roles? roles
     end
   end
-
+  set :self_check do |*p|
+    condition do
+      @current_user.id == params[:id]
+    end
+  end
   if ENV['MONGOLAB_URL']
     MongoMapper.database = ENV['MONGOLAB_DATABASE']
     MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], ENV['MONGOLAB_PORT'])
@@ -60,6 +64,7 @@ class User
   def role_validation
     if roles.count == 0
       roles << :user
+      roles << :root if User.count == 0
     end
   end
 
@@ -186,7 +191,9 @@ helpers do
 
   def roles?(roles)
     authenticate unless signed_in?
-    @current_user.roles & roles.to_set
+    @current_user.roles << :self if @current_user.id.to_param == params[:id]
+    set = @current_user.roles & roles.to_set
+    !set.empty?
   end
 end
 
@@ -319,6 +326,10 @@ get '/users', :auth => [:root] do
   slim :users, :locals => { :users => User.all }
 end
 
+get '/user/login' do
+  slim :login
+end
+
 get '/user/new' do
   slim :user_new
 end
@@ -335,12 +346,12 @@ post '/user' do
   redirect to('/')
 end
 
-get '/user/:id', :auth => [:user] do
+get '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
   slim :user, :locals => { :user => u }
 end
 
-put '/user/:id', :auth => [:user] do
+put '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
   if u.update_attributes! params
     session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
@@ -350,7 +361,7 @@ put '/user/:id', :auth => [:user] do
   end
 end
 
-delete '/user/:id', :auth => [:user] do
+delete '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
   if u.destroy
     session[:flash] = ["Benutzer erfolgreich gelöscht", "alert-success"]

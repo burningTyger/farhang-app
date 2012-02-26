@@ -1,0 +1,11 @@
+==partial :partial_header, :text => "Anmelden"
+.row
+  .span4.offset4
+    form action="/user/login" method="post"
+      fieldset
+        label for="email" eMail
+        input.span4 name="email" type="text"
+        label for="password" Passwort
+        input.span4 name="password" type="password"
+        button.btn type="submit" Anmelden
+
