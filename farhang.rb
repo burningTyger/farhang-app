@@ -11,7 +11,6 @@ require 'sinatra'
 require 'slim'
 require 'sass'
 require 'mongo_mapper'
-#require 'coffee-script'
 require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
@@ -124,20 +123,15 @@ end
 
 class Lemma
   include MongoMapper::Document
-
   key :lemma, String, :unique => true, :required => true
-  key :translation_ids, Array
-  many :translations, :in => :translation_ids
+  many :translations
   timestamps!
 end
 
 class Translation
-  include MongoMapper::Document
-
+  include MongoMapper::EmbeddedDocument
   key :source, String
   key :target, String
-  key :lemma_ids, Array
-  many :lemmas, :in => :lemma_ids
   timestamps!
 end
 
@@ -219,6 +213,14 @@ get '/js/:file.js' do
   coffee params[:file].intern
 end
 
+get '/' do
+  if signed_in?
+    slim :dashboard
+  else
+    slim :home
+  end
+end
+
 get '/search' do
   if params[:term]
     redirect "/search/#{params[:term]}"
@@ -249,76 +251,32 @@ get '/lemma/new' do
   slim :lemma_new
 end
 
-get '/lemma/:id' do
-  #halt 404 unless params[:id]
-  halt 404 unless lemma = Lemma.find(params[:id])
-  slim :lemma, :locals => { :lemmas => Array(lemma) }
-end
-
-post '/lemma/new' do
-  halt 400 unless params[:lemma]
-  l = Lemma.find_or_create_by_lemma(params[:lemma])
-
-  i = 0
-  while true;
-    break unless params[:"translationSource_#{i}"] && params[:"translationTarget_#{i}"]
-    t = Translation.find_or_create_by_source_and_target(params[:"translationSource_#{i}"], params[:"translationTarget_#{i}"])
-    t.lemmas << l
-    l.translations << t
-    halt 400 unless t.save
-    i += 1
-  end
-
+post '/lemma' do
+  l = Lemma.create params
   halt 400 unless l.save
-  slim :lemma, :locals => { :lemmas => Array(l) }, :layout => false
+  redirect to("/lemma/#{lemma.id}")
 end
 
-get '/translation/:id' do
-  halt 404 unless params[:id]
-  translation = Translation.find(params[:id])
-  slim :translation, :locals => { :translation => translation }
-end
-
-put '/lemma/:id/translations' do
-  l = Lemma.find(params[:id])
-  t = Translation.find(params[:translation_id])
-  halt 404 unless l && t
-
-  l.translations << t
-  t.lemmas << l
-
-  content_type :json
-  (l.save && t.save).to_json
-end
-
-delete '/lemma/:id/translations' do
-  l = Lemma.find(params[:id])
-  t = Translation.find(params[:translation_id])
-  halt 404 unless l && t
-
-  l.translation_ids.delete(t.id)
-  t.lemma_ids.delete(l.id)
-
-  content_type :json
-  (l.save && t.save).to_json
-end
-
-get '/translations' do
-  set_params_page
-  translation = Translation
-  translation = translation.sort(:source.desc)
-  translation = translation.paginate(:page => params[:page], :per_page => params[:per_page])
-
-  set_pagination_buttons(translation)
-  slim :translations, :locals => { :translation => translation }
-end
-
-get '/' do
-  if signed_in?
-    slim :dashboard
+get '/lemma/:id' do
+  halt 404 unless lemma = Lemma.find(params[:id])
+  if @current_user
+    slim :lemma_edit, :locals => { :lemmas => Array(lemma) }
   else
-    slim :home
+    slim :lemma, :locals => { :lemmas => Array(lemma) }
   end
+end
+
+put '/lemma/:id' do
+  halt 404 unless lemma = Lemma.find(params[:id])
+  lemma.update_attributes! params
+  halt 400 unless lemma.save
+  redirect to("/lemma/#{lemma.id}")
+end
+
+delete '/lemma/:id' do
+  halt 404 unless lemma = Lemma.find(params[:id])
+  lemma.destroy
+  redirect to("/lemma/#{lemma.id}")
 end
 
 ## User routes
