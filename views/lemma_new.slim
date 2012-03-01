@@ -1,4 +1,14 @@
-/!
-form.form-horizontal action="/lemma" method="get" name="search"
-  input.span4 name="lemma" type="text"
-  input.btn type="submit" value="Speichern"
+.row
+  .span3
+    ==partial :partial_header, :text => "Eintrag anlegen"
+    p
+      | Neben dem neuen Begriff, dem Lemma, können Begriffe/Beispiele in der 
+      | Quell- und Zielsprache angegeben werden.
+  .span9
+    form action="/lemma" method="get" name="search"
+      label for="lemma" Lemma
+      input.span8 name="lemma" type="text"
+      .row
+        ==partial :partial_translation, :translations => nil
+      input.btn type="submit" value="Speichern"
+

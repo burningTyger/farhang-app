@@ -259,7 +259,7 @@ end
 
 get '/lemma/:id' do
   halt 404 unless lemma = Lemma.find(params[:id])
-  if @current_user
+  if authorized?
     slim :lemma_edit, :locals => { :lemmas => Array(lemma) }
   else
     slim :lemma, :locals => { :lemmas => Array(lemma) }
