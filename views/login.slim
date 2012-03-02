@@ -1,11 +1,21 @@
-==partial :partial_header, :text => "Anmelden"
 .row
-  .span4.offset4
+  .span3
+    ==partial :partial_header, :text => "Anmelden"
+    p
+      | Um Einträge bearbeiten oder anlegen zu können muss man sich anmelden.
+    a.btn href='/user/new' Registrieren
+  .span8.offset1
     form action="/user/login" method="post"
       fieldset
         label for="email" eMail
-        input.span4 name="email" type="text"
+        .input-prepend
+          span.add-on
+            i.icon-user
+          input.span4 name="email" type="text"
         label for="password" Passwort
-        input.span4 name="password" type="password"
-        button.btn type="submit" Anmelden
+        .input-prepend
+          span.add-on
+            i.icon-lock
+          input.span4 name="password" type="password"
+      button.btn type="submit" Anmelden
 
