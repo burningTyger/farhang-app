@@ -240,7 +240,7 @@ get '/search/:term' do
   slim :search, :locals => { :lemmas => lemmas }
 end
 
-get '/lemmas/autocomplete.json' do
+get '/lemma/autocomplete.json' do
   content_type :json
   lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
   puts lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
