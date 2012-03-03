@@ -1,18 +1,19 @@
-em: b
-  | Suchergebnis für 
-  = "'#{params[:term]}'"
-dl
-  - if !lemmas.empty?
-    - lemmas.each do |l|
-      dt.lemma
-        a href="/lemma/#{l.id}"= l.lemma
-      - l.translations.each do |t|
-        dd.translation
-          - if t.target
-            = t.source
-            |  
-            = t.target
-  - else
-    h3.unsuccessful Keinen Eintrag gefunden
-    a.btn.btn-primary.btn-large href="/lemma/new" Neu anlegen
+.row
+  .span3
+    ==partial :partial_header, :text => "Suchergebnisse"
+  .span9
+    dl
+      - if !lemmas.empty?
+        - lemmas.each do |l|
+          dt.lemma
+            a href="/lemma/#{l.id}"= l.lemma
+          - l.translations.each do |t|
+            dd.translation
+              - if t.target
+                = t.source
+                |  
+                = t.target
+      - else
+        h3.unsuccessful Keinen Eintrag gefunden
+        a.btn.btn-primary.btn-large href="/lemma/new" Neu anlegen
 
