@@ -144,7 +144,7 @@ error do
 end
 
 helpers do
-  def partial (template, locals = {})
+  def partial(template, locals = {})
     slim template, :layout => false, :locals => locals
   end
 
@@ -247,11 +247,11 @@ get '/lemma/autocomplete.json' do
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
-get '/lemma/new' do
+get '/lemma/new', :auth => [:user] do
   slim :lemma_new
 end
 
-post '/lemma' do
+post '/lemma', :auth => [:user] do
   l = Lemma.create params
   halt 400 unless l.save
   redirect to("/lemma/#{lemma.id}")
@@ -266,7 +266,7 @@ get '/lemma/:id' do
   end
 end
 
-put '/lemma/:id' do
+put '/lemma/:id', :auth => [:user] do
   halt 404 unless l = Lemma.find(params[:id])
   l.lemma = params[:lemma] if params[:lemma]
   if params[:translations]
@@ -281,7 +281,7 @@ put '/lemma/:id' do
   redirect to("/lemma/#{l.id}")
 end
 
-delete '/lemma/:id' do
+delete '/lemma/:id', :auth => [:user] do
   halt 404 unless lemma = Lemma.find(params[:id])
   lemma.destroy
   redirect to("/lemma/#{lemma.id}")

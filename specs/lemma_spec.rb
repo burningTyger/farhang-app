@@ -1,10 +1,53 @@
+# encoding: UTF-8
 require_relative 'spec_helper'
 include SpecHelper
 
 describe Lemma do
-  describe 'routes' do
+  describe 'anonymous' do
     before do
       @l = Factory :lemma
+    end
+
+    it 'has not a form to create a new Lemma resource' do
+      get '/lemma/new'
+      follow_redirect!
+      last_response.body.wont_include "translation[0]"
+    end
+
+    it "can't create a new Lemma resource" do
+      post '/lemma', l = FactoryGirl.attributes_for(:lemma, :lemma => "Brot")
+      follow_redirect!
+      l = Lemma.find_by_lemma(l[:lemma]).must_be_nil
+    end
+
+    it "can show a lemma page, but not a form" do
+      get "/lemma/#{@l.id}"
+      last_response.body.must_include @l.lemma
+      last_response.body.must_include @l.translations.first.source
+      last_response.body.wont_include "translation[0]"
+    end
+
+    it "can't delete a Lemma resource" do
+      delete "/lemma/#{@l.id}"
+      Lemma.find(@l.id).must_equal @l
+    end
+
+    it "can't modify a lemma of a Lemma resource" do
+      put "/lemma/#{@l.id}", :lemma => "test"
+      follow_redirect!
+      last_response.body.wont_include "test"
+    end
+
+    after do
+      Lemma.all.each {|l| l.destroy}
+    end
+  end
+
+  describe 'logged in' do
+    before do
+      @l = Factory :lemma
+      u = Factory :user
+      post '/user/login', :email => u.email, :password => 'secret'
     end
 
     it 'has a form to create a new Lemma resource' do
