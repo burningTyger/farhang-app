@@ -13,8 +13,11 @@ body {
       }
     /* The white background content wrapper */
     .content {
-      dt, dd {
-        line-height: 1.2em;}
+      dt {
+        padding-top: 1em;
+        line-height: 1.2em}
+      dd {
+        line-height: 1.5em;}
       font-size: 180%;
       background-color: #fff;
       padding: 20px;
