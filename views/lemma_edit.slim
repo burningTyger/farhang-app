@@ -5,7 +5,8 @@
     p
       | Einträge können geändert oder neue Beispiele angelegt werden.
   .span9
-    form action="/lemma/edit" method="put" name="search"
+    form action="/lemma/#{l.id}" method="post" name="search"
+      input name="_method" type="hidden" value="PUT"
       label for="lemma" Lemma
       input.span8 name="lemma" type="text" value=l.lemma
       .row

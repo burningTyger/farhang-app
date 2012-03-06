@@ -2,17 +2,17 @@
   -count = translations.count
   -translations.each_with_index do |t,i|
     .span4
-      label for="source_#{i}" Beispiel Deutsch
-      input.span4 name="source_#{i}" type="text" value=t.source
+      label for="translations[#{i}][source]" Beispiel Deutsch
+      input.span4 name="translations[#{i}][source]" type="text" value=t.source
     .span4
-      label for="target_#{i}" Beispiel Persisch
-      input.span4 name="target_#{i}" type="text" value=t.target
+      label for="translations[#{i}][target]" Beispiel Persisch
+      input.span4 name="translations[#{i}][target]" type="text" value=t.target
 -count = count ||= 0
 -2.times do |i|
   .span4
-    label for="source_#{i+count}" Beispiel Deutsch
-    input.span4 name="source_#{i+count}" type="text"
+    label for="translations[#{i+count}][source]" Beispiel Deutsch
+    input.span4 name="translations[#{i+count}][source]" type="text"
   .span4
-    label for="target_#{i+count}" Beispiel Persisch
-    input.span4 name="target_#{i+count}" type="text"
+    label for="translations[#{i+count}][target]" Beispiel Persisch
+    input.span4 name="translations[#{i+count}][target]" type="text"
 

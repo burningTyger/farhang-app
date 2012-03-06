@@ -267,10 +267,18 @@ get '/lemma/:id' do
 end
 
 put '/lemma/:id' do
-  halt 404 unless lemma = Lemma.find(params[:id])
-  lemma.update_attributes! params
-  halt 400 unless lemma.save
-  redirect to("/lemma/#{lemma.id}")
+  halt 404 unless l = Lemma.find(params[:id])
+  l.lemma = params[:lemma] if params[:lemma]
+  if params[:translations]
+    l.translations.clear
+    params[:translations].values.each do |t|
+      next if  t["source"].nil? || t["target"].nil?
+      next if t["source"].empty? || t["target"].empty?
+      l.translations << Translation.new(:source => t["source"], :target => t["target"])
+    end
+  end
+  l.save
+  redirect to("/lemma/#{l.id}")
 end
 
 delete '/lemma/:id' do
