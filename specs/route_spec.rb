@@ -5,6 +5,7 @@ describe "routes" do
   describe "home route" do
     before do
       @u = Factory :user
+      Factory :lemma
     end
 
     it "returns the homepage for unsigned user" do
@@ -25,6 +26,7 @@ describe "routes" do
 
     after do
       User.all.each { |u| u.destroy }
+      Lemma.all.each {|l| l.destroy}
     end
   end
 

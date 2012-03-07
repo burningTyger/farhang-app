@@ -124,6 +124,8 @@ end
 class Lemma
   include MongoMapper::Document
   key :lemma, String, :unique => true, :required => true
+  key :edited_by, String
+  key :valid, Boolean
   many :translations
   timestamps!
 end
@@ -253,6 +255,8 @@ end
 
 post '/lemma', :auth => [:user] do
   l = Lemma.create params
+  l.edited_by = @current_user.email
+  l.valid = roles?([:root, :admin]) ? true : false
   halt 400 unless l.save
   redirect to("/lemma/#{lemma.id}")
 end
@@ -277,11 +281,13 @@ put '/lemma/:id', :auth => [:user] do
       l.translations << Translation.new(:source => t["source"], :target => t["target"])
     end
   end
+  l.edited_by = @current_user.email
+  l.valid = roles?([:root, :admin]) ? true : false
   l.save
   redirect to("/lemma/#{l.id}")
 end
 
-delete '/lemma/:id', :auth => [:user] do
+delete '/lemma/:id', :auth => [:admin, :root] do
   halt 404 unless lemma = Lemma.find(params[:id])
   lemma.destroy
   redirect to("/lemma/#{lemma.id}")

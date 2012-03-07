@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 include SpecHelper
 
 describe Lemma do
-  describe 'anonymous' do
+  describe 'anonymous access' do
     before do
       @l = Factory :lemma
     end
@@ -46,8 +46,8 @@ describe Lemma do
   describe 'logged in' do
     before do
       @l = Factory :lemma
-      u = Factory :user
-      post '/user/login', :email => u.email, :password => 'secret'
+      @u = Factory :user
+      post '/user/login', :email => @u.email, :password => 'secret'
     end
 
     it 'has a form to create a new Lemma resource' do
@@ -72,9 +72,10 @@ describe Lemma do
       last_response.status.must_equal 400
     end
 
-    it "can delete a Lemma resource" do
+    it "can't delete a Lemma resource as regular user" do
+      count = Lemma.count
       delete "/lemma/#{@l.id}"
-      Lemma.find(@l.id).must_be_nil
+      count.must_equal Lemma.count
     end
 
     it "won't delete an unknown Lemma resource" do
@@ -114,8 +115,46 @@ describe Lemma do
       Lemma.find("1234").must_be_nil
     end
 
+    it "will let user create a valid edit of Lemma" do
+      put "/lemma/#{@l.id}", :lemma => "test"
+      follow_redirect!
+      last_response.body.must_include "test"
+      @l.reload
+      @l.valid.must_equal false
+      @l.edited_by.must_equal @u.email
+    end
+
     after do
       Lemma.all.each {|l| l.destroy}
+      User.all.each { |u| u.destroy }
+    end
+  end
+
+  describe 'logged in as admin' do
+    before do
+      @l = Factory :lemma
+      @u = Factory :user, :roles => [:user, :admin]
+      post '/user/login', :email => @u.email, :password => 'secret'
+    end
+
+    it "will let user create a valid edit of Lemma" do
+      put "/lemma/#{@l.id}", :lemma => "test"
+      follow_redirect!
+      last_response.body.must_include "test"
+      @l.reload
+      @l.valid.must_equal true
+      @l.edited_by.must_equal @u.email
+    end
+
+    it "will let user delete a Lemma" do
+      count = Lemma.count
+      delete "/lemma/#{@l.id}"
+      Lemma.count.must_equal count-1
+    end
+
+    after do
+      Lemma.all.each {|l| l.destroy}
+      User.all.each { |u| u.destroy }
     end
   end
 end
