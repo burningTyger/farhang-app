@@ -13,4 +13,5 @@ group :development, :test do
   gem 'rack-test'
   gem 'factory_girl'
   gem 'purdytest'
+  gem 'rake'
 end
