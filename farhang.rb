@@ -260,6 +260,11 @@ post '/lemma', :auth => [:user] do
   redirect to("/lemma/#{lemma.id}")
 end
 
+get '/lemma/validation', :auth => [:root, :admin] do
+  lemmas = Lemma.all :valid => false
+  slim :lemma_validation, :locals => { :lemmas => lemmas }
+end
+
 get '/lemma/:id' do
   halt 404 unless lemma = Lemma.find(params[:id])
   if authorized?
@@ -283,7 +288,7 @@ put '/lemma/:id', :auth => [:user] do
   l.edited_by = @current_user.email
   l.valid = roles?([:root, :admin]) ? true : false
   l.save
-  redirect to("/lemma/#{l.id}")
+  redirect back
 end
 
 delete '/lemma/:id', :auth => [:admin, :root] do
@@ -293,7 +298,7 @@ delete '/lemma/:id', :auth => [:admin, :root] do
 end
 
 ## User routes
-get '/users', :auth => [:root] do
+get '/users', :auth => [:root, :admin] do
   slim :users, :locals => { :users => User.all }
 end
 

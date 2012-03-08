@@ -10,14 +10,13 @@ describe Lemma do
 
     it 'has not a form to create a new Lemma resource' do
       get '/lemma/new'
-      follow_redirect!
-      last_response.body.wont_include "translation[0]"
+      last_response.status.must_equal 404
     end
 
     it "can't create a new Lemma resource" do
       post '/lemma', l = FactoryGirl.attributes_for(:lemma, :lemma => "Brot")
-      follow_redirect!
       l = Lemma.find_by_lemma(l[:lemma]).must_be_nil
+      last_response.status.must_equal 404
     end
 
     it "can show a lemma page, but not a form" do
@@ -34,8 +33,7 @@ describe Lemma do
 
     it "can't modify a lemma of a Lemma resource" do
       put "/lemma/#{@l.id}", :lemma => "test"
-      follow_redirect!
-      last_response.body.wont_include "test"
+      last_response.status.must_equal 404
     end
 
     after do
@@ -134,10 +132,11 @@ describe Lemma do
     before do
       @l = Factory :lemma
       @u = Factory :user, :roles => [:user, :admin]
+      @uu = Factory :user
       post '/user/login', :email => @u.email, :password => 'secret'
     end
 
-    it "will let user create a valid edit of Lemma" do
+    it "will let admin create a valid edit of Lemma" do
       put "/lemma/#{@l.id}", :lemma => "test"
       follow_redirect!
       last_response.body.must_include "test"
@@ -146,10 +145,20 @@ describe Lemma do
       @l.edited_by.must_equal @u.email
     end
 
-    it "will let user delete a Lemma" do
+    it "will let admin delete a Lemma" do
       count = Lemma.count
       delete "/lemma/#{@l.id}"
       Lemma.count.must_equal count-1
+    end
+
+    it "will let admin see the validation page" do
+      get "/lemma/validation"
+      last_response.status.must_equal 200
+    end
+
+    it "will let admin see the users page" do
+      get "/users"
+      last_response.status.must_equal 200
     end
 
     after do

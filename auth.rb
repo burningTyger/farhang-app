@@ -22,7 +22,8 @@ module Authentication
   end
 
   def access_denied
-    redirect '/'
+    #redirect '/'
+    halt 404
   end
 
   def store_location
