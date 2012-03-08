@@ -14,7 +14,7 @@ require 'mongo_mapper'
 require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
-require_relative 'auth'
+require "#{File.dirname(__FILE__)}/auth"
 
 include Authentication
 
@@ -154,12 +154,6 @@ helpers do
     @flash = session.delete(:flash)
   end
 
-  # this method removes kasra, fatha and damma from lemma
-  # by doing a unicode range check on the string
-  def devowelize(str)
-    str.delete("\u064B-\u0655")
-  end
-
   def set_params_page
     params[:page] = params.fetch("page"){1}.to_i
     params[:per_page] = params.fetch("per_page"){20}.to_i
@@ -233,7 +227,7 @@ end
 
 get '/search/:term' do
   if params[:term]
-    search_term = devowelize(params[:term])
+    search_term = params[:term]
     search_term.gsub!(/[%20]/, ' ')
     #search_term.gsub!(/\*/, '\*')
     # replace *: in conversion with Link to lemma

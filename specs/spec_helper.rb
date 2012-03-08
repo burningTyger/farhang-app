@@ -6,8 +6,8 @@ require 'mongo_mapper'
 require 'rack/test'
 require 'factory_girl'
 require 'purdytest'
-require_relative 'factories'
-require_relative '../farhang'
+require "#{File.dirname(__FILE__)}/factories"
+require "#{File.dirname(__FILE__)}/../farhang"
 
 module SpecHelper
   include Rack::Test::Methods

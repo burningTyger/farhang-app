@@ -7,7 +7,6 @@ gem 'bson_ext'
 gem 'bcrypt-ruby'
 
 group :development, :test do
-  gem 'require_relative' if RUBY_VERSION[0,3] == '1.8'
   gem 'sinatra-contrib'
   gem 'minitest'
   gem 'rack-test'
@@ -15,3 +14,4 @@ group :development, :test do
   gem 'purdytest'
   gem 'rake'
 end
+

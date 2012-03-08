@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
 describe "routes" do
@@ -58,8 +58,8 @@ describe "routes" do
     end
 
     it "can find a search term with parens in it" do
-      Factory(:lemma, :lemma => 'ca (*: cirka)')
-      get '/search', :term => 'ca%20(*:%20cirka)'
+      Factory(:lemma, :lemma => 'ca (*:cirka)')
+      get '/search', :term => 'ca%20(*:cirka)'
       follow_redirect!
       last_response.body.must_include 'cirka'
     end

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require_relative 'spec_helper'
+require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
 describe Lemma do
