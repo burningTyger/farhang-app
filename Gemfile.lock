@@ -58,6 +58,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt-ruby
+  bson
   bson_ext
   factory_girl
   minitest

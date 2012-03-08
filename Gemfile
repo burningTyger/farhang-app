@@ -3,7 +3,8 @@ gem 'sinatra'
 gem 'slim'
 gem 'sass'
 gem 'mongo_mapper'
-gem 'bson_ext'
+gem 'bson_ext', :platforms => :ruby
+gem 'bson', :platforms => :jruby
 gem 'bcrypt-ruby'
 
 group :development, :test do
