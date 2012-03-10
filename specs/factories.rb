@@ -8,7 +8,7 @@ FactoryGirl.define do
   end
 
   factory :lemma do
-    lemma 'ًWörterbuch'
+    lemma 'Wörterbuch'
     translations { |translations| [ translations.association(:translation),
                                     translations.association(:translation)]}
   end
