@@ -1,8 +1,10 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Dashboard"
-    p
-      | Farhang umfasst momentan #{Lemma.count} Einträge
+  .span2
+    .well
+      ==partial :partial_header, :text => "Startseite"
+      h5 #{Lemma.count} Einträge
+    ==partial :partial_sidebar_nav
   .span9
     h2 Zufälliger Eintrag
-    ==partial :lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(Lemma.count()))
+    ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(Lemma.count()))
+

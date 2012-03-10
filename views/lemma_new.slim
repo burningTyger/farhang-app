@@ -1,9 +1,11 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Eintrag anlegen"
-    p
-      | Neben dem neuen Begriff, dem Lemma, können Begriffe/Beispiele in der 
-      | Quell- und Zielsprache angegeben werden.
+  .span2
+    .well
+      ==partial :partial_header, :text => "Eintrag anlegen"
+      p
+        | Neben dem neuen Begriff, dem Lemma, können Begriffe oder Beispiele 
+        | in der Quell- und Zielsprache angegeben werden.
+    ==partial :partial_sidebar_nav
   .span9
     form action="/lemma" method="get" name="search"
       label for="lemma" Lemma

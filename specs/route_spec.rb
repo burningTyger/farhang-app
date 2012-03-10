@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
@@ -21,7 +22,7 @@ describe "routes" do
     it "returns the dashboard for signed user" do
       post '/user/login', :email => @u.email, :password => 'secret'
       get '/'
-      last_response.body.must_include 'Dashboard'
+      last_response.body.must_include 'Einträge'
     end
 
     after do

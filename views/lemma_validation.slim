@@ -1,8 +1,10 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Einträge prüfen"
-    p
-      | Neue oder geänderte Einträge fremder Nutzer müssen bestätigt werden.
+  .span2
+    .well
+      ==partial :partial_header, :text => "Einträge prüfen"
+      p
+        | Neue oder geänderte Einträge fremder Nutzer müssen bestätigt werden.
+    ==partial :partial_sidebar_nav
   .span9
     - lemmas.each do |l|
       form action="/lemma/#{l.id}" method="post" name="search"

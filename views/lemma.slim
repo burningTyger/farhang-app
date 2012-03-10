@@ -1,10 +1,5 @@
--l = lemmas.first
-dt.lemma
-  a href="/lemma/#{l.id}"= l.lemma
-  -l.translations.each do |t|
-    dd.translation
-      -if t.target
-        = t.source
-        |  
-        = t.target
-
+.row
+  .span2
+    ==partial :partial_sidebar_nav
+  .span9
+    ==partial :partial_lemma, :lemmas => lemmas

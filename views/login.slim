@@ -1,10 +1,12 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Anmelden"
-    p
-      | Um Einträge bearbeiten oder anlegen zu können muss man sich anmelden.
-    a.btn href='/user/new' Registrieren
-  .span8.offset1
+  .span2
+    .well
+      ==partial :partial_header, :text => "Anmeldung"
+      p
+        | Um Einträge bearbeiten oder anlegen zu können muss man sich anmelden.
+      a.btn href='/user/new' Registrieren
+    ==partial :partial_sidebar_nav
+  .span8.offset2
     form action="/user/login" method="post"
       fieldset
         label for="email" eMail

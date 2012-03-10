@@ -1,9 +1,11 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Benutzer anlegen"
-    p
-      | Um das Lexikon bearbeiten zu können, muss ein Benutzer angelegt werden
-  .span7
+  .span2
+    .well
+      ==partial :partial_header, :text => "Registrieren"
+      p
+        | Um das Lexikon bearbeiten zu können, muss ein Benutzer angelegt werden
+    ==partial :partial_sidebar_nav
+  .span7.offset1
     form.form-stacked action="/user" method="post"
       fieldset
         label for="email" eMail

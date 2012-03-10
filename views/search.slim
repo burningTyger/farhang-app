@@ -1,6 +1,10 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Suchergebnisse"
+  .span2
+    .well
+      ==partial :partial_header, :text => "Suchergebnis"
+      | für 
+      =params[:term]
+    ==partial :partial_sidebar_nav
   .span9
     dl
       - if !lemmas.empty?

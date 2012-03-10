@@ -1,8 +1,10 @@
 .row
-  .span3
-    ==partial :partial_header, :text => "Benutzerprofil"
-    p
-      | Das bin ich. Hier stelle ich mich ein|um|an.
+  .span2
+    .well
+      ==partial :partial_header, :text => "Profil"
+      p
+        | Das bin ich. Hier stelle ich mich ein|um|an.
+    ==partial :partial_sidebar_nav
   .span7
     form.form-stacked action="/user/#{user.id}" method="POST"
       input name="_method" type="hidden" value="PUT"
