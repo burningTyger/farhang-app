@@ -6,7 +6,6 @@ describe "routes" do
   describe "home route" do
     before do
       @u = Factory :user
-      Factory :lemma
     end
 
     it "returns the homepage for unsigned user" do
@@ -24,18 +23,9 @@ describe "routes" do
       get '/'
       last_response.body.must_include 'Einträge'
     end
-
-    after do
-      User.all.each { |u| u.destroy }
-      Lemma.all.each {|l| l.destroy}
-    end
   end
 
   describe "search routes" do
-    before do
-      Factory :lemma
-    end
-
     it "gets and finds a url search" do
       Factory(:lemma, :lemma  => 'Apfel')
       get '/search/Apfel'
@@ -66,7 +56,7 @@ describe "routes" do
     end
 
     after do
-      Lemma.collection.remove
+      Lemma.delete_all
     end
   end
 end

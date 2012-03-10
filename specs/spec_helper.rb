@@ -18,9 +18,5 @@ module SpecHelper
   def session
     last_request.env['rack.session']
   end
-
-  def setup
-
-  end
-
 end
+

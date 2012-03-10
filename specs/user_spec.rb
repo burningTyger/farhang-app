@@ -5,6 +5,7 @@ describe User do
   describe 'routes' do
     before do
       @u = Factory :user
+      post '/user/login', :email => @u.email, :password => 'secret'
     end
 
     it 'has a form to create a new User resource' do
@@ -20,7 +21,6 @@ describe User do
     end
 
     it "can show a user page" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       get "/user/#{@u.id}"
       last_response.body.must_include @u.email
     end
@@ -30,51 +30,40 @@ describe User do
       last_response.status.must_equal 400
     end
 
-    it "can delete a User resource" do
-      post '/user/login', :email => @u.email, :password => 'secret'
+    it "can delete own User resource" do
       delete "/user/#{@u.id}"
       User.find(@u.id).must_be_nil
     end
 
     it "won't delete an unknown User resource" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       count = User.count
       delete "/user/4321"
       User.count.must_equal count
     end
 
     it "can modify a User resource" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       put "/user/#{@u.id}", :email => "mine@example.org"
       User.find(@u.id).email.must_equal "mine@example.org"
     end
 
     it "wont modify an unknown User resource" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       put "/user/1234", :name => "Nelly"
       User.find("1234").must_be_nil
     end
 
     it "will let a user login with his credentials" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       signed_in?.must_equal true
     end
 
     it "will create a user with only user role" do
-      post '/user/login', :email => @u.email, :password => 'secret'
       u = Factory :user
       u.roles.must_equal Set.new([:user])
     end
 
     it "will not let other users edit users" do
       u = Factory :user
-      post '/user/login', :email => @u.email, :password => 'secret'
       delete "/user/#{u.id}"
       User.find(u.id).must_equal u
-    end
-
-    after do
-      User.all.each {|u| u.destroy}
     end
   end
 
@@ -96,27 +85,23 @@ describe User do
     end
 
     it "is able to set user's reset password code" do
-      user = Factory(:user)
+      user = Factory :user
       user.reset_password_code.must_be_nil
       user.reset_password_code_until.must_be_nil
       user.set_password_code!
       user.reset_password_code.wont_be_nil
       user.reset_password_code_until.wont_be_nil
     end
-
-    after do
-      User.all.each {|u| u.destroy}
-    end
   end
 
   describe "Authentication" do
     it 'works with existing email and correct password' do
-      user = Factory(:user)
+      user = Factory :user
       User.authenticate(user.email, 'secret').must_equal user
     end
 
     it 'works with existing email (case insensitive) and password' do
-      user = Factory(:user)
+      user = Factory :user
       User.authenticate(user.email.upcase, 'secret').must_equal user
     end
 
@@ -126,10 +111,6 @@ describe User do
 
     it 'does not work with non-existant email' do
       User.authenticate('foo@bar.com', 'foobar').must_be_nil
-    end
-
-    after do
-      User.all.each {|u| u.destroy}
     end
   end
 
@@ -150,10 +131,10 @@ describe User do
       u = Factory :user, :password => "123456", :password_confirmation => "123456"
       u.save!.must_equal true
     end
+  end
 
-    after do
-      User.all.each {|u| u.destroy}
-    end
+  after do
+    User.delete_all
   end
 end
 

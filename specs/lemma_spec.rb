@@ -3,11 +3,11 @@ require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
 describe Lemma do
-  describe 'anonymous access' do
-    before do
-      @l = Factory :lemma
-    end
+  before do
+    @l = Factory :lemma
+  end
 
+  describe 'anonymous access' do
     it 'has not a form to create a new Lemma resource' do
       get '/lemma/new'
       last_response.status.must_equal 404
@@ -35,15 +35,10 @@ describe Lemma do
       put "/lemma/#{@l.id}", :lemma => "test"
       last_response.status.must_equal 404
     end
-
-    after do
-      Lemma.all.each {|l| l.destroy}
-    end
   end
 
   describe 'logged in' do
     before do
-      @l = Factory :lemma
       @u = Factory :user
       post '/user/login', :email => @u.email, :password => 'secret'
     end
@@ -121,19 +116,12 @@ describe Lemma do
       @l.valid.must_equal false
       @l.edited_by.must_equal @u.email
     end
-
-    after do
-      Lemma.all.each {|l| l.destroy}
-      User.all.each { |u| u.destroy }
-    end
   end
 
   describe 'logged in as admin' do
     before do
-      @l = Factory :lemma
-      @u = Factory :user, :roles => [:user, :admin]
-      @uu = Factory :user
-      post '/user/login', :email => @u.email, :password => 'secret'
+      @ua = Factory :user, :roles => [:user, :admin]
+      post '/user/login', :email => @ua.email, :password => 'secret'
     end
 
     it "will let admin create a valid edit of Lemma" do
@@ -142,7 +130,7 @@ describe Lemma do
       last_response.body.must_include "test"
       @l.reload
       @l.valid.must_equal true
-      @l.edited_by.must_equal @u.email
+      @l.edited_by.must_equal @ua.email
     end
 
     it "will let admin delete a Lemma" do
@@ -160,11 +148,11 @@ describe Lemma do
       get "/users"
       last_response.status.must_equal 200
     end
+  end
 
-    after do
-      Lemma.all.each {|l| l.destroy}
-      User.all.each { |u| u.destroy }
-    end
+  after do
+    Lemma.delete_all
+    User.delete_all
   end
 end
 
