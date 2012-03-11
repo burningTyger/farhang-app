@@ -16,13 +16,13 @@ require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
 require "#{File.dirname(__FILE__)}/auth"
-
+require "#{File.dirname(__FILE__)}/config"
 include Authentication
 
 configure do
   set :slim, :pretty => true
   enable :sessions
-  set :session_secret, ENV['SESSION_SECRET'] || 'super secret'
+  set :session_secret, SECRET || 'super secret'
   set :auth do |*roles|
     condition do
       roles? roles
@@ -33,10 +33,11 @@ configure do
       @current_user.id == params[:id]
     end
   end
-  if ENV['MONGOLAB_URL']
-    MongoMapper.database = ENV['MONGOLAB_DATABASE']
-    MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], ENV['MONGOLAB_PORT'])
-    MongoMapper.database.authenticate(ENV['MONGOLAB_USER'], ENV['MONGOLAB_PASS'])
+  if ENV['RACK_ENV'] == 'production'
+    MongoMapper.database = APP_NAME
+    MongoMapper.connection = Mongo::Connection.new(DB_HOST, DB_PORT)
+    MongoMapper.database.authenticate(DB_USER, DB_PASS)
+    MongoMapper.handle_passenger_forking
   elsif ENV['RACK_ENV'] == 'testing'
     MongoMapper.connection = Mongo::Connection.new('localhost')
     MongoMapper.database = "testing"
