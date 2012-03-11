@@ -251,9 +251,8 @@ end
 
 post '/lemma', :auth => [:user] do
   l = Lemma.create params
-  l.edited_by = @current_user.email
   l.valid = roles?([:root, :admin]) ? true : false
-  halt 400 unless l.save
+  halt 400 unless l.save :updater_id => @current_user.id
   redirect to("/lemma/#{lemma.id}")
 end
 
@@ -282,9 +281,8 @@ put '/lemma/:id', :auth => [:user] do
       l.translations << Translation.new(:source => t["source"], :target => t["target"])
     end
   end
-  l.edited_by = @current_user.email
   l.valid = roles?([:root, :admin]) ? true : false
-  l.save
+  l.save :updater_id => @current_user.id
   redirect back
 end
 

@@ -114,7 +114,7 @@ describe Lemma do
       last_response.body.must_include "test"
       @l.reload
       @l.valid.must_equal false
-      @l.edited_by.must_equal @u.email
+      @l.version_at(:latest).updater_id.must_equal @u.id.to_param
     end
   end
 
@@ -130,7 +130,7 @@ describe Lemma do
       last_response.body.must_include "test"
       @l.reload
       @l.valid.must_equal true
-      @l.edited_by.must_equal @ua.email
+      @l.version_at(:latest).updater_id.must_equal @ua.id.to_param
     end
 
     it "will let admin delete a Lemma" do
