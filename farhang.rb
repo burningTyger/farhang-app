@@ -11,6 +11,7 @@ require 'sinatra'
 require 'slim'
 require 'sass'
 require 'mongo_mapper'
+require 'versionable'
 require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
@@ -123,6 +124,7 @@ end
 
 class Lemma
   include MongoMapper::Document
+  enable_versioning :limit => 0
   key :lemma, String, :unique => true, :required => true
   key :edited_by, String
   key :valid, Boolean

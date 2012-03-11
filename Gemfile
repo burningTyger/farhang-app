@@ -6,6 +6,7 @@ gem 'mongo_mapper'
 gem 'bson_ext', :platforms => :ruby
 gem 'bson', :platforms => :jruby
 gem 'bcrypt-ruby'
+gem 'mm-versionable', :require => 'versionable'
 
 group :development, :test do
   gem 'sinatra-contrib'

@@ -13,11 +13,18 @@ GEM
     bson_ext (1.6.1)
       bson (~> 1.6.1)
     builder (3.0.0)
+    differ (0.1.2)
     eventmachine (0.12.10)
-    factory_girl (2.6.1)
+    factory_girl (2.6.3)
       activesupport (>= 2.3.9)
     i18n (0.6.0)
     minitest (2.11.3)
+    mm-versionable (0.2.6)
+      bson_ext
+      builder
+      differ
+      i18n
+      mongo_mapper (>= 0.9.0)
     mongo (1.6.1)
       bson (~> 1.6.1)
     mongo_mapper (0.11.0)
@@ -62,6 +69,7 @@ DEPENDENCIES
   bson_ext
   factory_girl
   minitest
+  mm-versionable
   mongo_mapper
   purdytest
   rack-test

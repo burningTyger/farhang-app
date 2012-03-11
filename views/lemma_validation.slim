@@ -6,9 +6,16 @@
         | Neue oder geänderte Einträge fremder Nutzer müssen bestätigt werden.
     ==partial :partial_sidebar_nav
   .span9
-    - lemmas.each do |l|
-      form action="/lemma/#{l.id}" method="post" name="search"
-        input name="_method" type="hidden" value="PUT"
-        == partial :lemma, :lemmas => [l]
-        input.btn type="submit" value="Speichern"
+    -if lemmas.empty?
+      h4 Keine unbestätigten Einträge vorhanden
+    -else
+      - lemmas.each do |l|
+        form action="/lemma/#{l.id}" method="post" name="search"
+          input name="_method" type="hidden" value="PUT"
+          -c = l.versions_count
+          -c.times do |i|
+            -v = l.rollback(c-1-i)
+            == partial :partial_lemma, :lemmas => [v]
+            - break if v.valid
+          input.btn type="submit" value="Speichern"
 
