@@ -1,0 +1,71 @@
+-if @current_user
+  -case
+  -when roles?([:admin, :root])
+    ul.nav.nav-list.well
+      li class=(request.path_info == "/" ? 'active' : '')
+        a href="/"
+          i.icon-home
+          | Startseite
+      li.nav-header Lemmas
+      li class=(request.path_info == "/lemma/validation" ? 'active' : '')
+        a href="/lemma/validation"
+          i.icon-ok
+          | Bestätigen
+      li class=(request.path_info == "/lemma/new" ? 'active' : '')
+        a href="/lemma/new"
+          i.icon-plus
+          | Hinzufügen
+      li.nav-header Benutzer
+      li class=(request.path_info == "/user/#{@current_user.id}" ? 'active' : '')
+        a href="/user/#{@current_user.id}"
+          i.icon-pencil
+          | Profil
+      li class=(request.path_info == "/users" ? 'active' : '')
+        a href="/users"
+          i.icon-cog
+          | Übersicht
+      li class=(request.path_info == "/user/logout" ? 'active' : '')
+      li
+        a href="/user/logout"
+          i.icon-off
+          | Abmelden
+  -when roles?([:user])
+    ul.nav.nav-list.well
+      li class=(request.path_info == "/" ? 'active' : '')
+      li
+        a href="/"
+          i.icon-home
+          | Startseite
+      li.nav-header Lemmas
+      li class=(request.path_info == "/lemma/new" ? 'active' : '')
+      li
+        a href="/lemma/new"
+          i.icon-plus
+          | Hinzufügen
+      li.nav-header Benutzer
+      li class=(request.path_info == "/user/#{@current_user.id}" ? 'active' : '')
+      li
+        a href="/user/#{@current_user.id}"
+          i.icon-pencil
+          | Profil
+      li class=(request.path_info == "/user/logout" ? 'active' : '')
+      li
+        a href="/user/logout"
+          i.icon-off
+          | Abmelden
+-else
+  ul.nav.nav-list.well
+    li class=(request.path_info == "/" ? 'active' : '')
+      a href="/"
+        i.icon-home
+        | Startseite
+    li.nav-header Benutzer
+    li class=(request.path_info == "/user/login" ? 'active' : '')
+      a href="/user/login"
+        i.icon-user
+        | Anmelden
+    li class=(request.path_info == "/user/new" ? 'active' : '')
+      a href="/user/new"
+        i.icon-plus
+        | Registrieren
+

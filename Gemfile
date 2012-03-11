@@ -1,20 +1,19 @@
 source "http://rubygems.org"
 gem 'sinatra'
-gem 'haml'
+gem 'slim'
 gem 'sass'
 gem 'mongo_mapper'
-gem "json"
-gem "coffee-script-source"
-gem "coffee-script"
-gem "therubyracer"
-gem "bson_ext", "~> 1.3.1"
-gem "bson", "~> 1.3.1"
+gem 'bson_ext', :platforms => :ruby
+gem 'bson', :platforms => :jruby
+gem 'bcrypt-ruby'
+gem 'mm-versionable', :require => 'versionable'
 
 group :development, :test do
-  gem 'require_relative' if RUBY_VERSION[0,3] == '1.8'
-  gem 'sinatra-reloader'
+  gem 'sinatra-contrib'
   gem 'minitest'
   gem 'rack-test'
   gem 'factory_girl'
-  gem 'puma'
+  gem 'purdytest'
+  gem 'rake'
 end
+

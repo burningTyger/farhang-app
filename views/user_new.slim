@@ -1,0 +1,21 @@
+.row
+  .span2
+    .well
+      ==partial :partial_header, :text => "Registrieren"
+      p
+        | Um das Lexikon bearbeiten zu können, muss ein Benutzer angelegt werden
+    ==partial :partial_sidebar_nav
+  .span7.offset1
+    form.form-stacked action="/user" method="post"
+      fieldset
+        label for="email" eMail
+        input.span7 name="email" type="text"
+        label for="password" Passwort
+        input.span7 name="password" type="text"
+        label for="password_confirmation" Passwort bestätigen
+        input.span7 name="password_confirmation" type="text"
+      .form-actions
+        button.btn.primary type="submit" Speichern
+        ' 
+        button.btn type="reset" Abbrechen
+

@@ -1,0 +1,10 @@
+.row
+  .span2
+    .well
+      ==partial :partial_header, :text => "Startseite"
+      h5 #{Lemma.count} Einträge
+    ==partial :partial_sidebar_nav
+  .span9
+    h2 Zufälliger Eintrag
+    ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(Lemma.count())) if Lemma.count > 1
+

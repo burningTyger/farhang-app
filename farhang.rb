@@ -4,18 +4,35 @@
 #
 # Author:: burningTyger (https://github.com/burningTyger)
 # Home:: https://github.com/burningTyger/farhang-app
-# Copyright:: Copyright (c) 2011 burningTyger
+# Copyright:: Copyright (c) 2011 – 2012 burningTyger
 # License:: MIT License
 #
 require 'sinatra'
-require 'haml'
+require 'slim'
 require 'sass'
 require 'mongo_mapper'
-require 'coffee-script'
+require 'versionable'
 require 'sinatra/reloader' if development?
+require 'digest/sha1'
+require 'bcrypt'
+require "#{File.dirname(__FILE__)}/auth"
+
+include Authentication
 
 configure do
-  set :server, %w[puma thin]
+  set :slim, :pretty => true
+  enable :sessions
+  set :session_secret, ENV['SESSION_SECRET'] || 'super secret'
+  set :auth do |*roles|
+    condition do
+      roles? roles
+    end
+  end
+  set :self_check do |*p|
+    condition do
+      @current_user.id == params[:id]
+    end
+  end
   if ENV['MONGOLAB_URL']
     MongoMapper.database = ENV['MONGOLAB_DATABASE']
     MongoMapper.connection = Mongo::Connection.new(ENV['MONGOLAB_URL'], ENV['MONGOLAB_PORT'])
@@ -29,24 +46,96 @@ configure do
   end
 end
 
-FARHANG_VERSION = "0.1"
+FARHANG_VERSION = "0.9.0"
+
+class User
+  include MongoMapper::Document
+  attr_accessible :email, :password
+
+  key :email, String, :required => true, :unique => true
+  key :crypted_password, String
+  key :reset_password_code, String
+  key :reset_password_code_until, Time
+  key :roles, Set
+  timestamps!
+
+  validate :role_validation
+
+  def role_validation
+    if roles.count == 0
+      roles << :user
+      roles << :root if User.count == 0
+    end
+  end
+
+  RegEmailName   = '[\w\.%\+\-]+'
+  RegDomainHead  = '(?:[A-Z0-9\-]+\.)+'
+  RegDomainTLD   = '(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)'
+  RegEmailOk     = /\A#{RegEmailName}@#{RegDomainHead}#{RegDomainTLD}\z/i
+
+  def self.authenticate(email, secret)
+    u = User.first(:conditions => {:email => email.downcase})
+    u && u.authenticated?(secret) ? u : nil
+  end
+
+  validates_length_of :email, :within => 6..100, :allow_blank => true
+  validates_format_of :email, :with => RegEmailOk, :allow_blank => true
+
+  PasswordRequired = Proc.new { |u| u.password_required? }
+  validates_presence_of :password, :if => PasswordRequired
+  validates_confirmation_of :password, :if => PasswordRequired, :allow_nil => true
+  validates_length_of :password, :minimum => 6, :if => PasswordRequired, :allow_nil => true
+
+  def authenticated?(secret)
+    password == secret ? true : false
+  end
+
+  def password
+    if crypted_password.present?
+      @password ||= BCrypt::Password.new(crypted_password)
+    else
+      nil
+    end
+  end
+
+  def password=(value)
+    if value.present?
+      @password = value
+      self.crypted_password = BCrypt::Password.create(value)
+    end
+  end
+
+  def email=(new_email)
+    new_email.downcase! unless new_email.nil?
+    write_attribute(:email, new_email)
+  end
+
+  def password_required?
+    crypted_password.blank? || !password.blank?
+  end
+
+  def set_password_code!
+    seed = "#{email}#{Time.now.to_s.split(//).sort_by {rand}.join}"
+    self.reset_password_code_until = 1.day.from_now
+    self.reset_password_code = Digest::SHA1.hexdigest(seed)
+    save!
+  end
+end
 
 class Lemma
   include MongoMapper::Document
-
+  enable_versioning :limit => 0
   key :lemma, String, :unique => true, :required => true
-  key :translation_ids, Array
-  many :translations, :in => :translation_ids
+  key :edited_by, String
+  key :valid, Boolean
+  many :translations
   timestamps!
 end
 
 class Translation
-  include MongoMapper::Document
-
+  include MongoMapper::EmbeddedDocument
   key :source, String
   key :target, String
-  key :lemma_ids, Array
-  many :lemmas, :in => :lemma_ids
   timestamps!
 end
 
@@ -59,10 +148,12 @@ error do
 end
 
 helpers do
-  # this method removes kasra, fatha and damma from lemma
-  # by doing a unicode range check on the string
-  def devowelize(str)
-    str.delete("\u064B-\u0655")
+  def partial(template, locals = {})
+    slim template, :layout => false, :locals => locals
+  end
+
+  def flash
+    @flash = session.delete(:flash)
   end
 
   def set_params_page
@@ -80,7 +171,7 @@ helpers do
         }.merge(options)
       @next_page = "?#{Rack::Utils.build_query params}"
     end
-    
+
     if data.previous_page
       params = {
         :page     => data.previous_page,
@@ -88,6 +179,13 @@ helpers do
         }.merge(options)
       @prev_page = "?#{Rack::Utils.build_query params}"
     end
+  end
+
+  def roles?(roles)
+    authenticate unless signed_in?
+    @current_user.roles << :self if @current_user.id.to_param == params[:id]
+    set = @current_user.roles & roles.to_set
+    !set.empty?
   end
 end
 
@@ -113,110 +211,140 @@ get '/js/:file.js' do
   coffee params[:file].intern
 end
 
+get '/' do
+  if signed_in?
+    slim :dashboard
+  else
+    slim :home
+  end
+end
+
 get '/search' do
   if params[:term]
     redirect "/search/#{params[:term]}"
   else
-    redirect '/search'
+    redirect '/'
   end
 end
 
 get '/search/:term' do
   if params[:term]
-    search_term = devowelize(params[:term])
+    search_term = params[:term]
     search_term.gsub!(/[%20]/, ' ')
     #search_term.gsub!(/\*/, '\*')
     # replace *: in conversion with Link to lemma
-    lemmas = Lemma.all(:lemma => Regexp.new(/^#{search_term}/i))
+    lemmas = Lemma.all(:lemma => Regexp.new(/^#{Regexp.escape(search_term)}/i))
   end
-  haml :search, :locals => { :lemmas => lemmas }
+  slim :search, :locals => { :lemmas => lemmas }
 end
 
-get '/lemmas/autocomplete' do
+get '/lemma/autocomplete.json' do
+  content_type :json
   lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
-get '/lemma' do
-  content_type :json
-  l = Lemma.first(params)
-  halt 404 unless l
-  l.to_json
+get '/lemma/new', :auth => [:user] do
+  slim :lemma_new
+end
+
+post '/lemma', :auth => [:user] do
+  l = Lemma.create params
+  l.edited_by = @current_user.email
+  l.valid = roles?([:root, :admin]) ? true : false
+  halt 400 unless l.save
+  redirect to("/lemma/#{lemma.id}")
+end
+
+get '/lemma/validation', :auth => [:root, :admin] do
+  lemmas = Lemma.all :valid => false
+  slim :lemma_validation, :locals => { :lemmas => lemmas }
 end
 
 get '/lemma/:id' do
-  halt 404 unless params[:id]
-  lemma = Lemma.find(params[:id])
-  haml :lemma, :locals => { :lemmas => Array(lemma) }
-end
-
-post '/lemma' do
-  halt 400 unless params[:lemma_input]
-  l = Lemma.find_or_create_by_lemma(params[:lemma_input])
-  
-  i = 0
-  while true;
-    break unless params[:"translationSource_#{i}"] && params[:"translationTarget_#{i}"]
-    t = Translation.find_or_create_by_source_and_target(params[:"translationSource_#{i}"], params[:"translationTarget_#{i}"])
-    t.lemmas << l
-    l.translations << t
-    halt 400 unless t.save
-    i += 1
+  halt 404 unless lemma = Lemma.find(params[:id])
+  if authorized?
+    slim :lemma_edit, :locals => { :lemmas => Array(lemma) }
+  else
+    slim :lemma, :locals => { :lemmas => Array(lemma) }
   end
-  
-  halt 400 unless l.save
-  haml :lemma, :locals => { :lemmas => Array(l) }, :layout => false
 end
 
-=begin
-put 'lemma/:id' do
-  halt 404 unless params[:id]
-  
+put '/lemma/:id', :auth => [:user] do
+  halt 404 unless l = Lemma.find(params[:id])
+  l.lemma = params[:lemma] if params[:lemma]
+  if params[:translations]
+    l.translations.clear
+    params[:translations].values.each do |t|
+      next if  t["source"].nil? || t["target"].nil?
+      next if t["source"].empty? || t["target"].empty?
+      l.translations << Translation.new(:source => t["source"], :target => t["target"])
+    end
+  end
+  l.edited_by = @current_user.email
+  l.valid = roles?([:root, :admin]) ? true : false
+  l.save
+  redirect back
 end
 
-=end
-get '/translation/:id' do
-  halt 404 unless params[:id]
-  translation = Translation.find(params[:id])
-  haml :translation, :locals => { :translation => translation }
+delete '/lemma/:id', :auth => [:admin, :root] do
+  halt 404 unless lemma = Lemma.find(params[:id])
+  lemma.destroy
+  redirect to("/lemma/#{lemma.id}")
 end
 
-put '/lemma/:id/translations' do
-  l = Lemma.find(params[:id])
-  t = Translation.find(params[:translation_id])
-  halt 404 unless l && t
-
-  l.translations << t
-  t.lemmas << l
-  
-  content_type :json
-  (l.save && t.save).to_json
+## User routes
+get '/users', :auth => [:root, :admin] do
+  slim :users, :locals => { :users => User.all }
 end
 
-delete '/lemma/:id/translations' do
-  l = Lemma.find(params[:id])
-  t = Translation.find(params[:translation_id])
-  halt 404 unless l && t
-
-  l.translation_ids.delete(t.id)
-  t.lemma_ids.delete(l.id)
-
-  content_type :json
-  (l.save && t.save).to_json
+get '/user/login' do
+  slim :login
 end
 
-get '/translations' do
-  set_params_page
-  translation = Translation
-  translation = translation.sort(:source.desc)
-  translation = translation.paginate(:page => params[:page], :per_page => params[:per_page])
-
-  set_pagination_buttons(translation)
-  haml :translations, :locals => { :translation => translation }
+get '/user/new' do
+  slim :user_new
 end
 
-
-
-get '/' do
-  haml :home
+get '/user/logout' do
+  sign_out_keeping_session!
+  redirect to('/')
 end
+
+post '/user' do
+  user = User.new params
+  halt 400 unless user.save
+  session[:flash] = ["Benutzer erfolgreich angelegt", "alert-success"]
+  redirect to('/')
+end
+
+get '/user/:id', :auth => [:self, :root] do
+  halt 404 unless u = User.find(params[:id])
+  slim :user, :locals => { :user => u }
+end
+
+put '/user/:id', :auth => [:self, :root] do
+  halt 404 unless u = User.find(params[:id])
+  if u.update_attributes! params
+    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
+    redirect to("/users")
+  else
+    halt 409, "Resource konnte nicht geändert werden"
+  end
+end
+
+delete '/user/:id', :auth => [:self, :root] do
+  halt 404 unless u = User.find(params[:id])
+  if u.destroy
+    session[:flash] = ["Benutzer erfolgreich gelöscht", "alert-success"]
+    redirect to("/users")
+  else
+    halt 400, "Eintrag konnte nicht gelöscht werden"
+  end
+end
+
+post '/user/login' do
+  authenticate_with_login_form params[:email], params[:password]
+  redirect to('/')
+end
+
