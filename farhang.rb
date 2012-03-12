@@ -266,7 +266,7 @@ get '/lemma/:id' do
   if authorized?
     slim :lemma_edit, :locals => { :lemmas => Array(lemma) }
   else
-    slim :lemma, :locals => { :lemmas => Array(lemma) }
+    slim :partial_lemma, :locals => { :lemmas => Array(lemma) }
   end
 end
 

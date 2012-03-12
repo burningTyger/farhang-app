@@ -1,12 +1,7 @@
 .row
-  .span2
-    .well
-      ==partial :partial_header, :text => "Anmeldung"
-      p
-        | Um Einträge bearbeiten oder anlegen zu können muss man sich anmelden.
-      a.btn href='/user/new' Registrieren
-    ==partial :partial_sidebar_nav
-  .span8.offset2
+  .span5
+    h3
+      | Anmelden
     form action="/user/login" method="post"
       fieldset
         label for="email" eMail
@@ -17,7 +12,16 @@
         label for="password" Passwort
         .input-prepend
           span.add-on
-            i.icon-lock
+            i.icon-key
           input.span4 name="password" type="password"
       button.btn type="submit" Anmelden
+
+  .span4
+    h3 
+      | Neu hier?
+      a href="#" style="float: right"
+        i(class="icon-question-sign icon-large" id="help"
+          title="Hilfe"
+          data-content="Um Einträge bearbeiten oder anlegen zu können, muss man registriert sein und sich auf dieser Seite anmelden.")
+    a.btn.btn-large.btn-primary href='/user/new' Registrieren
 

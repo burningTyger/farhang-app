@@ -18,7 +18,7 @@
       li.nav-header Benutzer
       li class=(request.path_info == "/user/#{@current_user.id}" ? 'active' : '')
         a href="/user/#{@current_user.id}"
-          i.icon-pencil
+          i.icon-user
           | Profil
       li class=(request.path_info == "/users" ? 'active' : '')
         a href="/users"
@@ -46,7 +46,7 @@
       li class=(request.path_info == "/user/#{@current_user.id}" ? 'active' : '')
       li
         a href="/user/#{@current_user.id}"
-          i.icon-pencil
+          i.icon-user
           | Profil
       li class=(request.path_info == "/user/logout" ? 'active' : '')
       li

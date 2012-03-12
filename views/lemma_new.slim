@@ -1,16 +1,13 @@
-.row
-  .span2
-    .well
-      ==partial :partial_header, :text => "Eintrag anlegen"
-      p
-        | Neben dem neuen Begriff, dem Lemma, können Begriffe oder Beispiele 
-        | in der Quell- und Zielsprache angegeben werden.
-    ==partial :partial_sidebar_nav
-  .span9
-    form action="/lemma" method="get" name="search"
-      label for="lemma" Lemma
-      input.span8 name="lemma" type="text"
-      .row
-        ==partial :partial_translation, :translations => nil
-      input.btn type="submit" value="Speichern"
+h3 
+  | Eintrag neu anlegen
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Neben dem neuen Begriff, dem Lemma, können Begriffe oder Beispiele in der Quell- und Zielsprache angegeben werden.")
+form action="/lemma" method="get" name="search"
+  label for="lemma" Lemma
+  input.span8 name="lemma" type="text"
+  .row
+    ==partial :partial_translation, :translations => nil
+  input.btn type="submit" value="Speichern"
 

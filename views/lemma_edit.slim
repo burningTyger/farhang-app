@@ -1,17 +1,15 @@
+h3
+  | Eintrag bearbeiten 
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Einträge können geändert oder neue Beispiele angelegt werden.")
 -l = lemmas.first
-.row
-  .span2
-    .well
-      ==partial :partial_header, :text => "Eintrag bearbeiten"
-      p
-        | Einträge können geändert oder neue Beispiele angelegt werden.
-    ==partial :partial_sidebar_nav
-  .span9
-    form action="/lemma/#{l.id}" method="post" name="search"
-      input name="_method" type="hidden" value="PUT"
-      label for="lemma" Lemma
-      input.span8 name="lemma" type="text" value=l.lemma
-      .row
-        ==partial :partial_translation, :translations => l.translations
-      input.btn type="submit" value="Bestätigen"
+form action="/lemma/#{l.id}" method="post" name="search"
+  input name="_method" type="hidden" value="PUT"
+  label for="lemma" Lemma
+  input.span8 name="lemma" type="text" value=l.lemma
+  .row
+    ==partial :partial_translation, :translations => l.translations
+  input.btn type="submit" value="Bestätigen"
 

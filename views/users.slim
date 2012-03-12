@@ -1,24 +1,22 @@
-.row
-  .span2
-    .well
-      ==partial :partial_header, :text => "Benutzerliste"
-      p
-        | Alle registrierten Benutzer.
-    ==partial :partial_sidebar_nav
-  .span9
-    -if users
-      table.table
-        thead
-          tr
-            th &#x270e
-            th eMail
-            th Anmeldedatum
-        tbody
-          -users.each_with_index do |user, i|
-            tr
-              td
-                a href="/user/#{user.id}"
-                  | &#x270e
-              td= user.email
-              td= user.created_at.strftime("%d.%m.%Y")
+h3 
+  | Neu hier?
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Alle registrierten Benutzer können in dieser Darstellung bearbeitet werden.")
+-if users
+  table.table
+    thead
+      tr
+        th &#x270e
+        th eMail
+        th Anmeldedatum
+    tbody
+      -users.each_with_index do |user, i|
+        tr
+          td
+            a href="/user/#{user.id}"
+              | &#x270e
+          td= user.email
+          td= user.created_at.strftime("%d.%m.%Y")
 

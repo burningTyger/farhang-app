@@ -1,23 +1,22 @@
-.row
-  .span2
-    .well
-      ==partial :partial_header, :text => "Suchergebnis"
-      | für 
-      =params[:term]
-    ==partial :partial_sidebar_nav
-  .span9
-    dl
-      - if !lemmas.empty?
-        - lemmas.each do |l|
-          dt.lemma
-            a href="/lemma/#{l.id}"= l.lemma
-          - l.translations.each do |t|
-            dd.translation
-              - if t.target
-                = t.source
-                |  
-                = t.target
-      - else
-        h3.unsuccessful Keinen Eintrag gefunden
-        a.btn.btn-primary.btn-large href="/lemma/new" Neu anlegen
+h3 
+  | Suchergebnis für 
+  ="„#{params[:term]}“"
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Wenn man ohne Autovervollständigung suchen möchte, muss man nach der Eingabe die ESC Taste drücken. Damit lassen sich auch freie Suchbegriffe finden.")
+dl
+  - if !lemmas.empty?
+    - lemmas.each do |l|
+      dt.lemma
+        a href="/lemma/#{l.id}"= l.lemma
+      - l.translations.each do |t|
+        dd.translation
+          - if t.target
+            = t.source
+            |  
+            = t.target
+  - else
+    h3.unsuccessful Keinen Eintrag gefunden
+    a.btn.btn-primary.btn-large href="/lemma/new" Diesen Suchbegriff neu anlegen
 

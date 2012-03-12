@@ -1,5 +1,5 @@
-doctype transitional
-html lang="de"
+doctype 5
+html lang="en"
   head
     meta charset="utf-8"
     title Farhang
@@ -7,6 +7,7 @@ html lang="de"
       | <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     /! Le styles
     link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    link href="/css/font-awesome.css" rel="stylesheet"
     link href="/css/app.css" rel="stylesheet"
     link href="/images/f.png" rel="shortcut icon"
 
@@ -24,7 +25,11 @@ html lang="de"
               input.btn type="submit" value="Suchen"
       .content
         ==partial :partial_flash
-        ==yield
+        .row
+          .span2
+            ==partial :partial_sidebar_nav
+          .span9
+            ==yield
       footer
         p © 2012 ckh & bT
         p: img alt="Creative Commons Lizenzvertrag" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" style="border-width:0"
@@ -33,4 +38,9 @@ html lang="de"
   script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
   script src="/bootstrap/js/bootstrap-typeahead.js"
   script src="/bootstrap/js/typeahead-patch.js"
+  script src="/bootstrap/js/bootstrap-tooltip.js"
+  script src="/bootstrap/js/bootstrap-popover.js"
+  javascript:
+    $('#help').popover({placement: 'left'})
 
+  /! Beautiful icons by Font Awesome - http://fortawesome.github.com/Font-Awesome
