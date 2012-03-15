@@ -1,4 +1,4 @@
--if @current_user
+-if signed_in?
   -case
   -when roles?([:admin, :root])
     ul.nav.nav-list.well

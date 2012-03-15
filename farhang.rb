@@ -213,11 +213,7 @@ get '/js/:file.js' do
 end
 
 get '/' do
-  if signed_in?
-    slim :dashboard
-  else
-    slim :home
-  end
+  slim :home
 end
 
 get '/search' do
