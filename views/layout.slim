@@ -21,6 +21,7 @@ html lang="en"
           .span7
             h1.slogan Das freie deutsch-persische Lexikon
             form.form-horizontal action="/search" method="get" name="search"
+              /.input-append wip 2.0.2
               input.span4#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
               input.btn type="submit" value="Suchen"
       .content
@@ -28,7 +29,7 @@ html lang="en"
         .row
           .span2
             ==partial :partial_sidebar_nav
-          .span9
+          .span10
             ==yield
       footer
         p © 2012 ckh & bT
