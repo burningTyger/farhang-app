@@ -282,6 +282,26 @@ put '/lemma/:id', :auth => [:user] do
   redirect back
 end
 
+patch '/lemma/:id/valid', :auth => [:admin, :root] do
+  halt 404 unless l = Lemma.find(params[:id])
+  case params[:valid]
+  when 'true'
+    l.valid = true
+  else
+    count = l.versions_count
+    until l.valid
+      count -= 1
+      l.rollback(count)
+    end
+  end
+  if l.save
+    session[:flash] = ["Änderungen erfolgreich bestätigt", "alert-success"]
+    redirect back
+  else
+    halt 409, "Eintrag konnte nicht bestätigt werden"
+  end
+end
+
 delete '/lemma/:id', :auth => [:admin, :root] do
   halt 404 unless lemma = Lemma.find(params[:id])
   lemma.destroy

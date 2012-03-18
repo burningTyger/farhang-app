@@ -11,6 +11,7 @@ FactoryGirl.define do
     lemma 'Wörterbuch'
     translations { |translations| [ translations.association(:translation),
                                     translations.association(:translation)]}
+    valid true
   end
 
   factory :translation do

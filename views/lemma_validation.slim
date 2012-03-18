@@ -7,13 +7,21 @@ h3
 -if lemmas.empty?
   h4 Keine unbestätigten Einträge vorhanden
 -else
-  - lemmas.each do |l|
-    form action="/lemma/#{l.id}" method="post" name="search"
-      input name="_method" type="hidden" value="PUT"
-      -c = l.versions_count
-      -c.times do |i|
-        -v = l.rollback(c-1-i)
-        == partial :partial_lemma, :lemmas => [v]
-        - break if v.valid
-      input.btn type="submit" value="Speichern"
-
+  -lemmas.each do |l|
+    -count = l.versions_count
+    .well
+      -until l.valid
+        -count -= 1
+        -v = l.rollback(count)
+        ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
+        -break if v.valid
+      hr
+      .btn-inline
+        form action="/lemma/#{l.id}/valid" method="post" name="validation"
+          input name="_method" type="hidden" value="PATCH"
+          input name="valid" type="hidden" value="true"
+          input.btn.btn-success type="submit" value="Speichern"
+        form action="/lemma/#{l.id}/valid" method="post" name="validation"
+          input name="_method" type="hidden" value="PATCH"
+          input name="valid" type="hidden" value="false"
+          input.btn.btn-danger type="submit" value="Zurücksetzen"

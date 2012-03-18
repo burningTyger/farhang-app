@@ -150,6 +150,39 @@ describe Lemma do
     end
   end
 
+  describe 'logged in as admin with validation action' do
+    before do
+      uu = Factory :user
+      post '/user/login', :email => uu.email, :password => 'secret'
+      put "/lemma/#{@l.id}", :lemma => 'test'
+      ua = Factory :user, :roles => [:user, :admin]
+      post '/user/login', :email => ua.email, :password => 'secret'
+    end
+
+    it "will let the admin see an invalid Lemma" do
+      get '/lemma/validation'
+      last_response.body.must_include 'Wörterbuch'
+      last_response.body.must_include 'test'
+    end
+
+    it "will let the admin validate a Lemma" do
+      patch "/lemma/#{@l.id}/valid", :valid => true
+      get '/lemma/validation'
+      last_response.body.wont_include 'Wörterbuch'
+      last_response.body.wont_include 'test'
+    end
+
+    it "will let the admin reject a validation" do
+      get "/lemma/#{@l.id}"
+      last_response.body.must_include 'test'
+      patch "/lemma/#{@l.id}/valid", :valid => false
+      get "/lemma/#{@l.id}"
+      last_response.body.must_include 'Wörterbuch'
+      last_response.body.wont_include 'test'
+    end
+
+  end
+
   after do
     Lemma.delete_all
     User.delete_all

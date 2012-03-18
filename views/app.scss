@@ -21,6 +21,11 @@ body {
       dd {
         line-height: 1.5em;
         font-size: 150%;}
+      .btn-inline {
+        form {
+          margin-right: 10px;
+          display:inline;}
+      }
       background-color: #fff;
       padding: 20px;
       /* negative indent the amount of the padding to maintain the grid system */
