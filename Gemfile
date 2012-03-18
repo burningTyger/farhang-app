@@ -6,7 +6,7 @@ gem 'mongo_mapper'
 gem 'bson_ext', :platforms => :ruby
 gem 'bson', :platforms => :jruby
 gem 'bcrypt-ruby'
-gem 'mm-versionable', :require => 'versionable', :git => "https://burningTyger@github.com/burningTyger/mm-versionable.git"
+gem 'mm-versionable', :require => 'versionable', :git => "https://github.com/burningTyger/mm-versionable.git"
 
 group :development, :test do
   gem 'sinatra-contrib'

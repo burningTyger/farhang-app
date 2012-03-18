@@ -1,5 +1,12 @@
 GIT
-  remote: https://burningTyger@github.com/burningTyger/mm-versionable.git
+  remote: https://github.com/brynary/rack-test.git
+  revision: cab8eb929b45d9e32474fad1b6806c2ab8f6bea8
+  specs:
+    rack-test (0.6.1)
+      rack (>= 1.0)
+
+GIT
+  remote: https://github.com/burningTyger/mm-versionable.git
   revision: db50731fce7508ff0ff7d364da437ea8cb97715d
   specs:
     mm-versionable (0.2.6)
@@ -8,13 +15,6 @@ GIT
       differ
       i18n
       mongo_mapper (>= 0.9.0)
-
-GIT
-  remote: https://github.com/brynary/rack-test.git
-  revision: cab8eb929b45d9e32474fad1b6806c2ab8f6bea8
-  specs:
-    rack-test (0.6.1)
-      rack (>= 1.0)
 
 GEM
   remote: http://rubygems.org/
@@ -33,7 +33,7 @@ GEM
     builder (3.0.0)
     differ (0.1.2)
     eventmachine (0.12.10)
-    factory_girl (2.6.3)
+    factory_girl (2.6.4)
       activesupport (>= 2.3.9)
     i18n (0.6.0)
     minitest (2.11.3)
