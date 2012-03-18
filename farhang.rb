@@ -246,10 +246,25 @@ get '/lemma/new', :auth => [:user] do
 end
 
 post '/lemma', :auth => [:user] do
-  l = Lemma.create params
-  l.valid = roles?([:root, :admin]) ? true : false
-  halt 400 unless l.save :updater_id => @current_user.id
-  redirect to("/lemma/#{lemma.id}")
+  redirect back if Lemma.find(:lemma => params[:lemma])
+  l = Lemma.new(:lemma => params[:lemma])
+  if params[:translations]
+    params[:translations].values.each do |t|
+      next if  t["source"].nil? || t["target"].nil?
+      next if t["source"].empty? || t["target"].empty?
+      l.translations << Translation.new(:source => t["source"], :target => t["target"])
+    end
+  else
+    redirect back
+  end
+  l.valid = roles?([:root, :admin])
+  if l.save :updater_id => @current_user.id
+    session[:flash] = ["Der Eintrag wurde erfolgreich angelegt", "alert-success"]
+    redirect to("/lemma/#{l.id}")
+  else
+    session[:flash] = ["Der Eintrag konnte nicht angelegt werden", "alert-error"]
+    redirect back
+  end
 end
 
 get '/lemma/validation', :auth => [:root, :admin] do

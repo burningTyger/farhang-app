@@ -60,11 +60,6 @@ describe Lemma do
       last_response.body.must_include @l.translations.first.source
     end
 
-    it "won't create an empty Lemma resource" do
-      post '/lemma'
-      last_response.status.must_equal 400
-    end
-
     it "can't delete a Lemma resource as regular user" do
       count = Lemma.count
       delete "/lemma/#{@l.id}"
