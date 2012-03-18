@@ -361,11 +361,34 @@ put '/user/:id', :auth => [:self, :root] do
   end
 end
 
+patch '/user/:id/roles', :auth =>  [:root] do
+  halt 404 unless user = User.find(params[:id])
+  if !params[:roles] || params[:roles].empty?
+    break
+  elsif user == User.first
+    session[:flash] = ["Benutzerrechte des Besitzers können nicht geändert werden", "alert-error"]
+  else
+    roles = []
+    roles << :user << params[:roles].to_sym
+    user.roles.replace roles.to_set
+    if user.save
+      session[:flash] = ["Benutzerrechte erfolgreich geändert", "alert-success"]
+    else
+      session[:flash] = ["Fehler. Benutzerrechte konnten nicht geändert werden", "alert-error"]
+    end
+  end
+  redirect to("/users")
+end
+
 delete '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
   if u.destroy
     session[:flash] = ["Benutzer erfolgreich gelöscht", "alert-success"]
-    redirect to("/users")
+    if roles? [:root]
+      redirect to("/users")
+    else
+      redirect to("/user/logout")
+    end
   else
     halt 400, "Eintrag konnte nicht gelöscht werden"
   end

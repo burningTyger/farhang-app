@@ -67,6 +67,27 @@ describe User do
     end
   end
 
+  describe "root user management" do
+    before do
+      @ua = Factory :user, :roles => [:root, :user]
+      post '/user/login', :email => @ua.email, :password => 'secret'
+    end
+
+    it "lets the root see the users page" do
+      get "/users"
+      last_response.status.must_equal 200
+    end
+
+    it "lets root change the user roles" do
+      u = Factory :user
+      patch "/user/#{u.id}/roles", :roles => "admin"
+      follow_redirect!
+      last_response.status.must_equal 200
+      u.reload
+      u.roles.to_a.must_equal [:user, :admin]
+    end
+  end
+
   describe 'model' do
     it "validates presence of email" do
       proc {Factory :user, :email => ""}.must_raise(MongoMapper::DocumentNotValid)

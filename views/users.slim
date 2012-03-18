@@ -11,6 +11,8 @@ h3
         th &#x270e
         th eMail
         th Anmeldedatum
+        th Rechte
+        th Löschen
     tbody
       -users.each_with_index do |user, i|
         tr
@@ -19,4 +21,19 @@ h3
               | &#x270e
           td= user.email
           td= user.created_at.strftime("%d.%m.%Y")
+          td
+            form.form-inline action="/user/#{user.id}/roles" method="post"
+              input name="_method" type="hidden" value="PATCH"
+              label.control-label for="roles"
+              select.span2 name="roles"
+                -%w(user admin).each do |role|
+                  option selected=(user.roles.include? role.to_sym) = role
+              |  
+              button.btn type="submit"
+                i.icon-refresh
+          td
+            form.form-inline action="/user/#{user.id}" method="post"
+              input name="_method" type="hidden" value="DELETE"
+              button.btn type="submit"
+                i.icon-remove
 
