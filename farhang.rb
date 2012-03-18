@@ -292,7 +292,7 @@ put '/lemma/:id', :auth => [:user] do
       l.translations << Translation.new(:source => t["source"], :target => t["target"])
     end
   end
-  l.valid = roles?([:root, :admin]) ? true : false
+  l.valid = roles?([:root, :admin])
   l.save :updater_id => @current_user.id
   redirect back
 end
@@ -303,18 +303,16 @@ patch '/lemma/:id/valid', :auth => [:admin, :root] do
   when 'true'
     l.valid = true
   else
-    count = l.versions_count
-    until l.valid
-      count -= 1
-      l.rollback(count)
+    versions = l.versions.reverse
+    version = versions.find { |v| v.data[:valid] }
+    if version
+      l.rollback(version.pos)
+    else
+      l.destroy
     end
   end
-  if l.save
-    session[:flash] = ["Änderungen erfolgreich bestätigt", "alert-success"]
-    redirect back
-  else
-    halt 409, "Eintrag konnte nicht bestätigt werden"
-  end
+  l.save if l.valid
+  redirect back
 end
 
 delete '/lemma/:id', :auth => [:admin, :root] do

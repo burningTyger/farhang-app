@@ -10,7 +10,7 @@ h3
   -lemmas.each do |l|
     -count = l.versions_count
     .well
-      -until l.valid
+      -until l.valid || count==0
         -count -= 1
         -v = l.rollback(count)
         ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
