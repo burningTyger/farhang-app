@@ -84,7 +84,7 @@ describe User do
       follow_redirect!
       last_response.status.must_equal 200
       u.reload
-      u.roles.to_a.must_equal [:user, :admin]
+      u.roles.must_equal [:user, :admin].to_set
     end
   end
 
