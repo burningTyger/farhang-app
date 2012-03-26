@@ -230,7 +230,7 @@ get '/search/:term' do
     search_term.gsub!(/[%20]/, ' ')
     #search_term.gsub!(/\*/, '\*')
     # replace *: in conversion with Link to lemma
-    lemmas = Lemma.all(:lemma => Regexp.new(/^#{Regexp.escape(search_term)}/i))
+    lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
   end
   slim :search, :locals => { :lemmas => lemmas }
 end
