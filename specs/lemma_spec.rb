@@ -75,6 +75,12 @@ describe Lemma do
     it "can modify the lemma of a Lemma resource" do
       put "/lemma/#{@l.id}", :lemma => "test"
       follow_redirect!
+      last_request.env["PATH_INFO"].must_equal "/lemma/#{@l.id}/preview"
+    end
+
+    it "can modify the lemma of a Lemma resource" do
+      put "/lemma/#{@l.id}", :lemma => "test"
+      follow_redirect!
       last_response.body.must_include "test"
     end
 

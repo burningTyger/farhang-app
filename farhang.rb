@@ -281,6 +281,11 @@ get '/lemma/:id' do
   end
 end
 
+get '/lemma/:id/preview' do
+  halt 404 unless lemma = Lemma.find(params[:id])
+  slim :partial_lemma, :locals => { :lemmas => Array(lemma) }
+end
+
 put '/lemma/:id', :auth => [:user] do
   halt 404 unless l = Lemma.find(params[:id])
   l.lemma = params[:lemma] if params[:lemma]
@@ -293,8 +298,13 @@ put '/lemma/:id', :auth => [:user] do
     end
   end
   l.valid = roles?([:root, :admin])
-  l.save :updater_id => @current_user.id
-  redirect back
+  if l.save :updater_id => @current_user.id
+    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
+    redirect "/lemma/#{l.id}/preview"
+  else
+    session[:flash] = ["Änderungen konnten nicht gespeichert werden", "alert-error"]
+    redirect back
+  end
 end
 
 patch '/lemma/:id/valid', :auth => [:admin, :root] do
