@@ -1,9 +1,10 @@
 -l = lemmas.first
-dt
-  a href="/lemma/#{l.id}"= l.lemma
-  -l.translations.each do |t|
-    dd.translation
-      -if t.target
-        = t.source
-        |  
-        = t.target
+dl
+  dt
+    a href="/lemma/#{l.id}"= l.lemma
+    -l.translations.each do |t|
+      dd.translation
+        -if t.target
+          = t.source
+          |  
+          = t.target
