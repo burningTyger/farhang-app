@@ -13,7 +13,7 @@ describe "sidebar" do
 
   describe "common user" do
     before do
-      u = Factory :user
+      u = FactoryGirl.create :user
       post '/user/login', :email => u.email, :password => 'secret'
     end
 
@@ -26,7 +26,7 @@ describe "sidebar" do
 
   describe "admin user" do
     before do
-      u = Factory :user, :roles => [:user, :admin]
+      u = FactoryGirl.create :user, :roles => [:user, :admin]
       post '/user/login', :email => u.email, :password => 'secret'
     end
 
@@ -39,7 +39,7 @@ describe "sidebar" do
 
   describe "root user" do
     before do
-      u = Factory :user, :roles => [:user, :root]
+      u = FactoryGirl.create :user, :roles => [:user, :root]
       post '/user/login', :email => u.email, :password => 'secret'
     end
 

@@ -4,7 +4,7 @@ include SpecHelper
 
 describe Lemma do
   before do
-    @l = Factory :lemma
+    @l = FactoryGirl.create :lemma
   end
 
   describe 'anonymous access' do
@@ -39,7 +39,7 @@ describe Lemma do
 
   describe 'logged in' do
     before do
-      @u = Factory :user
+      @u = FactoryGirl.create :user
       post '/user/login', :email => @u.email, :password => 'secret'
     end
 
@@ -49,7 +49,7 @@ describe Lemma do
     end
 
     it "can create a new Lemma resource" do
-      post '/lemma', l = Factory.attributes_for(:lemma)
+      post '/lemma', l = FactoryGirl.attributes_for(:lemma)
       l = Lemma.find_by_lemma(l[:lemma])
       l.must_be_kind_of Lemma
     end
@@ -121,7 +121,7 @@ describe Lemma do
 
   describe 'logged in as admin' do
     before do
-      @ua = Factory :user, :roles => [:user, :admin]
+      @ua = FactoryGirl.create :user, :roles => [:user, :admin]
       post '/user/login', :email => @ua.email, :password => 'secret'
     end
 
@@ -153,10 +153,10 @@ describe Lemma do
 
   describe 'logged in as admin with validation action' do
     before do
-      uu = Factory :user
+      uu = FactoryGirl.create :user
       post '/user/login', :email => uu.email, :password => 'secret'
       put "/lemma/#{@l.id}", :lemma => 'test'
-      ua = Factory :user, :roles => [:user, :admin]
+      ua = FactoryGirl.create :user, :roles => [:user, :admin]
       post '/user/login', :email => ua.email, :password => 'secret'
     end
 

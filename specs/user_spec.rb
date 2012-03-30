@@ -4,7 +4,7 @@ include SpecHelper
 describe User do
   describe 'routes' do
     before do
-      @u = Factory :user
+      @u = FactoryGirl.create :user
       post '/user/login', :email => @u.email, :password => 'secret'
     end
 
@@ -14,7 +14,7 @@ describe User do
     end
 
     it "can create a new User resource" do
-      post '/user', u = Factory.attributes_for(:user)
+      post '/user', u = FactoryGirl.attributes_for(:user)
       last_response.location.must_equal 'http://example.org/'
       u = User.find_by_email(u[:email])
       u.must_be_kind_of User
@@ -56,12 +56,12 @@ describe User do
     end
 
     it "will create a user with only user role" do
-      u = Factory :user
+      u = FactoryGirl.create :user
       u.roles.must_equal Set.new([:user])
     end
 
     it "will not let other users edit users" do
-      u = Factory :user
+      u = FactoryGirl.create :user
       delete "/user/#{u.id}"
       User.find(u.id).must_equal u
     end
@@ -69,7 +69,7 @@ describe User do
 
   describe "root user management" do
     before do
-      @ua = Factory :user, :roles => [:root, :user]
+      @ua = FactoryGirl.create :user, :roles => [:root, :user]
       post '/user/login', :email => @ua.email, :password => 'secret'
     end
 
@@ -79,7 +79,7 @@ describe User do
     end
 
     it "lets root change the user roles" do
-      u = Factory :user
+      u = FactoryGirl.create :user
       patch "/user/#{u.id}/roles", :roles => "admin"
       follow_redirect!
       last_response.status.must_equal 200
@@ -90,12 +90,12 @@ describe User do
 
   describe 'model' do
     it "validates presence of email" do
-      proc {Factory :user, :email => ""}.must_raise(MongoMapper::DocumentNotValid)
+      proc {FactoryGirl.create :user, :email => ""}.must_raise(MongoMapper::DocumentNotValid)
     end
 
     it "validates length of email" do
-      proc {Factory :user, :email => "a@a"}.must_raise(MongoMapper::DocumentNotValid)
-      u = Factory :user, :email => "a@ac.co"
+      proc {FactoryGirl.create :user, :email => "a@a"}.must_raise(MongoMapper::DocumentNotValid)
+      u = FactoryGirl.create :user, :email => "a@ac.co"
       u.save!.must_equal true
     end
 
@@ -106,7 +106,7 @@ describe User do
     end
 
     it "is able to set user's reset password code" do
-      user = Factory :user
+      user = FactoryGirl.create :user
       user.reset_password_code.must_be_nil
       user.reset_password_code_until.must_be_nil
       user.set_password_code!
@@ -117,12 +117,12 @@ describe User do
 
   describe "Authentication" do
     it 'works with existing email and correct password' do
-      user = Factory :user
+      user = FactoryGirl.create :user
       User.authenticate(user.email, 'secret').must_equal user
     end
 
     it 'works with existing email (case insensitive) and password' do
-      user = Factory :user
+      user = FactoryGirl.create :user
       User.authenticate(user.email.upcase, 'secret').must_equal user
     end
 
@@ -148,8 +148,8 @@ describe User do
     end
 
     it "validates the length of password" do
-      proc {Factory :user, :password => "1234"}.must_raise(MongoMapper::DocumentNotValid)
-      u = Factory :user, :password => "123456", :password_confirmation => "123456"
+      proc {FactoryGirl.create :user, :password => "1234"}.must_raise(MongoMapper::DocumentNotValid)
+      u = FactoryGirl.create :user, :password => "123456", :password_confirmation => "123456"
       u.save!.must_equal true
     end
   end

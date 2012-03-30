@@ -5,7 +5,7 @@ include SpecHelper
 describe "routes" do
   describe "home route" do
     before do
-      @u = Factory :user
+      @u = FactoryGirl.create :user
     end
 
     it "returns the homepage for unsigned user" do
@@ -27,7 +27,7 @@ describe "routes" do
 
   describe "search routes" do
     it "gets and finds a url search" do
-      Factory(:lemma, :lemma  => 'Apfel')
+      FactoryGirl.create :lemma, :lemma  => 'Apfel'
       get '/search/Apfel'
       last_response.body.must_include 'Apfel'
       last_response.body.wont_include 'Augapfel'
@@ -37,7 +37,7 @@ describe "routes" do
     end
 
     it "gets and finds a params search" do
-      Factory(:lemma, :lemma  => 'Apfel')
+      FactoryGirl.create :lemma, :lemma  => 'Apfel'
       get '/search', :term => 'Apfel'
       follow_redirect!
       last_response.body.must_include 'Apfel'
@@ -49,7 +49,7 @@ describe "routes" do
     end
 
     it "can find a search term with parens in it" do
-      Factory(:lemma, :lemma => 'ca (*:cirka)')
+      FactoryGirl.create :lemma, :lemma => 'ca (*:cirka)'
       get '/search', :term => 'ca%20(*:cirka)'
       follow_redirect!
       last_response.body.must_include 'cirka'

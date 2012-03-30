@@ -4,7 +4,7 @@ include SpecHelper
 
 describe "versioning" do
   before do
-    @l = Factory :lemma
+    @l = FactoryGirl.create :lemma
   end
 
   describe "simple" do
