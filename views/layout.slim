@@ -2,6 +2,7 @@ doctype 5
 html lang="en"
   head
     meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
     title Farhang
     /![if lt IE 9]
       | <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -22,7 +23,7 @@ html lang="en"
             h1.slogan Das freie deutsch-persische Lexikon
             form.form-horizontal#search-form action="/search" method="get" name="search"
               /.input-append wip 2.0.2
-              input.span4#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
+              input#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
               input.btn type="submit" value="Suchen"
       .content
         ==partial :partial_flash
@@ -46,3 +47,4 @@ html lang="en"
     $('#help').popover({placement: 'left'});
     $('#searchinput').focus();
   /! Beautiful icons by Font Awesome - http://fortawesome.github.com/Font-Awesome
+
