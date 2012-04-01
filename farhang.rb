@@ -47,7 +47,7 @@ configure do
   end
 end
 
-FARHANG_VERSION = "0.9.0"
+FARHANG_VERSION = "0.9.4"
 
 class User
   include MongoMapper::Document
