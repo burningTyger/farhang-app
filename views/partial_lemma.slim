@@ -1,10 +1,16 @@
--l = lemmas.first
 dl
-  dt
-    a href="/lemma/#{l.id}"= l.lemma
-    -l.translations.each do |t|
-      dd.translation
-        -if t.target
-          = t.source
-          |  
-          = t.target
+  - if !lemmas.empty?
+    - lemmas.each do |l|
+      dt
+        a href="/lemma/#{l.id}"= l.lemma
+      - l.translations.each do |t|
+        dd
+          - if t.target
+            span dir="ltr"
+              =t.source
+            |  
+            span dir="rtl"
+              =t.target
+  - else
+    h3.unsuccessful Keinen Eintrag gefunden
+    a.btn.btn-primary.btn-large href="/lemma/new" Diesen Suchbegriff neu anlegen
