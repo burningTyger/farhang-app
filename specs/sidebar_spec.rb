@@ -35,6 +35,23 @@ describe "sidebar" do
       last_response.body.must_include 'Bestätigen'
       #last_response.body.wont_include 'Übersicht'
     end
+
+    it "shows label-succes if no unvalidated lemma exists" do
+      get '/'
+      last_response.body.must_include "label-success"
+    end
+
+    it "shows label-warning if unvalidated lemmas exist" do
+      FactoryGirl.create :lemma, :valid => false
+      get '/'
+      last_response.body.must_include "label-warning"
+    end
+
+    it "shows the number of unvalidated lemmas" do
+      FactoryGirl.create_list :multi_lemma, 7, :valid => false
+      get '/'
+      last_response.body.must_include "7"
+    end
   end
 
   describe "root user" do

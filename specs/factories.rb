@@ -12,6 +12,12 @@ FactoryGirl.define do
     translations { |translations| [ translations.association(:translation),
                                     translations.association(:translation)]}
     valid true
+
+    trait :sequential_lemma do
+      sequence(:lemma) {|n| "lemma#{n}" }
+    end
+
+    factory :multi_lemma, :traits => [:sequential_lemma]
   end
 
   factory :translation do

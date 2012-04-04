@@ -11,7 +11,10 @@
         li class=(request.path_info == "/lemma/validation" ? 'active' : '')
           a href="/lemma/validation"
             i.icon-ok
-            | Bestätigen
+            | Bestätigen 
+            -count = Lemma.where(:valid => false).count
+            span.label class=(count == 0 ? "label-success" : "label-warning")
+              =count
         li class=(request.path_info == "/lemma/new" ? 'active' : '')
           a href="/lemma/new"
             i.icon-plus
