@@ -5,11 +5,17 @@ h3
       title="Hilfe"
       data-content="Einträge können geändert oder neue Beispiele angelegt werden.")
 -l = lemmas.first
-form action="/lemma/#{l.id}" method="post" name="search"
-  input name="_method" type="hidden" value="PUT"
-  label for="lemma" Lemma
-  input.span10 name="lemma" type="text" value=l.lemma
-  .row
-    ==partial :partial_translation, :translations => l.translations
-  input.btn type="submit" value="Bestätigen"
+.btn-inline
+  form action="/lemma/#{l.id}" method="post" name="search"
+    input name="_method" type="hidden" value="PUT"
+    label for="lemma" Lemma
+    input.span10 name="lemma" type="text" value=l.lemma
+    .row
+      ==partial :partial_translation, :translations => l.translations
+    input.btn.btn-success type="submit" value="Bestätigen"
+    a.btn href="/lemma/#{l.id}/preview" Zur Ansicht wechseln
+  form action="/lemma/#{l.id}" method="post" name="deletion"
+    input name="_method" type="hidden" value="DELETE"
+    input name="valid" type="hidden" value="true"
+    input.btn.btn-danger style="float: right" type="submit" value="Löschen"
 

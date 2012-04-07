@@ -288,8 +288,13 @@ end
 
 delete '/lemma/:id', :auth => [:admin, :root] do
   halt 404 unless lemma = Lemma.find(params[:id])
-  lemma.destroy
-  redirect to("/lemma/#{lemma.id}")
+  if lemma.destroy
+    session[:flash] = ["Eintrag erfolgreich gelöscht", "alert-success"]
+    redirect to("/")
+  else
+    session[:flash] = ["Eintrag konnte nicht gelöscht werden", "alert-error"]
+    redirect back
+  end
 end
 
 ## User routes
