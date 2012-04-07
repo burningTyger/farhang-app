@@ -14,8 +14,9 @@ h3
       ==partial :partial_translation, :translations => l.translations
     input.btn.btn-success type="submit" value="Bestätigen"
     a.btn href="/lemma/#{l.id}/preview" Zur Ansicht wechseln
-  form action="/lemma/#{l.id}" method="post" name="deletion"
-    input name="_method" type="hidden" value="DELETE"
-    input name="valid" type="hidden" value="true"
-    input.btn.btn-danger style="float: right" type="submit" value="Löschen"
+  -if roles?([:admin, :root])
+    form action="/lemma/#{l.id}" method="post" name="deletion"
+      input name="_method" type="hidden" value="DELETE"
+      input name="valid" type="hidden" value="true"
+      input.btn.btn-danger style="float: right" type="submit" value="Löschen"
 
