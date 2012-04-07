@@ -64,6 +64,11 @@ body {
 .navbar .btn {
   border: 0;
 }
+.btn-inline {
+  form {
+    display: inline;
+  }
+}
 
 @media (max-width: 480px) {
   .page-header {
