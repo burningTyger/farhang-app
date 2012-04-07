@@ -137,7 +137,6 @@ class Translation
   include MongoMapper::EmbeddedDocument
   key :source, String
   key :target, String
-  timestamps!
 end
 
 not_found do
@@ -155,31 +154,6 @@ helpers do
 
   def flash
     @flash = session.delete(:flash)
-  end
-
-  def set_params_page
-    params[:page] = params.fetch("page"){1}.to_i
-    params[:per_page] = params.fetch("per_page"){20}.to_i
-  end
-
-  def set_pagination_buttons(data, options = {})
-    return if data.nil? || data.empty?
-
-    if data.next_page
-      params = {
-        :page     => data.next_page,
-        :per_page => data.per_page
-        }.merge(options)
-      @next_page = "?#{Rack::Utils.build_query params}"
-    end
-
-    if data.previous_page
-      params = {
-        :page     => data.previous_page,
-        :per_page => data.per_page
-        }.merge(options)
-      @prev_page = "?#{Rack::Utils.build_query params}"
-    end
   end
 
   def roles?(roles)
@@ -204,14 +178,6 @@ get '/css/:file.css' do
   scss params[:file].intern
 end
 
-# coffeescript js generation
-get '/js/:file.js' do
-  halt 404 unless File.exist?("views/#{params[:file]}.coffee")
-  time = File.stat("views/#{params[:file]}.coffee").ctime
-  last_modified(time)
-  coffee params[:file].intern
-end
-
 get '/' do
   slim :home
 end
@@ -225,13 +191,9 @@ get '/search' do
 end
 
 get '/search/:term' do
-  if params[:term]
-    search_term = params[:term]
-    search_term.gsub!(/[%20]/, ' ')
-    #search_term.gsub!(/\*/, '\*')
-    # replace *: in conversion with Link to lemma
-    lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
-  end
+  search_term = params[:term]
+  search_term.gsub!(/[%20]/, ' ')
+  lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
   slim :search, :locals => { :lemmas => lemmas }
 end
 
@@ -250,7 +212,7 @@ post '/lemma', :auth => [:user] do
   l = Lemma.new(:lemma => params[:lemma])
   if params[:translations]
     params[:translations].values.each do |t|
-      next if  t["source"].nil? || t["target"].nil?
+      next if t["source"].nil? || t["target"].nil?
       next if t["source"].empty? || t["target"].empty?
       l.translations << Translation.new(:source => t["source"], :target => t["target"])
     end
@@ -260,7 +222,7 @@ post '/lemma', :auth => [:user] do
   l.valid = roles?([:root, :admin])
   if l.save :updater_id => @current_user.id
     session[:flash] = ["Der Eintrag wurde erfolgreich angelegt", "alert-success"]
-    redirect to("/lemma/#{l.id}")
+    redirect to("/lemma/#{l.id}/preview")
   else
     session[:flash] = ["Der Eintrag konnte nicht angelegt werden", "alert-error"]
     redirect back
@@ -309,8 +271,7 @@ end
 
 patch '/lemma/:id/valid', :auth => [:admin, :root] do
   halt 404 unless l = Lemma.find(params[:id])
-  case params[:valid]
-  when 'true'
+  if params[:valid] == 'true'
     l.valid = true
   else
     versions = l.versions.reverse
