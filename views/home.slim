@@ -1,3 +1,8 @@
-h3 Ein zufälliger Eintrag aus #{Lemma.count} Einträgen
+h3 
+  | Ein zufälliger Eintrag aus #{Lemma.count} Einträgen
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Begriffe im Suchfeld oben eingeben. Zum Ändern oder Anlegen neuer Einträge muss man sich registrieren.")
 ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(Lemma.count())) if Lemma.count > 1
 
