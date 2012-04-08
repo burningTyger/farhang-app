@@ -16,13 +16,13 @@ require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
 require "#{File.dirname(__FILE__)}/auth"
-require "#{File.dirname(__FILE__)}/config"
+require "#{File.dirname(__FILE__)}/config" if production?
 include Authentication
 
 configure do
   set :slim, :pretty => true
   enable :sessions
-  set :session_secret, SECRET || 'super secret'
+  set :session_secret, SECRET ||= 'super secret'
   set :auth do |*roles|
     condition do
       roles? roles
