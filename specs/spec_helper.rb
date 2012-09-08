@@ -5,7 +5,6 @@ require 'minitest/autorun'
 require 'mongo_mapper'
 require 'rack/test'
 require 'factory_girl'
-require 'purdytest'
 require "#{File.dirname(__FILE__)}/factories"
 require "#{File.dirname(__FILE__)}/../farhang"
 

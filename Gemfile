@@ -13,7 +13,6 @@ group :development, :test do
   gem 'minitest'
   gem 'rack-test', :git => "https://github.com/brynary/rack-test.git"
   gem 'factory_girl', "~> 2.6"
-  gem 'purdytest'
   gem 'rake'
 end
 
