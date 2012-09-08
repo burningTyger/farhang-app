@@ -13,6 +13,7 @@ h4
     .row
       ==partial :partial_translation, :translations => l.translations
     input.btn.btn-success type="submit" value="Bestätigen"
+    ' 
     a.btn href="/lemma/#{l.id}/preview" Zur Ansicht wechseln
   -if roles?([:admin, :root])
     form action="/lemma/#{l.id}" method="post" name="deletion"

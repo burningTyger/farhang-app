@@ -22,9 +22,9 @@ html lang="en"
           .span8
             h2.slogan Das freie deutsch-persische Lexikon
             form.form-horizontal#search-form action="/search" method="get" name="search"
-              /.input-append wip 2.0.2
-              input#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
-              input.btn type="submit" value="Suchen"
+              .input-append
+                input#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
+                input.btn type="submit" value="Suchen"
       .content
         ==partial :partial_flash
         .row

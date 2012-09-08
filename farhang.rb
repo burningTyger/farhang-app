@@ -22,7 +22,7 @@ include Authentication
 configure do
   set :slim, :pretty => true
   enable :sessions
-  set :session_secret, SECRET ||= 'super secret'
+  set :session_secret, 'set your own secret'
   set :auth do |*roles|
     condition do
       roles? roles
