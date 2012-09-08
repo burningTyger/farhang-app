@@ -47,7 +47,7 @@ configure do
   end
 end
 
-FARHANG_VERSION = "0.9.6"
+FARHANG_VERSION = "0.9.8"
 
 class User
   include MongoMapper::Document
@@ -131,6 +131,14 @@ class Lemma
   key :valid, Boolean
   many :translations
   timestamps!
+
+  def set_translations(params)
+    params.values.each do |t|
+      next if t["source"].nil? || t["target"].nil?
+      next if t["source"].empty? || t["target"].empty?
+      translations << Translation.new(:source => t["source"], :target => t["target"])
+    end
+  end
 end
 
 class Translation
@@ -211,11 +219,7 @@ post '/lemma', :auth => [:user] do
   redirect back if Lemma.find(:lemma => params[:lemma])
   l = Lemma.new(:lemma => params[:lemma])
   if params[:translations]
-    params[:translations].values.each do |t|
-      next if t["source"].nil? || t["target"].nil?
-      next if t["source"].empty? || t["target"].empty?
-      l.translations << Translation.new(:source => t["source"], :target => t["target"])
-    end
+    l.set_translations(params[:translations])
   else
     redirect back
   end
@@ -253,11 +257,7 @@ put '/lemma/:id', :auth => [:user] do
   l.lemma = params[:lemma] if params[:lemma]
   if params[:translations]
     l.translations.clear
-    params[:translations].values.each do |t|
-      next if  t["source"].nil? || t["target"].nil?
-      next if t["source"].empty? || t["target"].empty?
-      l.translations << Translation.new(:source => t["source"], :target => t["target"])
-    end
+    l.set_translations(params[:translations])
   end
   l.valid = roles?([:root, :admin])
   if l.save :updater_id => @current_user.id
