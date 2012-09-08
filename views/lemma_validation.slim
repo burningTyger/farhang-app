@@ -1,11 +1,11 @@
-h3 
+h4 
   | Einträge Bestätigen
   a href="#" style="float: right"
     i(class="icon-question-sign icon-large" id="help"
       title="Einträge anderer Nutzer prüfen"
       data-content="Alle registrierten Benutzer können Bearbeitungen an den Lemmas vornehmen. Diese Einträge werden gekennzeichnet und dem Administrator in dieser Übersicht zur Prüfung vorgestellt. Alle Lemmas haben mindestens zwei Einträge in dieser Übersicht: oben ist der aktuelle Stand, ganz unten die letzte gültige Fassung.")
 -if lemmas.empty?
-  h4 Keine unbestätigten Einträge vorhanden
+  h5 Keine unbestätigten Einträge vorhanden
 -else
   -lemmas.each do |l|
     -count = l.versions_count

@@ -20,7 +20,7 @@ html lang="en"
           .span4
             a.logo href='/' Farhang
           .span8
-            h1.slogan Das freie deutsch-persische Lexikon
+            h2.slogan Das freie deutsch-persische Lexikon
             form.form-horizontal#search-form action="/search" method="get" name="search"
               /.input-append wip 2.0.2
               input#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
@@ -42,13 +42,26 @@ html lang="en"
           img alt="Creative Commons Lizenzvertrag" src="/images/by-sa.png" style="border-width:0"
         /! /container
 
-  script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"
-  script src="/bootstrap/js/bootstrap-typeahead.js"
-  script src="/bootstrap/js/typeahead-patch.js"
-  script src="/bootstrap/js/bootstrap-tooltip.js"
-  script src="/bootstrap/js/bootstrap-popover.js"
+  script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"
+  script src="/bootstrap/js/bootstrap.min.js"
   javascript:
-    $('#help').popover({placement: 'left'});
-    $('#searchinput').focus();
+    (function() { 
+      $("#help").popover({
+        placement: "left"
+      });
+
+      $("#searchinput").focus();
+      $("#searchinput").typeahead({
+        source: function(query, process) {
+          return $.get("/lemma/autocomplete.json", {
+            term: query
+          }, function(data) {
+            return process(data);
+          });
+        }
+      });
+    }).call(this);
+
+
   /! Beautiful icons by Font Awesome - http://fortawesome.github.com/Font-Awesome
 
