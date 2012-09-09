@@ -85,6 +85,9 @@ body {
   .container {
     width: auto;
     padding: 0 20px;
+    #help {
+      display: none;
+    }
   }
   .row {
     margin-left: 0;
