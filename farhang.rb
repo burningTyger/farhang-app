@@ -187,6 +187,11 @@ get '/css/:file.css' do
   scss params[:file].intern
 end
 
+# offer a pingable route with low overhead
+get '/ping' do
+  halt 200
+end
+
 get '/' do
   slim :home
 end
