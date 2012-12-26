@@ -12,8 +12,8 @@ gem 'newrelic_rpm'
 group :development, :test do
   gem 'sinatra-contrib'
   gem 'minitest'
-  gem 'rack-test', :git => "https://github.com/brynary/rack-test.git"
-  gem 'factory_girl', "~> 2.6"
+  gem 'rack-test'
+  gem 'factory_girl'
   gem 'rake'
 end
 
