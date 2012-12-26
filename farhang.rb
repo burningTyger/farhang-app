@@ -17,7 +17,6 @@ require 'digest/sha1'
 require 'bcrypt'
 require "#{File.dirname(__FILE__)}/auth"
 require "#{File.dirname(__FILE__)}/config" if production?
-require 'newrelic_rpm' if production?
 include Authentication
 
 configure do
