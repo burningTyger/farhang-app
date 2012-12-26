@@ -2,7 +2,7 @@
 # needed. Testing and development should work without this file.
 #
 # uncomment this line if you have a newrelic account
-# require 'newrelic_rpm' if production
+# require 'newrelic_rpm' if production?
 
 # Use Openshift env vars for db connectivity.
 # Use your own credentials or other env vars like those on Heroku.
