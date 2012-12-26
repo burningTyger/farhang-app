@@ -1,2 +1,4 @@
+.newrelic.yml
+config.rb
 .sass-cache
 .rbx/
