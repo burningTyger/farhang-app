@@ -9,6 +9,7 @@
 #
 require 'sinatra'
 require 'slim'
+#require 'slim/logic_less'
 require 'sass'
 require 'mongo_mapper'
 require 'versionable'
@@ -21,6 +22,7 @@ include Authentication
 
 configure do
   set :slim, :pretty => true
+#  set :slim, :logic_less => false
   enable :sessions
   set :session_secret, SECRET ||= 'super secret'
   set :auth do |*roles|
@@ -145,6 +147,11 @@ class Translation
   include MongoMapper::EmbeddedDocument
   key :source, String
   key :target, String
+end
+
+class Preferences
+  include MongoMapper::Document
+  key :analytics, String
 end
 
 not_found do
@@ -378,5 +385,21 @@ end
 post '/user/login' do
   authenticate_with_login_form params[:email], params[:password]
   redirect to('/')
+end
+
+get '/app/preferences', :auth => [:root] do
+  p = Preferences.first
+  p p
+  slim :preferences, :locals => { :p => p }#, :logic_less => true
+end
+
+put '/app/preferences', :auth => [:root] do
+  p = Preferences.first || Preferences.new
+  if p.update_attributes! params
+    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
+    redirect to("/app/preferences")
+  else
+    halt 409, "Einstellungen konnte nicht geändert werden"
+  end
 end
 

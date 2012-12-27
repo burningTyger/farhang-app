@@ -19,6 +19,11 @@
           a href="/lemma/new"
             i.icon-plus
             | Hinzufügen
+        li.nav-header Anwendung
+        li class=(request.path_info == "/app/preferences" ? 'active' : '')
+          a href="/app/preferences"
+            i.icon-cog
+            | Einstellungen
         li.nav-header Benutzer
         li class=(request.path_info == "/user/#{@current_user.id}" ? 'active' : '')
           a href="/user/#{@current_user.id}"
