@@ -182,6 +182,7 @@ end
 before do
   # just get rid of all these empty params
   # which makes checking them a lot easier
+  # which also makes it impossible to empty a value... RETHINK!
   params.delete_if { |k, v| v.empty? }
 end
 
@@ -389,7 +390,6 @@ end
 
 get '/app/preferences', :auth => [:root] do
   p = Preferences.first
-  p p
   slim :preferences, :locals => { :p => p }#, :logic_less => true
 end
 

@@ -1,0 +1,14 @@
+h4
+  | Einstellungen
+  a href="#" style="float: right"
+    i(class="icon-question-sign icon-large" id="help"
+      title="Hilfe"
+      data-content="Hier können die Anwendungseinstellungen angepasst werden, z.B. Code für Google Analytics o.ä. Dienste")
+form.form-stacked action="/app/preferences" method="POST"
+  input name="_method" type="hidden" value="PUT"
+  fieldset
+    label for="analytics" Zusätzliches HTML/JavaScript für Benutzerseiten
+    textarea.span8 name="analytics" rows=9
+      ==p.analytics
+  input.btn.btn-success type="submit" value="Speichern"
+
