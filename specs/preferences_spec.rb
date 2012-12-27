@@ -32,7 +32,6 @@ describe "Preferences" do
 
     it "root cat set the preferences" do
       put "/app/preferences", :analytics => "test String"
-      puts last_response.errors
       follow_redirect!
       last_response.status.must_equal 200
     end
