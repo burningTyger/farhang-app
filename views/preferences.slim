@@ -9,6 +9,6 @@ form.form-stacked action="/app/preferences" method="POST"
   fieldset
     label for="analytics" Zusätzliches HTML/JavaScript für Benutzerseiten
     textarea.span8 name="analytics" rows=9
-      ==p.analytics
+      ==p.analytics if p
   input.btn.btn-success type="submit" value="Speichern"
 
