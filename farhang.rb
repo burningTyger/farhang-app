@@ -9,7 +9,6 @@
 #
 require 'sinatra'
 require 'slim'
-#require 'slim/logic_less'
 require 'sass'
 require 'mongo_mapper'
 require 'versionable'
@@ -22,7 +21,6 @@ include Authentication
 
 configure do
   set :slim, :pretty => true
-#  set :slim, :logic_less => false
   enable :sessions
   set :session_secret, SECRET ||= 'super secret'
   set :auth do |*roles|
@@ -390,7 +388,7 @@ end
 
 get '/app/preferences', :auth => [:root] do
   p = Preferences.first
-  slim :preferences, :locals => { :p => p }#, :logic_less => true
+  slim :preferences, :locals => { :p => p }
 end
 
 put '/app/preferences', :auth => [:root] do
