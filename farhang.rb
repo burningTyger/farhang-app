@@ -171,8 +171,8 @@ helpers do
     @flash = session.delete(:flash)
   end
 
-  def roles?(roles)
-    authenticate unless signed_in?
+  def roles? roles
+    return false unless signed_in?
     @current_user.roles << :self if @current_user.id.to_param == params[:id]
     set = @current_user.roles & roles.to_set
     !set.empty?
