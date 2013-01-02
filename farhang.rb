@@ -150,6 +150,8 @@ end
 class Preferences
   include MongoMapper::Document
   key :analytics, String
+  key :keywords, String
+  key :description, String
 end
 
 not_found do
@@ -163,6 +165,10 @@ end
 helpers do
   def partial(template, locals = {})
     slim template, :layout => false, :locals => locals
+  end
+
+  def preferences
+    Preferences.first || Preferences.new
   end
 
   def flash
@@ -387,13 +393,11 @@ post '/user/login' do
 end
 
 get '/app/preferences', :auth => [:root] do
-  p = Preferences.first
-  slim :preferences, :locals => { :p => p }
+  slim :preferences
 end
 
 put '/app/preferences', :auth => [:root] do
-  p = Preferences.first || Preferences.new
-  if p.update_attributes! params
+  if preferences.update_attributes! params
     session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
     redirect to("/app/preferences")
   else

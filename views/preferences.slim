@@ -7,8 +7,12 @@ h4
 form.form-stacked action="/app/preferences" method="POST"
   input name="_method" type="hidden" value="PUT"
   fieldset
+    label for="description" Kurzbeschreibung der Seite
+    input.span8 name="description" type="text" value=preferences.description
+    label for="keywords" Keywords
+    input.span8 name="keywords" type="text" value=preferences.keywords
     label for="analytics" Zusätzliches HTML/JavaScript für Benutzerseiten
     textarea.span8 name="analytics" rows=9
-      ==p.analytics if p
+      ==preferences.analytics
   input.btn.btn-success type="submit" value="Speichern"
 

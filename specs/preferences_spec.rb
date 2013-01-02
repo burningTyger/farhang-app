@@ -56,6 +56,7 @@ describe "Preferences" do
 
   after do
     User.delete_all
+    Preferences.delete_all
   end
 end
 
