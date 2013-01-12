@@ -204,7 +204,7 @@ get '/ping' do
 end
 
 get '/' do
-  slim :home
+  slim :home, :locals => { :title => "Startseite" }
 end
 
 get '/search' do
@@ -219,7 +219,7 @@ get '/search/:term' do
   search_term = params[:term]
   search_term.gsub!(/[%20]/, ' ')
   lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
-  slim :search, :locals => { :lemmas => lemmas }
+  slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(search_term)}" }
 end
 
 get '/lemma/autocomplete.json' do
@@ -229,7 +229,7 @@ get '/lemma/autocomplete.json' do
 end
 
 get '/lemma/new', :auth => [:user] do
-  slim :lemma_new
+  slim :lemma_new, :locals => { :title => "Neuen Eintrag anlegen" }
 end
 
 post '/lemma', :auth => [:user] do
@@ -252,21 +252,21 @@ end
 
 get '/lemma/validation', :auth => [:root, :admin] do
   lemmas = Lemma.all :valid => false
-  slim :lemma_validation, :locals => { :lemmas => lemmas }
+  slim :lemma_validation, :locals => { :lemmas => lemmas, :title => "Lemmas bestätigen" }
 end
 
 get '/lemma/:id' do
   halt 404 unless lemma = Lemma.find(params[:id])
   if authorized?
-    slim :lemma_edit, :locals => { :lemmas => Array(lemma) }
+    slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
   else
-    slim :partial_lemma, :locals => { :lemmas => Array(lemma) }
+    slim :partial_lemma, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
   end
 end
 
 get '/lemma/:id/preview' do
   halt 404 unless lemma = Lemma.find(params[:id])
-  slim :partial_lemma, :locals => { :lemmas => Array(lemma) }
+  slim :partial_lemma, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
 end
 
 put '/lemma/:id', :auth => [:user] do
@@ -316,15 +316,15 @@ end
 
 ## User routes
 get '/users', :auth => [:root, :admin] do
-  slim :users, :locals => { :users => User.all }
+  slim :users, :locals => { :users => User.all, :title => "Benutzer" }
 end
 
 get '/user/login' do
-  slim :login
+  slim :login, :locals => { :title => "Login" }
 end
 
 get '/user/new' do
-  slim :user_new
+  slim :user_new, :locals => { :title => "Neu anmelden" }
 end
 
 get '/user/logout' do
@@ -341,7 +341,7 @@ end
 
 get '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
-  slim :user, :locals => { :user => u }
+  slim :user, :locals => { :user => u, :title => u.email }
 end
 
 put '/user/:id', :auth => [:self, :root] do
@@ -393,7 +393,7 @@ post '/user/login' do
 end
 
 get '/app/preferences', :auth => [:root] do
-  slim :preferences
+  slim :preferences, :locals => { :title => "Einstellungen" }
 end
 
 put '/app/preferences', :auth => [:root] do
@@ -402,6 +402,14 @@ put '/app/preferences', :auth => [:root] do
     redirect to("/app/preferences")
   else
     halt 409, "Einstellungen konnte nicht geändert werden"
+  end
+end
+
+get '/app/sitemap', :auth => [:root] do
+  attachment "sitemap.txt"
+  lemmas = Lemma.all
+  lemmas.map do |l|
+    "#{request.url.gsub('app/sitemap','')}#{l.id.to_s}\n"
   end
 end
 

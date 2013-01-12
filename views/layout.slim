@@ -5,7 +5,7 @@ html lang="en"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
     meta name="description" content=preferences.description
     meta name="keywords" content=preferences.keywords
-    title Farhang
+    title Farhang — #{title}
     /![if lt IE 9]
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
@@ -19,7 +19,8 @@ html lang="en"
       .page-header
         .row
           .span4
-            a.logo href='/' Farhang
+            h1
+              a.logo href='/' Farhang
           .span8
             h2.slogan Das freie deutsch-persische Lexikon
             form.form-horizontal#search-form action="/search" method="get" name="search"
@@ -35,7 +36,7 @@ html lang="en"
             ==yield
       footer
         p
-          | © 2012 
+          | Farhang.im © 2012 
           a href="https://github.com/ckh/farhang" ckh
           |  & 
           a href="https://github.com/burningTyger/farhang-app" bT
