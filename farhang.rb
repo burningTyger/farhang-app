@@ -126,7 +126,7 @@ end
 class Lemma
   include MongoMapper::Document
   enable_versioning :limit => 0
-  key :lemma, String, :unique => true, :required => true
+  key :lemma, String, :unique => true, :required => true, :index => true
   key :edited_by, String
   key :valid, Boolean
   many :translations
@@ -405,11 +405,11 @@ put '/app/preferences', :auth => [:root] do
   end
 end
 
-get '/app/sitemap', :auth => [:root] do
+get '/app/sitemap' do
   attachment "sitemap.txt"
-  lemmas = Lemma.all
-  lemmas.map do |l|
-    "#{request.url.gsub('app/sitemap','')}#{l.id.to_s}\n"
-  end
+  # This route can be used to DDOS the lexicon…
+  lemmas = Lemma.fields(:id)
+  root = request.url.gsub('app/sitemap','')
+  lemmas.map {|l| "#{root}#{l.id}\n"} << root
 end
 

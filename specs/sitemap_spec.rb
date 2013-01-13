@@ -2,38 +2,12 @@ require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
 describe "Sitemap" do
-  describe 'user sitemaps' do
+  describe 'public sitemaps' do
     before do
-      u = FactoryGirl.create :user
-      post '/user/login', :email => u.email, :password => 'secret'
-    end
-
-    it "plain user cant access the sitemap page" do
-      get "/app/sitemap"
-      last_response.status.must_equal 404
-    end
-  end
-
-  describe "admin sitemaps management" do
-    before do
-      u = FactoryGirl.create :user, :roles => [:admin, :user]
-      post '/user/login', :email => u.email, :password => 'secret'
-    end
-
-    it "lets admin not  see the sitemap page" do
-      get "/app/sitemap"
-      last_response.status.must_equal 404
-    end
-  end
-
-  describe "root sitemaps management" do
-    before do
-      u = FactoryGirl.create :user, :roles => [:root, :user]
-      post '/user/login', :email => u.email, :password => 'secret'
       FactoryGirl.create_list :multi_lemma, 7, :valid => true
     end
 
-    it "lets root see the sitemap page" do
+    it "lets everybody see the sitemap page" do
       get "/app/sitemap"
       last_response.status.must_equal 200
     end
@@ -45,7 +19,6 @@ describe "Sitemap" do
   end
 
   after do
-    User.delete_all
     Lemma.delete_all
   end
 end
