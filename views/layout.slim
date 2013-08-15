@@ -8,40 +8,42 @@ html lang="en"
     title Farhang — #{title}
     /![if lt IE 9]
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-    link href="/css/font-awesome.css" rel="stylesheet"
+    link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/css/bootstrap.min.css" rel="stylesheet"
+    link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"
     link href="/css/app.css" rel="stylesheet"
     link href="/images/f.png" rel="shortcut icon"
 
     link href="http://fonts.googleapis.com/css?family=Overlock:900italic" rel="stylesheet" type="text/css"
   body
-    .container
-      .page-header
-        .row
-          .span4
-            h1
-              a.logo href='/' Farhang
-          .span8
-            h2.slogan Das freie deutsch-persische Lexikon
-            form.form-horizontal#search-form action="/search" method="get" name="search"
-              .input-append
-                input#searchinput name="term" type="text" data-provide="typeahead" autocomplete="off"
-                input.btn type="submit" value="Suchen"
-      .content
+    #wrap
+      nav.navbar.navbar-static-top role="navigation"
+        .navbar-header
+          a.navbar-brand href="/" Farhang
+        button.btn.btn-default.navbar-btn.pull-right type="button" Anmelden
+        form.navbar-form.navbar-left#search-form action="/search" method="get" name="search" role="search"
+          .form-group
+            input.form-control type="text"
+          button.btn.btn-default type="submit" Suchen
+      .container.text-center
+        h1
+          | Farhang
+        .lead
+          | Das freie deutsch-persische Lexikon
+        .input-group.input-group-lg
+        hr
+      .container
         ==partial :partial_flash
-        .row
-          .span2
-            ==partial :partial_sidebar_nav
-          .span10
-            ==yield
-      footer
-        p
-          | Farhang.im © 2012 
-          a href="https://github.com/ckh/farhang" ckh
-          |  & 
-          a href="https://github.com/burningTyger/farhang-app" bT
-        p: a href="http://creativecommons.org/licenses/by-sa/3.0/deed.de"
-          img alt="Creative Commons Lizenzvertrag" src="/images/by-sa.png" style="border-width:0"
+        ==yield
+    #footer
+      .container
+        p.text-muted.credit
+          .pull-right
+            a href="http://creativecommons.org/licenses/by-sa/3.0/deed.de"
+              img alt="Creative Commons Lizenzvertrag" src="/images/by-sa.png" style="border-width:0"
+            |  farhang.im © 2010 – 2013 
+            a href="https://github.com/ckh/farhang" ckh
+            |  & 
+            a href="https://github.com/burningtyger/farhang-app" bt
 
   script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"
   script src="/bootstrap/js/bootstrap.min.js"
