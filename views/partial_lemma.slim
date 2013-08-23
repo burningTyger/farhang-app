@@ -12,5 +12,8 @@ dl
             span dir="rtl"
               =t.target
   - else
-    h5.unsuccessful Keinen Eintrag gefunden
-    a.btn.btn-primary.btn-large href="/lemma/new" Diesen Suchbegriff neu anlegen
+    h4.unsuccessful Keinen Eintrag gefunden
+    - if signed_in?
+      a.btn.btn-primary.btn-default href="/lemma/new" Diesen Suchbegriff neu anlegen
+    - else
+      | Melden Sie sich an, um diesen Eintrag anzulegen

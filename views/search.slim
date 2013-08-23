@@ -1,8 +1,5 @@
-h4 
-  | Suchergebnis für 
-  ="„#{params[:term]}“"
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Hilfe"
-      data-content="Wenn man ohne Autovervollständigung suchen möchte, muss man nach der Eingabe die ESC Taste drücken. Damit lassen sich auch freie Suchbegriffe finden.")
-==partial :partial_lemma, :lemmas => lemmas
+i(class="icon-question-sign icon-large" id="help"
+  title="Hilfe"
+  data-content="Wenn man ohne Autovervollständigung suchen möchte, muss man nach der Eingabe die ESC Taste drücken. Damit lassen sich auch freie Suchbegriffe finden.")
+.styled-list
+  ==partial :partial_lemma, :lemmas => lemmas

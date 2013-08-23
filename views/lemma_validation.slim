@@ -1,11 +1,10 @@
+i(class="icon-question-sign icon-large" id="help"
+  title="Einträge anderer Nutzer prüfen"
+  data-content="Alle registrierten Benutzer können Bearbeitungen an den Lemmas vornehmen. Diese Einträge werden gekennzeichnet und dem Administrator in dieser Übersicht zur Prüfung vorgestellt. Alle Lemmas haben mindestens zwei Einträge in dieser Übersicht: oben ist der aktuelle Stand, ganz unten die letzte gültige Fassung.")
 h4 
   | Einträge Bestätigen
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Einträge anderer Nutzer prüfen"
-      data-content="Alle registrierten Benutzer können Bearbeitungen an den Lemmas vornehmen. Diese Einträge werden gekennzeichnet und dem Administrator in dieser Übersicht zur Prüfung vorgestellt. Alle Lemmas haben mindestens zwei Einträge in dieser Übersicht: oben ist der aktuelle Stand, ganz unten die letzte gültige Fassung.")
 -if lemmas.empty?
-  h5 Keine unbestätigten Einträge vorhanden
+  h4 Keine unbestätigten Einträge vorhanden
 -else
   -lemmas.each do |l|
     -count = l.versions_count
@@ -13,15 +12,19 @@ h4
       -until l.valid || count==0
         -count -= 1
         -v = l.rollback(count)
-        ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
+        .styled-list
+          ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
         -break if v.valid
-      hr
-      .btn-inline
-        form action="/lemma/#{l.id}/valid" method="post" name="validation"
-          input name="_method" type="hidden" value="PATCH"
-          input name="valid" type="hidden" value="true"
-          input.btn.btn-success type="submit" value="Speichern"
-        form action="/lemma/#{l.id}/valid" method="post" name="validation"
-          input name="_method" type="hidden" value="PATCH"
-          input name="valid" type="hidden" value="false"
-          input.btn.btn-danger type="submit" value="Zurücksetzen"
+      .row
+        .col-md-6
+          form action="/lemma/#{l.id}/valid" method="post" name="validation" role="form"
+            .form-group
+              input name="_method" type="hidden" value="PATCH"
+              input name="valid" type="hidden" value="true"
+              input.btn.btn-success type="submit" value="Speichern"
+        .col-md-6
+          form action="/lemma/#{l.id}/valid" method="post" name="validation" role="form"
+            .form-group
+              input name="_method" type="hidden" value="PATCH"
+              input name="valid" type="hidden" value="false"
+              input.btn.btn-danger type="submit" value="Zurücksetzen"

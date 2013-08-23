@@ -1,18 +1,21 @@
 -if translations
   -count = translations.count
   -translations.each_with_index do |t,i|
-    .span5
-      label for="translations[#{i}][source]" Beispiel Deutsch
-      input.span5 name="translations[#{i}][source]" dir="ltr" type="text" value=t.source
-    .span5
-      label for="translations[#{i}][target]" Beispiel Persisch
-      input.span5 name="translations[#{i}][target]" dir="rtl" type="text" value=t.target
+    .col-md-6
+      .form-group
+        label.control-label for="translations[#{i}][source]" Beispiel Deutsch
+        input.form-control name="translations[#{i}][source]" dir="ltr" type="text" value=t.source
+    .col-md-6
+      .form-group
+        label.control-label for="translations[#{i}][target]" Beispiel Persisch
+        input.form-control name="translations[#{i}][target]" dir="rtl" type="text" value=t.target
 -count = count ||= 0
 -2.times do |i|
-  .span5
-    label for="translations[#{i+count}][source]" Beispiel Deutsch
-    input.span5 name="translations[#{i+count}][source]" dir="ltr" type="text"
-  .span5
-    label for="translations[#{i+count}][target]" Beispiel Persisch
-    input.span5 name="translations[#{i+count}][target]" dir="rtl" type="text"
-
+  .col-md-6
+      .form-group
+        label.control-label for="translations[#{i+count}][source]" Beispiel Deutsch
+        input.form-control name="translations[#{i+count}][source]" dir="ltr" type="text"
+  .col-md-6
+      .form-group
+        label.control-label for="translations[#{i+count}][target]" Beispiel Persisch
+        input.form-control name="translations[#{i+count}][target]" dir="rtl" type="text"

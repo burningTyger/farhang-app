@@ -1,18 +1,21 @@
-h4
-  | Einstellungen
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Hilfe"
-      data-content="Hier können die Anwendungseinstellungen angepasst werden, z.B. Code für Google Analytics o.ä. Dienste")
-form.form-stacked action="/app/preferences" method="POST"
-  input name="_method" type="hidden" value="PUT"
-  fieldset
-    label for="description" Kurzbeschreibung der Seite
-    input.span8 name="description" type="text" value=preferences.description
-    label for="keywords" Keywords
-    input.span8 name="keywords" type="text" value=preferences.keywords
-    label for="analytics" Zusätzliches HTML/JavaScript für Benutzerseiten
-    textarea.span8 name="analytics" rows=9
-      ==preferences.analytics
-  input.btn.btn-success type="submit" value="Speichern"
-
+i(class="icon-question-sign icon-large" id="help"
+  title="Hilfe"
+  data-content="Hier können die Anwendungseinstellungen angepasst werden, z.B. Code für Google Analytics o.ä. Dienste")
+.row
+  .col-md-offset-1.col-md-11
+    h4
+      | Einstellungen
+    form action="/app/preferences" method="POST" role="form"
+      input name="_method" type="hidden" value="PUT"
+      .form-group
+        label.control-label for="description" Kurzbeschreibung der Seite
+        input.form-control name="description" type="text" value=preferences.description
+      .form-group
+        label.control-label for="keywords" Keywords
+        input.form-control name="keywords" type="text" value=preferences.keywords
+      .form-group
+        label.control-label for="analytics" Zusätzliches HTML/JavaScript für Benutzerseiten
+        textarea.form-control name="analytics" rows=9
+          ==preferences.analytics
+      .form-group
+        input.btn.btn-primary type="submit" value="Speichern"

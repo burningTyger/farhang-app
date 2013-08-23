@@ -1,23 +1,27 @@
-h4
-  | Eintrag bearbeiten 
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Hilfe"
-      data-content="Einträge können geändert oder neue Beispiele angelegt werden. Vorsicht beim Löschen von Einträgen.")
--l = lemmas.first
-.btn-inline
-  form action="/lemma/#{l.id}" method="post" name="search"
-    input name="_method" type="hidden" value="PUT"
-    label for="lemma" Lemma
-    input.span10 name="lemma" type="text" value=l.lemma
-    .row
-      ==partial :partial_translation, :translations => l.translations
-    input.btn.btn-success type="submit" value="Bestätigen"
-    ' 
-    a.btn href="/lemma/#{l.id}/preview" Zur Ansicht wechseln
+i(class="icon-question-sign icon-large" id="help"
+  title="Hilfe"
+  data-content="Einträge können geändert oder neue Beispiele angelegt werden. Lemma ist der Oberbegriff, nach dem gesucht werden kann  Zur Zeit sind nur deutsche Lemmata zulässig.")
+.row
+  .col-md-offset-1.col-md-11
+    h4
+      | Eintrag bearbeiten 
+    -l = lemmas.first
+    form action="/lemma/#{l.id}" method="post" name="search" role="form"
+      .form-group
+        input name="_method" type="hidden" value="PUT"
+        label.control-label for="lemma" Lemma
+        input.form-control name="lemma" type="text" value=l.lemma
+      .form-group
+          ==partial :partial_translation, :translations => l.translations
+      .form-group
+        input.btn.btn-primary type="submit" value="Bestätigen"
+.row
+  .col-md-offset-1.col-md-5.col-xs-6
+    a href="/lemma/#{l.id}/preview"
+      button.btn.btn-default Zur Ansicht wechseln
+  .col-md-6.col-xs-6
   -if roles?([:admin, :root])
-    form action="/lemma/#{l.id}" method="post" name="deletion"
+    form action="/lemma/#{l.id}" method="post" name="deletion" role="form"
       input name="_method" type="hidden" value="DELETE"
       input name="valid" type="hidden" value="true"
       input.btn.btn-danger style="float: right" type="submit" value="Löschen"
-

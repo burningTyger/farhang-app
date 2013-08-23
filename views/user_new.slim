@@ -1,25 +1,17 @@
-h4
-  | Neu registrieren
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Hilfe"
-      data-content="Um das Lexikon bearbeiten zu können, muss ein Benutzer angelegt werden")
-form.form-stacked action="/user" method="post"
-  fieldset
-    label for="email" eMail
-    .input-prepend
-      span.add-on
-        i.icon-envelope
-      input.span5 name="email" type="text"
-    label for="password" Passwort
-    .input-prepend
-      span.add-on
-        i.icon-key
-      input.span5 name="password" type="password"
-    label for="password_confirmation" Passwort bestätigen
-    .input-prepend
-      span.add-on
-        i.icon-key
-      input.span5 name="password_confirmation" type="password"
-  button.btn.btn-success type="submit" Registrieren
-
+i(class="icon-question-sign icon-large" id="help"
+  title="Hilfe"
+  data-content="Um das Lexikon bearbeiten zu können, muss ein Benutzer angelegt werden")
+.row
+  .col-md-offset-3.col-md-6
+    form.form role="form" action="/user" method="post"
+      .form-group
+        label.control-label for="email" Email
+        input.form-control name="email" placeholder="Email" type="email"
+      .form-group
+        label.control-label for="password" Passwort
+        input.form-control name="password" placeholder="Passwort" type="password"
+      .form-group
+        label.control-label for="password-confirmation" Passwort bestätigen
+        input.form-control name="password-confirmation" placeholder="Passwort" type="password"
+      .form-group
+        button.btn.btn-success.btn-lg type="submit" Registrieren

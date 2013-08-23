@@ -7,6 +7,23 @@ body {
   /* The html and body elements cannot have any padding or margin. */
 }
 
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.brand {
+  font-family: 'Overlock', cursive;
+  text-decoration: none;
+  color: #333
+}
+
+.navbar-pad {
+  margin-right: 20px;
+}
+
 /* Wrapper for page content to push down footer */
 #wrap {
   min-height: 100%;
@@ -16,12 +33,28 @@ body {
   margin: 0 auto -60px;
   /* Pad bottom by footer height */
   padding: 0 0 60px;
+  #help {
+    text-decoration: none;
+    float: right;
+    font-size: 150%;
+  }
+  .styled-list {
+    dt {
+      padding-top: 1em;
+      font-size: 150%;
+    }
+    dd {
+      padding-left: 1em;
+      font-size: 150%;
+    }
+  }
 }
 
 /* Set the fixed height of the footer here */
 #footer {
   height: 40px;
   background-color: #f5f5f5;
+  margin-top:20px;
 }
 
 /* Lastly, apply responsive CSS fixes as necessary */
@@ -34,5 +67,85 @@ body {
   }
 }
 
+.twitter-typeahead {
+  width: 100%;
+  position: relative;
+}
 
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+  margin-bottom: 0;
+  width: 100%;
+  height: 34px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.twitter-typeahead .tt-hint {
+  color: #a1a1a1;
+  z-index: 1;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+}
+
+.twitter-typeahead .tt-query {
+  z-index: 2;
+  border-radius: 4px !important;
+}
+
+.input-group-addon + .twitter-typeahead > .tt-query {
+  border-top-left-radius: 0!important;
+  border-bottom-left-radius: 0!important;
+}
+
+.input-group-appended > .twitter-typeahead > .tt-query {
+  border-top-right-radius: 0!important;
+  border-bottom-right-radius: 0!important;
+}
+
+.tt-dropdown-menu {
+  min-width: 160px;
+  margin-top: 2px;
+  padding: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .2);
+          *border-right-width: 2px;
+          *border-bottom-width: 2px;
+          -webkit-border-radius: 6px;
+          -moz-border-radius: 6px;
+          border-radius: 6px;
+          -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+          -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+          -webkit-background-clip: padding-box;
+          -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.tt-suggestion {
+  display: block;
+  padding: 3px 20px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+.tt-suggestion.tt-is-under-cursor a {
+  color: #fff;
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
 

@@ -260,13 +260,13 @@ get '/lemma/:id' do
   if authorized?
     slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
   else
-    slim :partial_lemma, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+    slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
   end
 end
 
 get '/lemma/:id/preview' do
   halt 404 unless lemma = Lemma.find(params[:id])
-  slim :partial_lemma, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+  slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
 end
 
 put '/lemma/:id', :auth => [:user] do

@@ -1,13 +1,14 @@
-h4
-  | Mein Profil
-  a href="#" style="float: right"
-    i(class="icon-question-sign icon-large" id="help"
-      title="Hilfe"
-      data-content="Hier können die eigenen Benutzereinstellungen angepasst werden")
-form.form-stacked action="/user/#{user.id}" method="POST"
-  input name="_method" type="hidden" value="PUT"
-  fieldset
-    label for="email" eMail
-    input.span5 name="email" type="text" value=(user.email)
-  input.btn.btn-success type="submit" value="Speichern"
+i(class="icon-question-sign icon-large" id="help"
+  title="Hilfe"
+  data-content="Hier können die eigenen Benutzereinstellungen angepasst werden")
+.row
+  .col-md-offset-1.col-md-6
+    h4
+      | Mein Profil
+    form action="/user/#{user.id}" method="POST" role="form"
+      input name="_method" type="hidden" value="PUT"
+      .form-group
+        label.control-label for="email" eMail
+        input.form-control name="email" type="email" value=(user.email)
+      input.btn.btn-primary type="submit" value="Speichern"
 
