@@ -16,13 +16,13 @@ h4
           ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
         -break if v.valid
       .row
-        .col-md-6
+        .col-md-6.col-xs-6
           form action="/lemma/#{l.id}/valid" method="post" name="validation" role="form"
             .form-group
               input name="_method" type="hidden" value="PATCH"
               input name="valid" type="hidden" value="true"
               input.btn.btn-success type="submit" value="Speichern"
-        .col-md-6
+        .col-md-6.col-xs-6
           form action="/lemma/#{l.id}/valid" method="post" name="validation" role="form"
             .form-group
               input name="_method" type="hidden" value="PATCH"
