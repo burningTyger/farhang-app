@@ -2,7 +2,7 @@
 require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
-describe "sidebar" do
+describe "menu" do
   describe "anonymous" do
     it "returns the homepage for unsigned user" do
       get '/'
@@ -20,7 +20,7 @@ describe "sidebar" do
     it "returns the homepage for common user" do
       get '/'
       last_response.body.must_include 'Abmelden'
-      last_response.body.wont_include 'Bestätigen'
+      last_response.body.wont_include 'Benutzerverwaltung'
     end
   end
 
@@ -30,21 +30,10 @@ describe "sidebar" do
       post '/user/login', :email => u.email, :password => 'secret'
     end
 
-    it "returns the homepage for admin user" do
-      get '/'
-      last_response.body.must_include 'Bestätigen'
-      #last_response.body.wont_include 'Übersicht'
-    end
-
-    it "shows label-succes if no unvalidated lemma exists" do
-      get '/'
-      last_response.body.must_include "label-success"
-    end
-
     it "shows label-warning if unvalidated lemmas exist" do
       FactoryGirl.create :lemma, :valid => false
       get '/'
-      last_response.body.must_include "label-warning"
+      last_response.body.must_include "Bestätigen"
     end
 
     it "shows the number of unvalidated lemmas" do
@@ -62,8 +51,7 @@ describe "sidebar" do
 
     it "returns the homepage for root user" do
       get '/'
-      last_response.body.must_include 'Bestätigen'
-      last_response.body.must_include 'Übersicht'
+      last_response.body.must_include 'Benutzerverwaltung'
     end
   end
 
