@@ -2,7 +2,7 @@ dl
   - if !lemmas.empty?
     - lemmas.each do |l|
       dt
-        a href="/lemma/#{l.id}"= l.lemma
+        a href="/l/#{l.slug}"= l.lemma
       - l.translations.each do |t|
         dd
           - if t.target

@@ -12,6 +12,9 @@ require 'slim'
 require 'sass'
 require 'mongo_mapper'
 require 'versionable'
+require 'mm-sluggable'
+require 'unicode'
+require 'babosa'
 require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
@@ -125,6 +128,7 @@ end
 
 class Lemma
   include MongoMapper::Document
+  plugin MongoMapper::Plugins::Sluggable
   enable_versioning :limit => 0
   key :lemma, String, :unique => true, :required => true, :index => true
   key :edited_by, String
@@ -132,12 +136,23 @@ class Lemma
   many :translations
   timestamps!
 
+  sluggable :lemma,
+            :callback => :before_validation,
+              :method => :slug_hack
+
   def set_translations(params)
     params.values.each do |t|
       next if t["source"].nil? || t["target"].nil?
       next if t["source"].empty? || t["target"].empty?
-      translations << Translation.new(:source => t["source"], :target => t["target"])
+      translations << Translation.new(:source => t["source"],
+                                      :target => t["target"])
     end
+  end
+end
+
+class String
+  def slug_hack
+    to_slug.clean.normalize(:transliterate => :german)
   end
 end
 
@@ -257,6 +272,11 @@ end
 
 get '/lemma/:id' do
   halt 404 unless lemma = Lemma.find(params[:id])
+  redirect "/l/#{lemma.slug}", 301
+end
+
+get '/l/:slug' do
+  halt 404 unless lemma = Lemma.first(:slug => params[:slug])
   if authorized?
     slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
   else

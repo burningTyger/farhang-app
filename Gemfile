@@ -7,11 +7,17 @@ gem 'bson_ext', :platforms => :ruby
 gem 'bson', :platforms => :jruby
 gem 'bcrypt-ruby'
 gem 'mm-versionable', :require => 'versionable'
-gem 'newrelic_rpm'
+gem 'mm-sluggable'
+gem 'unicode'
+gem 'babosa'
+
+group :production do
+  gem 'newrelic_rpm'
+end
 
 group :development, :test do
-  gem 'sinatra-contrib'
   gem 'minitest', '~>5'
+  gem 'sinatra-contrib'
   gem 'rack-test'
   gem 'factory_girl'
   gem 'rake'

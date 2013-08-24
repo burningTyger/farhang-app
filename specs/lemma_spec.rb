@@ -21,6 +21,7 @@ describe Lemma do
 
     it "can show a lemma page, but not a form" do
       get "/lemma/#{@l.id}"
+      follow_redirect!
       last_response.body.must_include @l.lemma
       last_response.body.must_include @l.translations.first.source
       last_response.body.wont_include "translation[0]"
@@ -34,6 +35,13 @@ describe Lemma do
     it "can't modify a lemma of a Lemma resource" do
       put "/lemma/#{@l.id}", :lemma => "test"
       last_response.status.must_equal 404
+    end
+
+    it "shows a slugged page" do
+      get "/l/#{@l.slug}"
+      last_response.body.must_include @l.lemma
+      last_response.body.must_include @l.translations.first.source
+      last_response.body.wont_include "translation[0]"
     end
   end
 
@@ -56,6 +64,7 @@ describe Lemma do
 
     it "can show a lemma page" do
       get "/lemma/#{@l.id}"
+      follow_redirect!
       last_response.body.must_include @l.lemma
       last_response.body.must_include @l.translations.first.source
     end
@@ -149,6 +158,21 @@ describe Lemma do
       get "/users"
       last_response.status.must_equal 200
     end
+
+    it "will let admin create sluggable multiword entry" do
+      l = FactoryGirl.create :lemma, :lemma => "funny dog"
+      l.slug.must_equal "funny-dog"
+    end
+
+    it "will let admin create sluggable ascii entry" do
+      l = FactoryGirl.create :lemma, :lemma => "funny"
+      l.slug.must_equal "funny"
+    end
+
+    it "will let admin create sluggable utf-8 entry" do
+      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
+      l.slug.must_equal "loeaeuesset"
+    end
   end
 
   describe 'logged in as admin with validation action' do
@@ -175,9 +199,11 @@ describe Lemma do
 
     it "will let the admin reject a validation" do
       get "/lemma/#{@l.id}"
+      follow_redirect!
       last_response.body.must_include 'test'
       patch "/lemma/#{@l.id}/valid", :valid => false
       get "/lemma/#{@l.id}"
+      follow_redirect!
       last_response.body.must_include 'Wörterbuch'
       last_response.body.wont_include 'test'
     end
