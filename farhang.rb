@@ -260,7 +260,7 @@ post '/lemma', :auth => [:user] do
     session[:flash] = ["Der Eintrag wurde erfolgreich angelegt", "alert-success"]
     redirect to("/lemma/#{l.id}/preview")
   else
-    session[:flash] = ["Der Eintrag konnte nicht angelegt werden", "alert-error"]
+    session[:flash] = ["Dsr Eintrag konnte nicht angelegt werden", "alert-danger"]
     redirect back
   end
 end
@@ -301,7 +301,7 @@ put '/lemma/:id', :auth => [:user] do
     session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
     redirect "/lemma/#{l.id}/preview"
   else
-    session[:flash] = ["Änderungen konnten nicht gespeichert werden", "alert-error"]
+    session[:flash] = ["Änderungen konnten nicht gespeichert werden", "alert-danger"]
     redirect back
   end
 end
@@ -329,7 +329,7 @@ delete '/lemma/:id', :auth => [:admin, :root] do
     session[:flash] = ["Eintrag erfolgreich gelöscht", "alert-success"]
     redirect to("/")
   else
-    session[:flash] = ["Eintrag konnte nicht gelöscht werden", "alert-error"]
+    session[:flash] = ["Eintrag konnte nicht gelöscht werden", "alert-danger"]
     redirect back
   end
 end
@@ -379,7 +379,7 @@ patch '/user/:id/roles', :auth =>  [:root] do
   if !params[:roles] || params[:roles].empty?
     break
   elsif user == User.first
-    session[:flash] = ["Benutzerrechte des Besitzers können nicht geändert werden", "alert-error"]
+    session[:flash] = ["Benutzerrechte des Besitzers können nicht geändert werden", "alert-danger"]
   else
     roles = []
     roles << :user << params[:roles].to_sym
@@ -387,7 +387,7 @@ patch '/user/:id/roles', :auth =>  [:root] do
     if user.save
       session[:flash] = ["Benutzerrechte erfolgreich geändert", "alert-success"]
     else
-      session[:flash] = ["Fehler. Benutzerrechte konnten nicht geändert werden", "alert-error"]
+      session[:flash] = ["Fehler. Benutzerrechte konnten nicht geändert werden", "alert-danger"]
     end
   end
   redirect to("/users")
