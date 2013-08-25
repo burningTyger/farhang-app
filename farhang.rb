@@ -129,6 +129,7 @@ end
 class Lemma
   include MongoMapper::Document
   plugin MongoMapper::Plugins::Sluggable
+
   enable_versioning :limit => 0
   key :lemma, String, :unique => true, :required => true, :index => true
   key :edited_by, String
@@ -137,8 +138,14 @@ class Lemma
   timestamps!
 
   sluggable :lemma,
-            :callback => :before_validation,
-              :method => :slug_hack
+            :method => :slug_hack,
+            :callback => :after_validation
+
+  validate :ensure_lemma_slug
+
+  def ensure_lemma_slug
+      self.slug = nil if lemma_changed?
+  end
 
   def set_translations(params)
     params.values.each do |t|

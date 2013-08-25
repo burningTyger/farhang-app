@@ -173,6 +173,15 @@ describe Lemma do
       l = FactoryGirl.create :lemma, :lemma => "löäüßet"
       l.slug.must_equal "loeaeuesset"
     end
+
+    it "will let admin change a lemma and its slug" do
+
+      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
+      l.slug.must_equal "loeaeuesset"
+      l.lemma = "Tiger"
+      l.save
+      l.slug.must_equal "tiger"
+    end
   end
 
   describe 'logged in as admin with validation action' do
