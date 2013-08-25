@@ -43,6 +43,12 @@ describe Lemma do
       last_response.body.must_include @l.translations.first.source
       last_response.body.wont_include "translation[0]"
     end
+
+    it "searches for an unfound slug" do
+      get "/#{@l.slug.to_s[0...3]}"
+      follow_redirect!
+      last_request.path_info.must_include "search"
+    end
   end
 
   describe 'logged in' do

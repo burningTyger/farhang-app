@@ -13,9 +13,9 @@ describe "routes" do
       last_response.body.must_include 'Farhang'
     end
 
-    it "returns a 404 upon false address" do
+    it "returns a 302, ie redirect to search upon false address" do
       get '/ferf'
-      last_response.status.must_equal 404
+      last_response.status.must_equal 302
     end
 
     it "returns the dashboard for signed user" do

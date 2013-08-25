@@ -226,11 +226,14 @@ get '/' do
 end
 
 get '/:slug' do
-  halt 404 unless lemma = Lemma.first(:slug => params[:slug])
-  if authorized?
-    slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
+  if lemma = Lemma.first(:slug => params[:slug])
+    if authorized?
+      slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
+    else
+      slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+    end
   else
-    slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+    redirect "/search/#{params[:slug]}"
   end
 end
 
