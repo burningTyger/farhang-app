@@ -25,7 +25,7 @@ html lang="en"
             span.icon-bar
           a.navbar-brand.brand href="/" Farhang
         .collapse.navbar-collapse.navbar-1-collapse
-          form.navbar-form.navbar-left#search-form action="/search" method="get" name="search" role="search"
+          form.navbar-form.navbar-left#search-form action="/app/search" method="get" name="search" role="search"
             .form-group
               input.form-control#searchinput name="term" value="#{params[:term]}" type="text"
             .form-group
@@ -48,7 +48,7 @@ html lang="en"
                     'App
                     b.caret
                   ul.dropdown-menu
-                    li: a href="/users" Benutzerverwaltung
+                    li: a href="/app/users" Benutzerverwaltung
                     li: a href="/app/preferences" Einstellungen
               li.dropdown
                 a href="#" class="dropdown-toggle" data-toggle="dropdown"
@@ -87,7 +87,7 @@ html lang="en"
         });
         $("#searchinput").typeahead({
           name: 'lemmas',
-          remote: '/lemma/autocomplete.json?term=%QUERY'
+          remote: '/search/autocomplete.json?term=%QUERY'
         });
         $("#searchinput").focus();
       }).call(this);

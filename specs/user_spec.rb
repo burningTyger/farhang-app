@@ -14,7 +14,7 @@ describe User do
     end
 
     it "can create a new User resource" do
-      post '/user', u = FactoryGirl.attributes_for(:user)
+      post '/user/new', u = FactoryGirl.attributes_for(:user)
       last_response.location.must_equal 'http://example.org/'
       u = User.find_by_email(u[:email])
       u.must_be_kind_of User
@@ -26,7 +26,7 @@ describe User do
     end
 
     it "won't create an empty User resource" do
-      post '/user'
+      post '/user/new'
       last_response.status.must_equal 400
     end
 
@@ -65,6 +65,11 @@ describe User do
       delete "/user/#{u.id}"
       User.find(u.id).must_equal u
     end
+
+    it "wont let non roots see the users page" do
+      get "/app/users"
+      last_response.status.must_equal 404
+    end
   end
 
   describe "root user management" do
@@ -74,7 +79,7 @@ describe User do
     end
 
     it "lets the root see the users page" do
-      get "/users"
+      get "/app/users"
       last_response.status.must_equal 200
     end
 

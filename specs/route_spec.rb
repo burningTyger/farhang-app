@@ -38,11 +38,11 @@ describe "routes" do
 
     it "gets and finds a params search" do
       FactoryGirl.create :lemma, :lemma  => 'Apfel'
-      get '/search', :term => 'Apfel'
+      get '/app/search', :term => 'Apfel'
       follow_redirect!
       last_response.body.must_include 'Apfel'
       last_response.body.wont_include 'Augapfel'
-      get '/search', :term => 'apfel'
+      get '/app/search', :term => 'apfel'
       follow_redirect!
       last_response.body.must_include 'Apfel'
       last_response.body.wont_include 'Augapfel'
@@ -50,13 +50,25 @@ describe "routes" do
 
     it "can find a search term with parens in it" do
       FactoryGirl.create :lemma, :lemma => 'ca (*:cirka)'
-      get '/search', :term => 'ca%20(*:cirka)'
+      get '/app/search', :term => 'ca%20(*:cirka)'
       follow_redirect!
       last_response.body.must_include 'cirka'
     end
 
     after do
       Lemma.delete_all
+    end
+
+    describe "ping route" do
+      it "returns a 200 on /app/ping" do
+        get '/app/ping'
+        last_response.status.must_equal 200
+      end
+
+      it "returns a sitemap" do
+        get '/app/sitemap.txt'
+        last_response['Content-Type'].must_equal 'text/html;charset=utf-8'
+      end
     end
   end
 end

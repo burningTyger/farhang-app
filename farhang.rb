@@ -46,7 +46,8 @@ configure do
     MongoMapper.database = "testing"
   else
     MongoMapper.connection = Mongo::Connection.new('localhost')
-    MongoMapper.database = "development"
+    #MongoMapper.database = "development"
+    MongoMapper.database = "farhang19"
   end
 end
 
@@ -220,16 +221,20 @@ get '/css/:file.css' do
   scss params[:file].intern
 end
 
-# offer a pingable route with low overhead
-get '/ping' do
-  halt 200
-end
-
 get '/' do
   slim :home, :locals => { :title => "Startseite" }
 end
 
-get '/search' do
+get '/:slug' do
+  halt 404 unless lemma = Lemma.first(:slug => params[:slug])
+  if authorized?
+    slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
+  else
+    slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+  end
+end
+
+get '/app/search' do
   if params[:term]
     redirect "/search/#{params[:term]}"
   else
@@ -244,7 +249,7 @@ get '/search/:term' do
   slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(search_term)}" }
 end
 
-get '/lemma/autocomplete.json' do
+get '/search/autocomplete.json' do
   content_type :json
   lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
   lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
@@ -254,7 +259,7 @@ get '/lemma/new', :auth => [:user] do
   slim :lemma_new, :locals => { :title => "Neuen Eintrag anlegen" }
 end
 
-post '/lemma', :auth => [:user] do
+post '/lemma/new', :auth => [:user] do
   redirect back if Lemma.find(:lemma => params[:lemma])
   l = Lemma.new(:lemma => params[:lemma])
   if params[:translations]
@@ -279,16 +284,7 @@ end
 
 get '/lemma/:id' do
   halt 404 unless lemma = Lemma.find(params[:id])
-  redirect "/l/#{lemma.slug}", 301
-end
-
-get '/l/:slug' do
-  halt 404 unless lemma = Lemma.first(:slug => params[:slug])
-  if authorized?
-    slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
-  else
-    slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
-  end
+  redirect "/#{lemma.slug}", 301
 end
 
 get '/lemma/:id/preview' do
@@ -342,7 +338,7 @@ delete '/lemma/:id', :auth => [:admin, :root] do
 end
 
 ## User routes
-get '/users', :auth => [:root, :admin] do
+get '/app/users', :auth => [:root, :admin] do
   slim :users, :locals => { :users => User.all, :title => "Benutzer" }
 end
 
@@ -359,7 +355,7 @@ get '/user/logout' do
   redirect to('/')
 end
 
-post '/user' do
+post '/user/new' do
   user = User.new params
   halt 400 unless user.save
   session[:flash] = ["Benutzer erfolgreich angelegt", "alert-success"]
@@ -375,7 +371,7 @@ put '/user/:id', :auth => [:self, :root] do
   halt 404 unless u = User.find(params[:id])
   if u.update_attributes! params
     session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
-    redirect to("/users")
+    redirect to("/app/users")
   else
     halt 409, "Resource konnte nicht geändert werden"
   end
@@ -397,7 +393,7 @@ patch '/user/:id/roles', :auth =>  [:root] do
       session[:flash] = ["Fehler. Benutzerrechte konnten nicht geändert werden", "alert-danger"]
     end
   end
-  redirect to("/users")
+  redirect to("/app/users")
 end
 
 delete '/user/:id', :auth => [:self, :root] do
@@ -405,7 +401,7 @@ delete '/user/:id', :auth => [:self, :root] do
   if u.destroy
     session[:flash] = ["Benutzer erfolgreich gelöscht", "alert-success"]
     if roles? [:root]
-      redirect to("/users")
+      redirect to("/app/users")
     else
       redirect to("/user/logout")
     end
@@ -432,11 +428,15 @@ put '/app/preferences', :auth => [:root] do
   end
 end
 
+# offer a pingable route with low overhead
+get '/app/ping' do
+  halt 200
+end
+
 get '/app/sitemap' do
   attachment "sitemap.txt"
-  # This route can be used to DDOS the lexicon…
-  lemmas = Lemma.fields(:id)
+  lemmas = Lemma.fields(:slug)
   root = request.url.gsub('app/sitemap','')
-  lemmas.map {|l| "#{root}#{l.id}\n"} << root
+  lemmas.map {|l| "#{root}l/#{l.slug}\n"} << root
 end
 

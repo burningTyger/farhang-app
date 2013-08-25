@@ -14,7 +14,7 @@ describe Lemma do
     end
 
     it "can't create a new Lemma resource" do
-      post '/lemma', l = FactoryGirl.attributes_for(:lemma, :lemma => "Brot")
+      post '/lemma/new', l = FactoryGirl.attributes_for(:lemma, :lemma => "Brot")
       l = Lemma.find_by_lemma(l[:lemma]).must_be_nil
       last_response.status.must_equal 404
     end
@@ -38,7 +38,7 @@ describe Lemma do
     end
 
     it "shows a slugged page" do
-      get "/l/#{@l.slug}"
+      get "/#{@l.slug}"
       last_response.body.must_include @l.lemma
       last_response.body.must_include @l.translations.first.source
       last_response.body.wont_include "translation[0]"
@@ -57,7 +57,7 @@ describe Lemma do
     end
 
     it "can create a new Lemma resource" do
-      post '/lemma', l = FactoryGirl.attributes_for(:lemma)
+      post '/lemma/new', l = FactoryGirl.attributes_for(:lemma)
       l = Lemma.find_by_lemma(l[:lemma])
       l.must_be_kind_of Lemma
     end
@@ -154,11 +154,6 @@ describe Lemma do
       last_response.status.must_equal 200
     end
 
-    it "will let admin see the users page" do
-      get "/users"
-      last_response.status.must_equal 200
-    end
-
     it "will let admin create sluggable multiword entry" do
       l = FactoryGirl.create :lemma, :lemma => "funny dog"
       l.slug.must_equal "funny-dog"
@@ -175,7 +170,6 @@ describe Lemma do
     end
 
     it "will let admin change a lemma and its slug" do
-
       l = FactoryGirl.create :lemma, :lemma => "löäüßet"
       l.slug.must_equal "loeaeuesset"
       l.lemma = "Tiger"
