@@ -440,6 +440,6 @@ get '/app/sitemap' do
   attachment "sitemap.txt"
   lemmas = Lemma.fields(:slug)
   root = request.url.gsub('app/sitemap','')
-  lemmas.map {|l| "#{root}l/#{l.slug}\n"} << root
+  lemmas.map {|l| "#{root}#{l.slug}\n"} << root
 end
 
