@@ -8,7 +8,7 @@ gem 'bson', :platforms => :jruby
 gem 'bcrypt-ruby'
 gem 'mm-versionable', :require => 'versionable'
 gem 'mm-sluggable'
-gem 'unicode'
+gem 'unicode', :platforms => :ruby
 gem 'babosa'
 
 group :production do
