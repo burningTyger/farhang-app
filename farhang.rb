@@ -13,7 +13,7 @@ require 'sass'
 require 'mongo_mapper'
 require 'versionable'
 require 'mm-sluggable'
-require 'unicode' unless JRUBY_VERSION
+require 'unicode' unless defined?(JRUBY_VERSION)
 require 'babosa'
 require 'sinatra/reloader' if development?
 require 'digest/sha1'
