@@ -245,17 +245,17 @@ get '/app/search' do
   end
 end
 
+get '/search/autocomplete.json' do
+  content_type :json
+  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
+  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
+end
+
 get '/search/:term' do
   search_term = params[:term]
   search_term.gsub!(/[%20]/, ' ')
   lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
   slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(search_term)}" }
-end
-
-get '/search/autocomplete.json' do
-  content_type :json
-  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
-  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
 end
 
 get '/lemma/new', :auth => [:user] do
