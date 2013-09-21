@@ -70,10 +70,24 @@ describe "routes" do
       get '/app/ping'
       last_response.status.must_equal 200
     end
+  end
 
+  describe "sitemap" do
     it "returns a sitemap" do
       get '/app/sitemap.txt'
       last_response['Content-Type'].must_equal 'text/html;charset=utf-8'
+    end
+  end
+
+  describe "meta data" do
+    it "shows specific meta data for entries" do
+      FactoryGirl.create :lemma, :lemma  => 'Apfel'
+      get '/apfel'
+      last_response.body.must_include 'content="Das offene deutsch-persische Lexikon: Lexikon'
+    end
+
+    after do
+      Lemma.delete_all
     end
   end
 end
