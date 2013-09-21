@@ -132,7 +132,7 @@ class Lemma
   plugin MongoMapper::Plugins::Sluggable
 
   enable_versioning :limit => 0
-  key :lemma, String, :unique => true, :required => true, :index => true
+  key :lemma, String, :unique => true, :required => true
   key :edited_by, String
   key :valid, Boolean
   many :translations
