@@ -3,8 +3,8 @@ html lang="en"
   head
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
-    meta name="description" content=preferences.description
-    meta name="keywords" content=preferences.keywords
+    meta name="description" content=(defined?(description) ? "Das offene deutsch-persische Lexikon: #{description[:source]} #{description[:target]}" : preferences.description)
+    meta name="keywords" content=(defined?(description) ? "#{preferences.keywords}, #{description[:source]}, #{description[:target]}" : preferences.keywords)
     title Farhang/#{title}
     /![if lt IE 9]
       script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"

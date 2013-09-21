@@ -230,7 +230,9 @@ get '/:slug' do
     if authorized?
       slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
     else
-      slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
+      slim :search, :locals => { :lemmas => Array(lemma),
+                                 :title => lemma.lemma,
+                                 :description => lemma.translations.first }
     end
   else
     redirect "/search/#{params[:slug]}"
