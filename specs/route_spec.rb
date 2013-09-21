@@ -26,8 +26,11 @@ describe "routes" do
   end
 
   describe "search routes" do
-    it "gets and finds a url search" do
+    before do
       FactoryGirl.create :lemma, :lemma  => 'Apfel'
+    end
+
+    it "gets and finds a url search" do
       get '/search/Apfel'
       last_response.body.must_include 'Apfel'
       last_response.body.wont_include 'Augapfel'
@@ -37,11 +40,8 @@ describe "routes" do
     end
 
     it "gets and finds a params search" do
-      FactoryGirl.create :lemma, :lemma  => 'Apfel'
       get '/app/search', :term => 'Apfel'
       follow_redirect!
-      last_response.body.must_include 'Apfel'
-      last_response.body.wont_include 'Augapfel'
       get '/app/search', :term => 'apfel'
       follow_redirect!
       last_response.body.must_include 'Apfel'
@@ -55,20 +55,25 @@ describe "routes" do
       last_response.body.must_include 'cirka'
     end
 
+    it "returns a valid json file for autocomplete" do
+      get '/search/autocomplete.json?term=ap'
+      last_response.body.must_equal '["Apfel"]'
+    end
+
     after do
       Lemma.delete_all
     end
+  end
 
-    describe "ping route" do
-      it "returns a 200 on /app/ping" do
-        get '/app/ping'
-        last_response.status.must_equal 200
-      end
+  describe "ping route" do
+    it "returns a 200 on /app/ping" do
+      get '/app/ping'
+      last_response.status.must_equal 200
+    end
 
-      it "returns a sitemap" do
-        get '/app/sitemap.txt'
-        last_response['Content-Type'].must_equal 'text/html;charset=utf-8'
-      end
+    it "returns a sitemap" do
+      get '/app/sitemap.txt'
+      last_response['Content-Type'].must_equal 'text/html;charset=utf-8'
     end
   end
 end
