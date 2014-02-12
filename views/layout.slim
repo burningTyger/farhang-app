@@ -9,57 +9,56 @@ html lang="en"
     /![if lt IE 9]
       script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"
       script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.2.0/respond.js"
-    link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet" media="screen"
-    link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"
+    link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
+    link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet"
     link href="/css/app.css" rel="stylesheet"
     link href="/images/f.png" rel="shortcut icon"
     link href="http://fonts.googleapis.com/css?family=Overlock:900italic" rel="stylesheet" type="text/css"
   body
     #wrap
       nav.navbar.navbar-default.navbar-static-top role="navigation"
-        .navbar-header
-          button.navbar-toggle data-target=".navbar-1-collapse" data-toggle="collapse" type="button"
-            span.sr-only Toggle navigation
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar
-          a.navbar-brand.brand href="/" Farhang
-        .collapse.navbar-collapse.navbar-1-collapse
-          form.navbar-form.navbar-left#search-form action="/app/search" method="get" name="search" role="search"
-            .form-group
-              input.form-control#searchinput name="term" value="#{params[:term]}" type="text"
-            .form-group
-              button.btn.btn-default type="submit" Suchen
-          -if signed_in?
-            a href="/lemma/new"
-              button.btn.btn-default.navbar-btn.navbar-pad#lemma-new type="button" data-toggle="tooltip" title="Lemma hinzufügen"
-                i.icon-plus
-            -if roles?([:admin, :root])
-              -count = Lemma.where(:valid => false).count
-              -if count > 0
-                a href="/lemma/validation"
-                  button.btn.btn-default.navbar-btn.navbar-pad type="button"
-                    'Bestätigen
-                    span.label.label-warning =count
-            ul.nav.navbar-nav.navbar-right
-              -if roles?([:root])
+        .container
+          .navbar-header
+            button.navbar-toggle data-target=".navbar-1-collapse" data-toggle="collapse" type="button"
+              span.sr-only Toggle navigation
+              i.fa.fa-bars
+            a.navbar-brand.brand href="/" Farhang
+          .collapse.navbar-collapse.navbar-1-collapse
+            form.navbar-form.navbar-left#search-form action="/app/search" method="get" name="search" role="search"
+              .form-group
+                input.form-control#searchinput name="term" value="#{params[:term]}" type="text"
+              .form-group
+                button.btn.btn-default type="submit" Suchen
+            -if signed_in?
+              a href="/lemma/new"
+                button.btn.btn-default.navbar-btn#lemma-new type="button" data-toggle="tooltip" title="Lemma hinzufügen"
+                  i.fa.fa-plus
+              -if roles?([:admin, :root])
+                -count = Lemma.where(:valid => false).count
+                -if count > 0
+                  a href="/lemma/validation"
+                    button.btn.btn-default.navbar-btn type="button"
+                      'Bestätigen
+                      span.label.label-warning =count
+              ul.nav.navbar-nav.navbar-right
+                -if roles?([:root])
+                  li.dropdown
+                    a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                      'App
+                      b.caret
+                    ul.dropdown-menu
+                      li: a href="/app/users" Benutzerverwaltung
+                      li: a href="/app/preferences" Einstellungen
                 li.dropdown
                   a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                    'App
+                    'Konto
                     b.caret
                   ul.dropdown-menu
-                    li: a href="/app/users" Benutzerverwaltung
-                    li: a href="/app/preferences" Einstellungen
-              li.dropdown
-                a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                  'Konto
-                  b.caret
-                ul.dropdown-menu
-                  li: a href="/user/#{@current_user.id}" Profil
-                  li: a href="/user/logout" Abmelden
-          -else
-            a href="/user/login"
-              button.btn.btn-default.navbar-btn.navbar-right.navbar-pad type="button" Anmelden
+                    li: a href="/user/#{@current_user.id}" Profil
+                    li: a href="/user/logout" Abmelden
+            -else
+              a href="/user/login"
+                button.btn.btn-default.navbar-btn.navbar-right type="button" Anmelden
       .container
         ==partial :partial_flash
         ==yield
@@ -73,9 +72,9 @@ html lang="en"
             a href="https://github.com/ckh/farhang" ckh
             '  &
             a href="https://github.com/burningtyger/farhang-app" bt
-    script src="//cdn.jsdelivr.net/jquery/2.0.3/jquery-2.0.3.min.js"
-    script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"
-    script src="//cdn.jsdelivr.net/typeahead.js/0.9.3/typeahead.min.js"
+    script src="//cdn.jsdelivr.net/jquery/2.1.0/jquery.min.js"
+    script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"
+    script src="//cdn.jsdelivr.net/typeahead.js/0.10.1/typeahead.bundle.min.js"
     javascript:
       (function() {
         $("#help").popover({
@@ -85,11 +84,24 @@ html lang="en"
         $("#lemma-new").tooltip({
           placement: 'auto'
         });
-        $("#searchinput").typeahead({
+        var lemmas = new Bloodhound({
+          datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.val); },
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
           name: 'lemmas',
-          remote: '/search/autocomplete.json?term=%QUERY'
+          remote: {
+            url: '/search/autocomplete.json?term=%QUERY',
+            filter: function(list) {
+              return $.map(list, function(lemma) { return { val: lemma }; });
+            }
+          }
+        });
+        lemmas.initialize();
+        $("#searchinput").typeahead(null, {
+          name: 'lemmas',
+          displayKey: 'val',
+          source: lemmas.ttAdapter()
         });
         $("#searchinput").focus();
       }).call(this);
     ==preferences.analytics
-  /! Beautiful icons by Font Awesome - http://fortawesome.github.com/Font-Awesome
+  /! Font Awesome by Dave Gandy - http://fontawesome.io

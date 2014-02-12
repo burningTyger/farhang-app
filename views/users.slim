@@ -1,37 +1,40 @@
-i(class="icon-question-sign icon-large" id="help"
+i(class="fa fa-question-circle fa-2x" id="help"
   title="Hilfe"
   data-content="Alle registrierten Benutzer können in dieser Darstellung bearbeitet werden.")
-h4 
-  | Alle registrierten Benutzer
--if users
-  table.table.table-condensed.table-hover
-    thead
-      tr
-        th &#x270e
-        th eMail
-        th Anmeldedatum
-        th Rechte
-        th Löschen
-    tbody
-      -users.each_with_index do |user, i|
-        tr
-          td
-            a href="/user/#{user.id}"
-              button.btn.btn-default.btn-xs &#x270e
-          td= user.email
-          td= user.created_at.strftime("%d.%m.%Y")
-          td
-            form.form-inline action="/user/#{user.id}/roles" method="post" role="form"
-              input name="_method" type="hidden" value="PATCH"
-              .form-group
-                select.form-control.input-sm name="roles"
-                  -%w(user admin).each do |role|
-                    option selected=(user.roles.include? role.to_sym) = role
-              .form-group
-                button.btn.btn-default.btn-xs type="submit"
-                  i.icon-refresh
-          td
-            form.form-inline action="/user/#{user.id}" method="post"
-              input name="_method" type="hidden" value="DELETE"
-              button.btn.btn-danger.btn-xs type="submit"
-                i.icon-remove
+.row
+  .col-md-offset-1.col-md-7
+    h4 
+      | Alle registrierten Benutzer
+    -if users
+      table.table.table-condensed.table-hover
+        thead
+          tr
+            th &#x270e
+            th eMail
+            th Anmeldedatum
+            th Rechte
+            th Löschen
+        tbody
+          -users.each_with_index do |user, i|
+            tr
+              td
+                a href="/user/#{user.id}"
+                  i.fa.fa-pencil-square-o.fa-2x
+              td= user.email
+              td= user.created_at.strftime("%d.%m.%Y")
+              td
+                form.form-inline action="/user/#{user.id}/roles" method="post" role="form"
+                  input name="_method" type="hidden" value="PATCH"
+                  .form-group
+                    .input-group
+                      select.form-control.input-sm name="roles"
+                        -%w(user admin).each do |role|
+                          option selected=(user.roles.include? role.to_sym) = role
+                      .input-group-btn
+                        button.btn.btn-sm type="submit"
+                          i.fa.fa-refresh
+              td
+                form.form-inline action="/user/#{user.id}" method="post"
+                  input name="_method" type="hidden" value="DELETE"
+                  button.btn.btn-danger.btn-sm type="submit"
+                    i.fa.fa-times
