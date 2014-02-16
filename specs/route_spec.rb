@@ -4,10 +4,6 @@ include SpecHelper
 
 describe "routes" do
   describe "home route" do
-    before do
-      @u = FactoryGirl.create :user
-    end
-
     it "returns the homepage for unsigned user" do
       get '/'
       last_response.body.must_include 'Farhang'
@@ -19,7 +15,8 @@ describe "routes" do
     end
 
     it "returns the dashboard for signed user" do
-      post '/user/login', :email => @u.email, :password => 'secret'
+      u = FactoryGirl.create :user
+      post '/user/login', :email => u.email, :password => u.password
       get '/'
       last_response.body.must_include 'Einträge'
     end

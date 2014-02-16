@@ -2,12 +2,7 @@ require "#{File.dirname(__FILE__)}/spec_helper"
 include SpecHelper
 
 describe User do
-  describe 'routes' do
-    before do
-      @u = FactoryGirl.create :user
-      post '/user/login', :email => @u.email, :password => 'secret'
-    end
-
+  describe 'some anonymous user actions' do
     it 'has a form to create a new User resource' do
       get '/user/new'
       last_response.body.must_include "/user"
@@ -20,14 +15,26 @@ describe User do
       u.must_be_kind_of User
     end
 
-    it "can show a user page" do
-      get "/user/#{@u.id}"
-      last_response.body.must_include @u.email
-    end
-
     it "won't create an empty User resource" do
       post '/user/new'
       last_response.status.must_equal 400
+    end
+
+    it "will create a user with only user role" do
+      u = FactoryGirl.create :user
+      u.roles.must_equal Set.new([:user])
+    end
+  end
+
+  describe 'user actions' do
+    before do
+      @u = FactoryGirl.create :user
+      post '/user/login', :email => @u.email, :password => 'secret'
+    end
+
+    it "can show a user page" do
+      get "/user/#{@u.id}"
+      last_response.body.must_include @u.email
     end
 
     it "can delete own User resource" do
@@ -53,11 +60,6 @@ describe User do
 
     it "will let a user login with his credentials" do
       signed_in?.must_equal true
-    end
-
-    it "will create a user with only user role" do
-      u = FactoryGirl.create :user
-      u.roles.must_equal Set.new([:user])
     end
 
     it "will not let other users edit users" do

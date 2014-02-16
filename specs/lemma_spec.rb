@@ -159,29 +159,6 @@ describe Lemma do
       get "/lemma/validation"
       last_response.status.must_equal 200
     end
-
-    it "will let admin create sluggable multiword entry" do
-      l = FactoryGirl.create :lemma, :lemma => "funny dog"
-      l.slug.must_equal "funny-dog"
-    end
-
-    it "will let admin create sluggable ascii entry" do
-      l = FactoryGirl.create :lemma, :lemma => "funny"
-      l.slug.must_equal "funny"
-    end
-
-    it "will let admin create sluggable utf-8 entry" do
-      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
-      l.slug.must_equal "loeaeuesset"
-    end
-
-    it "will let admin change a lemma and its slug" do
-      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
-      l.slug.must_equal "loeaeuesset"
-      l.lemma = "Tiger"
-      l.save
-      l.slug.must_equal "tiger"
-    end
   end
 
   describe 'logged in as admin with validation action' do
@@ -216,7 +193,43 @@ describe Lemma do
       last_response.body.must_include 'Wörterbuch'
       last_response.body.wont_include 'test'
     end
+  end
 
+  describe "some basic lemma object actions" do
+    it "will let admin create sluggable multiword entry" do
+      l = FactoryGirl.create :lemma, :lemma => "funny dog"
+      l.slug.must_equal "funny-dog"
+    end
+
+    it "will let admin create sluggable ascii entry" do
+      l = FactoryGirl.create :lemma, :lemma => "funny"
+      l.slug.must_equal "funny"
+    end
+
+    it "will let admin create sluggable utf-8 entry" do
+      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
+      l.slug.must_equal "loeaeuesset"
+    end
+
+    it "will let admin change a lemma and its slug" do
+      l = FactoryGirl.create :lemma, :lemma => "löäüßet"
+      l.slug.must_equal "loeaeuesset"
+      l.lemma = "Tiger"
+      l.save
+      l.slug.must_equal "tiger"
+    end
+
+    it "wont let user create same slug" do
+      l = FactoryGirl.create :lemma, :lemma => "Punkt"
+      k = FactoryGirl.create :lemma, :lemma => "punkt"
+      l.slug.must_equal "punkt"
+      k.slug.must_equal "punkt-2"
+    end
+
+    it "will trim new string and remove spaces from Lemma" do
+      l = FactoryGirl.create :lemma, :lemma => " funny dog "
+      l.lemma.must_equal "funny dog"
+    end
   end
 
   after do
