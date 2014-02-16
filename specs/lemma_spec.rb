@@ -230,6 +230,13 @@ describe Lemma do
       l = FactoryGirl.create :lemma, :lemma => " funny dog "
       l.lemma.must_equal "funny dog"
     end
+
+    it "will trim new string and remove spaces from Translation" do
+      l = FactoryGirl.create :lemma, :lemma => " funny dog ", :translations => [FactoryGirl.create(:translation, :source => " eins ", :target => "  zwei   ")]
+      t = l.translations.first
+        t.source.must_equal "eins"
+        t.target.must_equal "zwei"
+    end
   end
 
   after do

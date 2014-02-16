@@ -142,6 +142,7 @@ class Lemma
             :method => :slug_hack,
             :callback => :after_validation
 
+  before_validation :strip_lemma!
   validate :ensure_lemma_slug
 
   def ensure_lemma_slug
@@ -156,6 +157,10 @@ class Lemma
                                       :target => t["target"])
     end
   end
+
+  def strip_lemma!
+    lemma.strip!
+  end
 end
 
 class String
@@ -168,6 +173,13 @@ class Translation
   include MongoMapper::EmbeddedDocument
   key :source, String
   key :target, String
+
+  before_validation :strip_translation!
+
+  def strip_translation!
+    source.strip!
+    target.strip!
+  end
 end
 
 class Preferences
