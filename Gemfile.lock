@@ -13,8 +13,6 @@ GEM
     babosa (0.3.11)
     backports (3.6.3)
     bcrypt (3.1.9)
-    bcrypt-ruby (3.1.5)
-      bcrypt (>= 3.1.3)
     bson (1.11.1)
     bson_ext (1.11.1)
       bson (~> 1.11.1)
@@ -35,15 +33,17 @@ GEM
       mongo_mapper (>= 0.9.0)
     mongo (1.11.1)
       bson (= 1.11.1)
-    mongo_mapper (0.13.0.beta1)
+    mongo_mapper (0.13.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0)
       mongo (~> 1.8)
-      plucky (~> 0.6.4)
+      plucky (~> 0.6.5)
     multi_json (1.10.1)
     newrelic_rpm (3.9.6.257)
     plucky (0.6.6)
       mongo (~> 1.5)
+    puma (2.9.2)
+      rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -77,15 +77,16 @@ PLATFORMS
 
 DEPENDENCIES
   babosa
-  bcrypt-ruby
+  bcrypt
   bson
   bson_ext
   factory_girl
   minitest (~> 5)
   mm-sluggable
   mm-versionable
-  mongo_mapper (= 0.13.0.beta1)
+  mongo_mapper
   newrelic_rpm
+  puma
   rack-test
   rake
   sass
