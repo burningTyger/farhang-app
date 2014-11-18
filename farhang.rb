@@ -355,7 +355,7 @@ delete '/lemma/:id', :auth => [:admin, :root] do
 end
 
 ## User routes
-get '/app/users', :auth => [:root, :admin] do
+get '/app/users', :auth => [:root] do
   slim :users, :locals => { :users => User.all, :title => "Benutzer" }
 end
 
