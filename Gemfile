@@ -13,6 +13,7 @@ gem 'babosa'
 
 group :production do
   gem 'newrelic_rpm'
+  gem 'skylight'
   gem 'puma'
 end
 
