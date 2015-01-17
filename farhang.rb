@@ -15,12 +15,29 @@ require 'versionable'
 require 'mm-sluggable'
 require 'unicode' unless defined?(JRUBY_VERSION)
 require 'babosa'
-require 'sinatra/reloader' if development?
 require 'digest/sha1'
 require 'bcrypt'
 require "#{File.dirname(__FILE__)}/auth"
-require "#{File.dirname(__FILE__)}/config" if production?
 include Authentication
+
+configure :production do
+  require "#{File.dirname(__FILE__)}/config" if production?
+  require "skylight/sinatra"
+  Skylight.start!
+  MongoMapper.connection = Mongo::Connection.new("localhost")
+  MongoMapper.database = "farhang"
+end
+
+configure :testing do
+  MongoMapper.connection = Mongo::Connection.new('localhost')
+  MongoMapper.database = "testing"
+end
+
+configure :development do
+  require 'sinatra/reloader' if development?
+  MongoMapper.connection = Mongo::Connection.new('localhost')
+  MongoMapper.database = "farhang19"
+end
 
 configure do
   set :slim, :pretty => true
@@ -35,19 +52,6 @@ configure do
     condition do
       @current_user.id == params[:id]
     end
-  end
-  if ENV['RACK_ENV'] == 'production'
-    MongoMapper.database = APP_NAME
-    MongoMapper.connection = Mongo::Connection.new(DB_HOST, DB_PORT)
-    MongoMapper.database.authenticate(DB_USER, DB_PASS)
-    MongoMapper.handle_passenger_forking
-  elsif ENV['RACK_ENV'] == 'testing'
-    MongoMapper.connection = Mongo::Connection.new('localhost')
-    MongoMapper.database = "testing"
-  else
-    MongoMapper.connection = Mongo::Connection.new('localhost')
-    #MongoMapper.database = "development"
-    MongoMapper.database = "farhang19"
   end
 end
 
