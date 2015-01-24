@@ -5,7 +5,7 @@
 .row
   .col-md-6
     h4 Das freie deutsch-persische Lexikon
-    ' Mit #{Lemma.count} Einträgen ist
+    ' Mit #{count} Einträgen ist
     span.brand Farhang
     '  eines der größten
       deutsch-persischen Wörterbücher, die online verfügbar sind. Dazu sind alle
@@ -13,9 +13,9 @@
       einen Eintrag sehen, der unvollständig ist oder sogar ein Eintrag fehlt,
       können sie sich anmelden und haben vollen Schreibzugriff auf das Lexikon.
   .col-md-6
-    h4 
+    h4
       ' Ein zufälliger Eintrag aus
       span.brand Farhang
     .well.well-sm
-      ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(Lemma.count())) if Lemma.count > 1
+      ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(count)) if Lemma.count > 1
 

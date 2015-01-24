@@ -238,7 +238,7 @@ get '/css/:file.css' do
 end
 
 get '/' do
-  slim :home, :locals => { :title => "Startseite" }
+  slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
 end
 
 get '/:slug' do
