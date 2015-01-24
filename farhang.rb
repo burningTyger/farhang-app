@@ -360,7 +360,7 @@ end
 
 ## User routes
 get '/app/users', :auth => [:root] do
-  slim :users, :locals => { :users => User.all, :title => "Benutzer" }
+  slim :users, :locals => { :users => User.all(:order => :created_at.desc), :title => "Benutzer" }
 end
 
 get '/user/login' do
