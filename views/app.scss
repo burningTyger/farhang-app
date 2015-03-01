@@ -9,10 +9,6 @@ body {
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
-.body-content {
-  padding-left: 15px;
-  padding-right: 15px;
-}
 
 .brand {
   font-family: 'Overlock', cursive;
@@ -29,6 +25,9 @@ body {
   margin: 0 auto -60px;
   /* Pad bottom by footer height */
   padding: 0 0 60px;
+  #lemma-validation {
+    margin: 0 15px;
+  }
   #help {
     text-decoration: none;
     float: right;
@@ -52,15 +51,6 @@ body {
   margin-top:20px;
 }
 
-/* Lastly, apply responsive CSS fixes as necessary */
-@media (max-width: 767px) {
-  #footer {
-    margin-left: -20px;
-    margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
 /*
  * * typehead.js-bootstrap3.less
  * * @version 0.2.3

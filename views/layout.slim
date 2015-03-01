@@ -37,7 +37,7 @@ html lang="en"
                 -count = Lemma.where(:valid => false).count
                 -if count > 0
                   a href="/lemma/validation"
-                    button.btn.btn-default.navbar-btn type="button"
+                    button.btn.btn-default.navbar-btn#lemma-validation type="button"
                       'Bestätigen
                       span.label.label-warning =count
               ul.nav.navbar-nav.navbar-right
