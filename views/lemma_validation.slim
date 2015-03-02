@@ -8,12 +8,19 @@ h4
 -else
   -lemmas.each do |l|
     -count = l.versions_count
+    -if count > 1
+      .well.styled-list
+        b Ursprüngliche Fassung
+        == partial(:partial_lemma, :lemmas => [l.rollback(:first)], :valid => l.valid)
+    -else
+      b Eintrag wurde neu angelegt
     .well
       -until l.valid || count==0
         -count -= 1
         -v = l.rollback(count)
         .styled-list
-          ==partial :partial_lemma, :lemmas => [v], :valid => l.valid
+          == "Änderung #{count+1}:" if l.versions_count > 1
+          == partial(:partial_lemma, :lemmas => [v], :valid => l.valid)
         -break if v.valid
       .row
         .col-md-6.col-xs-6
