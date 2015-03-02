@@ -13,7 +13,7 @@ gem 'babosa', '~> 0.3.11'
 
 group :production do
   gem 'newrelic_rpm'
-  gem 'skylight', '~> 0.6.0.beta.1'
+  gem 'skylight'
   gem 'puma'
 end
 
