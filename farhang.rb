@@ -4,7 +4,7 @@
 #
 # Author:: burningTyger (https://github.com/burningTyger)
 # Home:: https://github.com/burningTyger/farhang-app
-# Copyright:: Copyright (c) 2011 – 2014 burningTyger
+# Copyright:: Copyright (c) 2011 – 2015 burningTyger
 # License:: MIT License
 #
 require 'sinatra'
@@ -55,7 +55,7 @@ configure do
   end
 end
 
-FARHANG_VERSION = "1.3"
+FARHANG_VERSION = "1.4"
 
 class User
   include MongoMapper::Document
