@@ -36,7 +36,7 @@ end
 configure :development do
   require 'sinatra/reloader' if development?
   MongoMapper.connection = Mongo::Connection.new('localhost')
-  MongoMapper.database = "farhang19"
+  MongoMapper.database = "farhang"
 end
 
 configure do
