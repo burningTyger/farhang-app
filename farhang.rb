@@ -4,7 +4,7 @@
 #
 # Author:: burningTyger (https://github.com/burningTyger)
 # Home:: https://github.com/burningTyger/farhang-app
-# Copyright:: Copyright (c) 2011 – 2015 burningTyger
+# Copyright:: Copyright (c) 2011 – 2016 burningTyger
 # License:: MIT License
 #
 require 'sinatra'

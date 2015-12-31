@@ -1,13 +1,13 @@
 #Farhang
 
-Farhang is a dictionary app written in Ruby with Sinatra and MongoDB. 
+Farhang is a dictionary app written in Ruby with Sinatra and MongoDB.
 
 It is not a dictionary itself but a nice and simple interface to a dictionary
 stored in a database.
 
 ![Farhang.im in action](http://d.pr/i/W1JY+)
 See it in action with the original German-Persian dictionary at
-http://www.farhang.im 
+https://www.farhang.im
 
 If you have a dictionary that has unique word entries along with
 translations and possibly examples there are good chances you will be
@@ -59,8 +59,8 @@ your dictionary app:
 ##Requirements
 It runs on MRI, JRuby and Rubinius in 1.9 mode.
 
-You need a running MongoDB and your own `config.rb`. Make sure to rename 
-`config-example.rb` to `config.rb` and use your own values. 
+You need a running MongoDB and your own `config.rb`. Make sure to rename
+`config-example.rb` to `config.rb` and use your own values.
 
 It works best if you clone it with git:
 
@@ -71,7 +71,7 @@ Then you fire up your instance of Farhang via:
     ruby farhang.rb
 
 This will start your server and your app. Usually the local address to
-see Farhang in your browser is https://localhost:4567 if you prefer
+see Farhang in your browser is http://localhost:4567 if you prefer
 other port numbers you can use the `-p` option:
 
     ruby farhang.rb -p 9393
