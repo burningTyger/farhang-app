@@ -1,2 +1,3 @@
 require "#{File.dirname(__FILE__)}/farhang"
-run Sinatra::Application
+map('/') {run Farhang::Farhang}
+map('/edit') {run Farhang::FarhangEditor}

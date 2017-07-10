@@ -1,101 +1,48 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
-    activemodel (4.2.5)
-      activesupport (= 4.2.5)
-      builder (~> 3.1)
-    activesupport (4.2.5)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
-    babosa (0.3.11)
-    backports (3.6.7)
-    bcrypt (3.1.10)
-    bson (1.12.5)
-    bson_ext (1.12.5)
-      bson (~> 1.12.5)
-    builder (3.2.2)
-    differ (0.1.2)
-    factory_girl (4.5.0)
-      activesupport (>= 3.0.0)
-    i18n (0.7.0)
-    json (1.8.3)
-    minitest (5.8.3)
-    mm-sluggable (0.3.1)
-      mongo_mapper (>= 0.9.0)
-    mm-versionable (0.2.9)
-      bson
-      builder
-      differ
-      i18n
-      mongo_mapper (>= 0.9.0)
-    mongo (1.12.5)
-      bson (= 1.12.5)
-    mongo_mapper (0.13.1)
-      activemodel (>= 3.0.0)
-      activesupport (>= 3.0)
-      mongo (~> 1.8)
-      plucky (~> 0.6.5)
-    multi_json (1.11.2)
-    newrelic_rpm (3.14.1.311)
-    plucky (0.6.6)
-      mongo (~> 1.5)
-    puma (2.15.3)
-    rack (1.6.4)
-    rack-protection (1.5.3)
+    babosa (1.0.2)
+    envyable (1.2.0)
+      thor (>= 0.18.1, < 2.0)
+    mustermann (1.0.0)
+    newrelic_rpm (4.2.0.334)
+    puma (3.9.1)
+    rack (2.0.3)
+    rack-cache (1.7.0)
+      rack (>= 0.4)
+    rack-protection (2.0.0)
       rack
-    rack-test (0.6.3)
-      rack (>= 1.0)
-    rake (10.4.2)
-    sass (3.4.20)
-    sinatra (1.4.6)
-      rack (~> 1.4)
-      rack-protection (~> 1.4)
-      tilt (>= 1.3, < 3)
-    sinatra-contrib (1.4.6)
-      backports (>= 2.0)
-      multi_json
-      rack-protection
-      rack-test
-      sinatra (~> 1.4.0)
-      tilt (>= 1.3, < 3)
-    skylight (0.10.0)
-      activesupport (>= 3.0.0)
-    slim (3.0.6)
-      temple (~> 0.7.3)
+    sass (3.4.25)
+    sequel (4.48.0)
+    sinatra (2.0.0)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0)
+      tilt (~> 2.0)
+    slim (3.0.8)
+      temple (>= 0.7.6, < 0.9)
       tilt (>= 1.3.3, < 2.1)
-    temple (0.7.6)
-    thread_safe (0.3.5)
-    tilt (2.0.1)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
-    unicode (0.4.4.2)
+    sqlite3 (1.3.13)
+    temple (0.8.0)
+    thor (0.19.4)
+    tilt (2.0.7)
+    unicode (0.4.4.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  babosa (~> 0.3.11)
-  bcrypt
-  bson
-  bson_ext
-  factory_girl
-  minitest (~> 5)
-  mm-sluggable
-  mm-versionable
-  mongo_mapper
-  newrelic_rpm
-  puma
-  rack-test
-  rake
-  sass
-  sinatra
-  sinatra-contrib
-  skylight
-  slim
-  unicode
+  babosa!
+  envyable!
+  newrelic_rpm!
+  puma!
+  rack-cache!
+  sass!
+  sequel!
+  sinatra!
+  slim!
+  sqlite3!
+  unicode!
 
 BUNDLED WITH
-   1.11.2
+   1.15.1

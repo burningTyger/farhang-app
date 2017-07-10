@@ -2,7 +2,7 @@ dl
   - if !lemmas.empty?
     - lemmas.each do |l|
       dt
-        a href="/#{l.slug}"= l.lemma
+        a href=url("/#{l.slug}") = l.lemma
       - l.translations.each do |t|
         dd
           - if t.target
@@ -13,7 +13,3 @@ dl
               =t.target
   - else
     h4.unsuccessful Keinen Eintrag gefunden
-    - if signed_in?
-      a.btn.btn-primary.btn-default href="/lemma/new" Diesen Suchbegriff neu anlegen
-    - else
-      | Melden Sie sich an, um diesen Eintrag anzulegen

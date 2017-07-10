@@ -1,463 +1,210 @@
-# encoding: UTF-8
-#
-# Farhang-app
-#
-# Author:: burningTyger (https://github.com/burningTyger)
-# Home:: https://github.com/burningTyger/farhang-app
-# Copyright:: Copyright (c) 2011 – 2016 burningTyger
-# License:: MIT License
-#
 require 'sinatra'
+require 'rack/cache'
 require 'slim'
 require 'sass'
-require 'mongo_mapper'
-require 'versionable'
-require 'mm-sluggable'
-require 'unicode' unless defined?(JRUBY_VERSION)
+require 'sequel'
+require 'sqlite3'
 require 'babosa'
-require 'digest/sha1'
-require 'bcrypt'
-require "#{File.dirname(__FILE__)}/auth"
-include Authentication
+require 'envyable'
+require 'newrelic_rpm' if production?
 
-configure :production do
-  require "#{File.dirname(__FILE__)}/config" if production?
-  require "skylight/sinatra"
-  Skylight.start!
-  MongoMapper.connection = Mongo::Connection.new("localhost")
-  MongoMapper.database = "farhang"
-end
+newrelic_ignore '/ping' if production?
 
-configure :testing do
-  MongoMapper.connection = Mongo::Connection.new('localhost')
-  MongoMapper.database = "testing"
-end
+Envyable.load('config/env.yml')
+DB = Sequel.connect("sqlite://#{ENV["F_DB"]}")
+at_exit {DB.disconnect; puts "Datenbank »#{ENV['F_DB']}« geschlossen"}
 
-configure :development do
-  require 'sinatra/reloader' if development?
-  MongoMapper.connection = Mongo::Connection.new('localhost')
-  MongoMapper.database = "farhang"
-end
-
-configure do
-  set :slim, :pretty => true
-  enable :sessions
-  set :session_secret, SECRET ||= 'super secret'
-  set :auth do |*roles|
-    condition do
-      roles? roles
-    end
+class Lemma < Sequel::Model
+  one_to_many :translations
+  def before_create
+    super
+    self.lemma.strip!
+    set_slug!
   end
-  set :self_check do |*p|
-    condition do
-      @current_user.id == params[:id]
+
+  def before_update
+    super
+    set_slug if modified?(:lemma)
+  end
+
+  def before_destroy
+    super
+    self.remove_all_translations
+  end
+
+  def set_slug!
+    self.slug = lemma.to_slug.clean.normalize(:transliterate => :german).to_s
+    if l = Lemma.find(:slug => self.slug)
+      nr = (l.lemma.split("").last.to_i)+1
+      self.slug = self.slug+"_"+nr.to_s
     end
   end
 end
 
-FARHANG_VERSION = "1.4"
+class Translation < Sequel::Model
+  def before_create
+    super
+    self.source.strip!
+    self.target.strip!
+  end
+end
 
-class User
-  include MongoMapper::Document
-  attr_accessible :email, :password
+module Farhang
+  FARHANG_VERSION = "2"
 
-  key :email, String, :required => true, :unique => true
-  key :crypted_password, String
-  key :reset_password_code, String
-  key :reset_password_code_until, Time
-  key :roles, Set
-  timestamps!
+  class Farhang < Sinatra::Application
+    configure do
+      set :slim, :pretty => true
+      use Rack::Cache,
+        metastore:    'file:./tmp/rack/meta',
+        entitystore:  'file:./tmp/rack/body',
+        verbose:      false
+      enable :sessions
+      set :session_secret, ENV['F_SESSION_SECRET']
+    end
 
-  validate :role_validation
+    not_found do
+      'page not found'
+    end
 
-  def role_validation
-    if roles.count == 0
-      roles << :user
-      roles << :root if User.count == 0
+    error do
+      'error'
+    end
+
+    helpers do
+      def partial(template, locals = {})
+        slim template, :layout => false, :locals => locals
+      end
+    end
+
+    # sass style sheet generation
+    get '/css/:file.css' do
+      halt 404 unless File.exist?("views/#{params[:file]}.scss")
+      time = File.stat("views/#{params[:file]}.scss").ctime
+      last_modified(time)
+      scss params[:file].intern
+    end
+
+    get '/' do
+      slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
+    end
+
+    get '/search/autocomplete.json' do
+      content_type :json
+      term = params[:term].force_encoding("UTF-8")
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).limit(10)
+      lemmas = lemmas.map{ |l| { :value => l.lemma,
+                                 :link => l.slug}}
+      lemmas.to_json
+    end
+
+    get '/search' do
+      redirect '/' unless params["term"]
+      term = params[:term].force_encoding("UTF-8")
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%"))
+      slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
+    end
+
+    get '/:slug' do
+      slug = params[:slug].force_encoding("UTF-8")
+      if lemma = Lemma.find(:slug => slug)
+        slim :search, :locals => { :lemmas => Array(lemma),
+                                   :title => lemma.lemma,
+                                   :description => lemma.translations.first }
+      else
+        redirect "/search?#{slug}"
+      end
+    end
+
+    get '/app/ping' do
+      halt 200
+    end
+
+    get '/app/sitemap' do
+      attachment "sitemap.txt"
+      lemmas = Lemma.select(:slug).all
+      root = request.url.gsub('app/sitemap','')
+      lemmas.map {|l| "#{root}#{l.slug}\n"} << root
     end
   end
 
-  RegEmailName   = '[\w\.%\+\-]+'
-  RegDomainHead  = '(?:[A-Z0-9\-]+\.)+'
-  RegDomainTLD   = '(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)'
-  RegEmailOk     = /\A#{RegEmailName}@#{RegDomainHead}#{RegDomainTLD}\z/i
+  class FarhangEditor < Sinatra::Application
+    configure do
+      set :slim, :pretty => true
+      use Rack::Auth::Basic, "Passwortgeschützter Bereich" do |username, password|
+        username == ENV["F_USER"] && password == ENV["F_PASS"]
+      end
+      use Rack::Cache,
+        metastore:    'file:./tmp/rack/meta',
+        entitystore:  'file:./tmp/rack/body',
+        verbose:      false
+      enable :sessions
+      set :session_secret, ENV['F_SESSION_SECRET']
+    end
 
-  def self.authenticate(email, secret)
-    u = User.first(:conditions => {:email => email.downcase})
-    u && u.authenticated?(secret) ? u : nil
-  end
+    not_found do
+      'page not found'
+    end
 
-  validates_length_of :email, :within => 6..100, :allow_blank => true
-  validates_format_of :email, :with => RegEmailOk, :allow_blank => true
+    error do
+      'error'
+    end
 
-  PasswordRequired = Proc.new { |u| u.password_required? }
-  validates_presence_of :password, :if => PasswordRequired
-  validates_confirmation_of :password, :if => PasswordRequired, :allow_nil => true
-  validates_length_of :password, :minimum => 6, :if => PasswordRequired, :allow_nil => true
+    helpers do
+      def partial(template, locals = {})
+        slim template, :layout => false, :locals => locals
+      end
+    end
 
-  def authenticated?(secret)
-    password == secret ? true : false
-  end
+    get '/' do
+      slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
+    end
 
-  def password
-    if crypted_password.present?
-      @password ||= BCrypt::Password.new(crypted_password)
-    else
-      nil
+    get '/new' do
+      slim :lemma_new, :locals => { :title => "Neuen Eintrag anlegen" }
+    end
+
+    get '/:slug' do
+      slug = params[:slug].force_encoding("UTF-8")
+      lemma = Lemma.find(:slug => slug)
+      slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten"}
+    end
+
+    post '/new' do
+      lemma = params[:lemma].force_encoding("UTF-8")
+      redirect back if Lemma.find(:lemma => lemma)
+      l = Lemma.create(:lemma => lemma)
+      if params[:translations]
+        params[:translations].each_value do |t|
+          next if t.values.any?{|v| v.nil? || v.empty?}
+          l.add_translation Translation.create t
+        end
+      else
+        redirect back
+      end
+      redirect to("/#{l.slug}")
+    end
+
+    put '/:id' do
+      halt 404 unless l = Lemma[params[:id]]
+      l.update(:lemma => params[:lemma]) if params[:lemma]
+      if params[:translations]
+        l.remove_all_translations
+        params[:translations].each_value do |t|
+          next if t.values.any?{|v| v.nil? || v.empty?}
+          l.add_translation Translation.create t
+        end
+      end
+      redirect to("/#{l.slug}")
+    end
+
+    delete '/:id' do
+      halt 404 unless lemma = Lemma[params[:id]]
+      if lemma.destroy
+        redirect to("/")
+      else
+        redirect back
+      end
     end
   end
-
-  def password=(value)
-    if value.present?
-      @password = value
-      self.crypted_password = BCrypt::Password.create(value)
-    end
-  end
-
-  def email=(new_email)
-    new_email.downcase! unless new_email.nil?
-    write_attribute(:email, new_email)
-  end
-
-  def password_required?
-    crypted_password.blank? || !password.blank?
-  end
-
-  def set_password_code!
-    seed = "#{email}#{Time.now.to_s.split(//).sort_by {rand}.join}"
-    self.reset_password_code_until = 1.day.from_now
-    self.reset_password_code = Digest::SHA1.hexdigest(seed)
-    save!
-  end
 end
-
-class Lemma
-  include MongoMapper::Document
-  plugin MongoMapper::Plugins::Sluggable
-
-  enable_versioning :limit => 0
-  key :lemma, String, :unique => true, :required => true
-  key :edited_by, String
-  key :valid, Boolean
-  many :translations
-  timestamps!
-
-  sluggable :lemma,
-            :method => :slug_hack,
-            :callback => :after_validation
-
-  before_validation :strip_lemma!
-  validate :ensure_lemma_slug
-
-  def ensure_lemma_slug
-      self.slug = nil if lemma_changed?
-  end
-
-  def set_translations(params)
-    params.values.each do |t|
-      next if t["source"].nil? || t["target"].nil?
-      next if t["source"].empty? || t["target"].empty?
-      translations << Translation.new(:source => t["source"],
-                                      :target => t["target"])
-    end
-  end
-
-  def strip_lemma!
-    lemma.strip!
-  end
-end
-
-class String
-  def slug_hack
-    to_slug.clean.normalize(:transliterate => :german)
-  end
-end
-
-class Translation
-  include MongoMapper::EmbeddedDocument
-  key :source, String
-  key :target, String
-
-  before_validation :strip_translation!
-
-  def strip_translation!
-    source.strip!
-    target.strip!
-  end
-end
-
-class Preferences
-  include MongoMapper::Document
-  key :analytics, String
-  key :keywords, String
-  key :description, String
-end
-
-not_found do
-  'page not found'
-end
-
-error do
-  'error'
-end
-
-helpers do
-  def partial(template, locals = {})
-    slim template, :layout => false, :locals => locals
-  end
-
-  def preferences
-    Preferences.first || Preferences.new
-  end
-
-  def flash
-    @flash = session.delete(:flash)
-  end
-
-  def roles? roles
-    return false unless signed_in?
-    @current_user.roles << :self if @current_user.id.to_param == params[:id]
-    set = @current_user.roles & roles.to_set
-    !set.empty?
-  end
-end
-
-before do
-  # just get rid of all these empty params
-  # which makes checking them a lot easier
-  # which also makes it impossible to empty a value... RETHINK!
-  params.delete_if { |k, v| v.empty? }
-end
-
-# sass style sheet generation
-get '/css/:file.css' do
-  halt 404 unless File.exist?("views/#{params[:file]}.scss")
-  time = File.stat("views/#{params[:file]}.scss").ctime
-  last_modified(time)
-  scss params[:file].intern
-end
-
-get '/' do
-  slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
-end
-
-get '/:slug' do
-  if lemma = Lemma.first(:slug => params[:slug])
-    if authorized?
-      slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten" }
-    else
-      slim :search, :locals => { :lemmas => Array(lemma),
-                                 :title => lemma.lemma,
-                                 :description => lemma.translations.first }
-    end
-  else
-    redirect "/search/#{params[:slug]}"
-  end
-end
-
-get '/app/search' do
-  if params[:term]
-    redirect "/search/#{params[:term]}"
-  else
-    redirect '/'
-  end
-end
-
-get '/search/autocomplete.json' do
-  content_type :json
-  lemmas = Lemma.where(:lemma => Regexp.new(/^#{params[:term]}/i)).limit(10)
-  lemmas.map{ |l| l.lemma }.to_json(:only => :lemma)
-end
-
-get '/search/:term' do
-  search_term = params[:term]
-  search_term.gsub!(/[%20]/, ' ')
-  lemmas = Lemma.all(:lemma => /^#{Regexp.escape(search_term)}/i)
-  slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(search_term)}" }
-end
-
-get '/lemma/new', :auth => [:user] do
-  slim :lemma_new, :locals => { :title => "Neuen Eintrag anlegen" }
-end
-
-post '/lemma/new', :auth => [:user] do
-  redirect back if Lemma.find(:lemma => params[:lemma])
-  l = Lemma.new(:lemma => params[:lemma])
-  if params[:translations]
-    l.set_translations(params[:translations])
-  else
-    redirect back
-  end
-  l.valid = roles?([:root, :admin])
-  if l.save :updater_id => @current_user.id
-    session[:flash] = ["Der Eintrag wurde erfolgreich angelegt", "alert-success"]
-    redirect to("/lemma/#{l.id}/preview")
-  else
-    session[:flash] = ["Dsr Eintrag konnte nicht angelegt werden", "alert-danger"]
-    redirect back
-  end
-end
-
-get '/lemma/validation', :auth => [:root, :admin] do
-  lemmas = Lemma.all :valid => false
-  slim :lemma_validation, :locals => { :lemmas => lemmas, :title => "Lemmas bestätigen" }
-end
-
-get '/lemma/:id' do
-  halt 404 unless lemma = Lemma.find(params[:id])
-  redirect "/#{lemma.slug}", 301
-end
-
-get '/lemma/:id/preview' do
-  halt 404 unless lemma = Lemma.find(params[:id])
-  slim :search, :locals => { :lemmas => Array(lemma), :title => lemma.lemma }
-end
-
-put '/lemma/:id', :auth => [:user] do
-  halt 404 unless l = Lemma.find(params[:id])
-  l.lemma = params[:lemma] if params[:lemma]
-  if params[:translations]
-    l.translations.clear
-    l.set_translations(params[:translations])
-  end
-  l.valid = roles?([:root, :admin])
-  if l.save :updater_id => @current_user.id
-    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
-    redirect "/lemma/#{l.id}/preview"
-  else
-    session[:flash] = ["Änderungen konnten nicht gespeichert werden", "alert-danger"]
-    redirect back
-  end
-end
-
-patch '/lemma/:id/valid', :auth => [:admin, :root] do
-  halt 404 unless l = Lemma.find(params[:id])
-  if params[:valid] == 'true'
-    l.valid = true
-  else
-    versions = l.versions.reverse
-    version = versions.find { |v| v.data[:valid] }
-    if version
-      l.rollback(version.pos)
-    else
-      l.destroy
-    end
-  end
-  l.save if l.valid
-  redirect back
-end
-
-delete '/lemma/:id', :auth => [:admin, :root] do
-  halt 404 unless lemma = Lemma.find(params[:id])
-  if lemma.destroy
-    session[:flash] = ["Eintrag erfolgreich gelöscht", "alert-success"]
-    redirect to("/")
-  else
-    session[:flash] = ["Eintrag konnte nicht gelöscht werden", "alert-danger"]
-    redirect back
-  end
-end
-
-## User routes
-get '/app/users', :auth => [:root] do
-  slim :users, :locals => { :users => User.all(:order => :created_at.desc), :title => "Benutzer" }
-end
-
-get '/user/login' do
-  slim :login, :locals => { :title => "Login" }
-end
-
-get '/user/new' do
-  slim :user_new, :locals => { :title => "Neu anmelden" }
-end
-
-get '/user/logout' do
-  sign_out_keeping_session!
-  redirect to('/')
-end
-
-post '/user/new' do
-  user = User.new params
-  halt 400 unless user.save
-  session[:flash] = ["Benutzer erfolgreich angelegt", "alert-success"]
-  redirect to('/')
-end
-
-get '/user/:id', :auth => [:self, :root] do
-  halt 404 unless u = User.find(params[:id])
-  slim :user, :locals => { :user => u, :title => u.email }
-end
-
-put '/user/:id', :auth => [:self, :root] do
-  halt 404 unless u = User.find(params[:id])
-  if u.update_attributes! params
-    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
-    redirect to("/app/users")
-  else
-    halt 409, "Resource konnte nicht geändert werden"
-  end
-end
-
-patch '/user/:id/roles', :auth =>  [:root] do
-  halt 404 unless user = User.find(params[:id])
-  if !params[:roles] || params[:roles].empty?
-    break
-  elsif user == User.first
-    session[:flash] = ["Benutzerrechte des Besitzers können nicht geändert werden", "alert-danger"]
-  else
-    roles = []
-    roles << :user << params[:roles].to_sym
-    user.roles.replace roles.to_set
-    if user.save
-      session[:flash] = ["Benutzerrechte erfolgreich geändert", "alert-success"]
-    else
-      session[:flash] = ["Fehler. Benutzerrechte konnten nicht geändert werden", "alert-danger"]
-    end
-  end
-  redirect to("/app/users")
-end
-
-delete '/user/:id', :auth => [:self, :root] do
-  halt 404 unless u = User.find(params[:id])
-  if u.destroy
-    session[:flash] = ["Benutzer erfolgreich gelöscht", "alert-success"]
-    if roles? [:root]
-      redirect to("/app/users")
-    else
-      redirect to("/user/logout")
-    end
-  else
-    halt 400, "Eintrag konnte nicht gelöscht werden"
-  end
-end
-
-post '/user/login' do
-  authenticate_with_login_form params[:email], params[:password]
-  redirect to('/')
-end
-
-get '/app/preferences', :auth => [:root] do
-  slim :preferences, :locals => { :title => "Einstellungen" }
-end
-
-put '/app/preferences', :auth => [:root] do
-  if preferences.update_attributes! params
-    session[:flash] = ["Änderungen erfolgreich gespeichert", "alert-success"]
-    redirect to("/app/preferences")
-  else
-    halt 409, "Einstellungen konnte nicht geändert werden"
-  end
-end
-
-# offer a pingable route with low overhead
-get '/app/ping' do
-  halt 200
-end
-
-get '/app/sitemap' do
-  attachment "sitemap.txt"
-  lemmas = Lemma.fields(:slug)
-  root = request.url.gsub('app/sitemap','')
-  lemmas.map {|l| "#{root}#{l.slug}\n"} << root
-end
-

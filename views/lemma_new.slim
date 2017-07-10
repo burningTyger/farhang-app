@@ -1,15 +1,11 @@
-i(class="fa fa-question-circle fa-2x" id="help"
-  title="Hilfe"
-  data-content="Neben dem neuen Begriff, dem Lemma, können Begriffe oder Beispiele in der Quell- und Zielsprache angegeben werden.")
 .row
-  .col-md-offset-1.col-md-11
-    h4
+  .col-md-12
+    h3
       | Eintrag neu anlegen
-    form action="/lemma/new" method="post" name="search" role="form"
-      .form-group
+    form action=url("/new") method="post" role="form"
+      .form-group.form-group-lg
         label.control-label for="lemma" Lemma
         input.form-control name="lemma" type="text"
-      .form-group
-        ==partial :partial_translation, :translations => nil
-      .form-group
-        input.btn.btn-success type="submit" value="Speichern"
+      ==partial :partial_translation, :translations => nil
+      .form-group.form-group-lg
+        input.btn.btn-lg.btn-success type="submit" value="Speichern"

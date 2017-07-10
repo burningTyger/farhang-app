@@ -3,95 +3,64 @@ html lang="en"
   head
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
-    meta name="description" content=(defined?(description) ? "Das offene deutsch-persische Lexikon: #{description[:source]} #{description[:target]}" : preferences.description)
-    meta name="keywords" content=(defined?(description) ? "#{preferences.keywords}, #{description[:source]}, #{description[:target]}" : preferences.keywords)
     title Farhang/#{title}
     /![if lt IE 9]
       script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.js"
       script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"
-    link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" media="screen"
-    link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"
-    link href="/css/app.css" rel="stylesheet"
     link href="/images/f.png" rel="shortcut icon"
     link href='//fonts.googleapis.com/css?family=Overlock:900italic' rel='stylesheet' type='text/css'
+    link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css"
+    link href="//cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet" type="text/css"
+    link href="/css/app.css" rel="stylesheet"
   body
     #wrap
-      nav.navbar.navbar-default.navbar-static-top role="navigation"
-        .container
-          .navbar-header
-            button.navbar-toggle data-target=".navbar-1-collapse" data-toggle="collapse" type="button"
-              span.sr-only Toggle navigation
-              i.fa.fa-bars
-            a.navbar-brand.brand href="/" Farhang
-          .collapse.navbar-collapse.navbar-1-collapse
-            form.navbar-form.navbar-left#search-form action="/app/search" method="get" name="search" role="search"
-              .form-group
-                input.form-control#searchinput name="term" value="#{params[:term]}" type="text"
-              .form-group
-                button.btn.btn-default type="submit" Suchen
-            -if signed_in?
-              a href="/lemma/new"
-                button.btn.btn-default.navbar-btn#lemma-new type="button" data-toggle="tooltip" title="Lemma hinzufügen"
-                  i.fa.fa-plus
-              -if roles?([:admin, :root])
-                -count = Lemma.where(:valid => false).count
-                -if count > 0
-                  a href="/lemma/validation"
-                    button.btn.btn-default.navbar-btn#lemma-validation type="button"
-                      'Bestätigen
-                      span.label.label-warning =count
-              ul.nav.navbar-nav.navbar-right
-                -if roles?([:root])
-                  li.dropdown
-                    a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                      'App
-                      b.caret
-                    ul.dropdown-menu
-                      li: a href="/app/users" Benutzerverwaltung
-                      li: a href="/app/preferences" Einstellungen
-                li.dropdown
-                  a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                    'Konto
-                    b.caret
-                  ul.dropdown-menu
-                    li: a href="/user/#{@current_user.id}" Profil
-                    li: a href="/user/logout" Abmelden
-            -else
-              a href="/user/login"
-                button.btn.btn-default.navbar-btn.navbar-right type="button" Anmelden
       .container
-        ==partial :partial_flash
+        .row
+          .col-lg-8.col-md-10.col-sm-12
+            form role="search" action="/search" method="get" name="search"
+              .input-group
+                span.input-group-btn
+                  a.btn.btn-default.btn-lg.brand href=url("/") F
+                input.form-control.input-lg#searchinput name="term" value="#{params[:term]}" type="text" autocomplete="off"
+                span.input-group-btn
+                  button.btn.btn-primary.btn-lg type="submit" Suchen
+          .col-lg-2.col-md-2.col-sm-12
+            -if request.script_name.include? "edit"
+              a href=url("/new")
+                button.btn.btn-success.btn-lg type="button" title="Lemma hinzufügen" Neu
+
         ==yield
     #footer
       .container
-        p.text-muted.credit
-          .pull-right.body-content
-            a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de"
-              img alt="Creative Commons Lizenzvertrag" src="/images/by-sa.png" style="border-width:0"
-            '  farhang.im © 2011–2016
-            a href="https://github.com/ckh/farhang" ckh
-            '  &
-            a href="https://github.com/burningtyger/farhang-app" bt
-    script src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"
-    script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
-    script src="//cdn.jsdelivr.net/typeahead.js/0.10.5/typeahead.bundle.min.js"
+        .row
+          .col-sm-12
+            p.text-muted.credit
+              .pull-left.body-content
+                -if request.script_name.include? "edit"
+                  a href="#{request.path_info}" Ansicht
+                -else
+                  a href="/edit#{request.path_info}" Bearbeiten
+              .pull-right.body-content
+                a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de"
+                  img alt="Creative Commons Lizenzvertrag" src="/images/by-sa.png" style="border-width:0"
+                '  farhang.im ©
+                a href="https://github.com/ckh/farhang" ckh
+                '  &
+                a href="https://github.com/burningtyger/farhang-app" bt
+    script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"
+    script src="//cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.1.1/typeahead.bundle.min.js"
+    script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
     javascript:
       (function() {
-        $("#help").popover({
-          placement: 'left',
-          trigger: 'hover'
-        });
-        $("#lemma-new").tooltip({
-          placement: 'auto'
-        });
         var lemmas = new Bloodhound({
           datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.val); },
           queryTokenizer: Bloodhound.tokenizers.whitespace,
           name: 'lemmas',
           remote: {
             url: '/search/autocomplete.json?term=%QUERY',
+            wildcard: '%QUERY',
             filter: function(list) {
-              return $.map(list, function(lemma) { return { val: lemma }; });
+              return $.map(list, function(lemma) { return { val: lemma.value, link: lemma.link }; });
             }
           }
         });
@@ -100,8 +69,15 @@ html lang="en"
           name: 'lemmas',
           displayKey: 'val',
           source: lemmas.ttAdapter()
+        })
+        .submit(function(e) {
+          this.submit
+        })
+        .on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+          window.location.href = "#{url('/')}"+datum.link;
         });
-        $("#searchinput").focus();
+        if ($(window).width() > 768) {
+          $("#searchinput").focus();
+        };
       }).call(this);
-    ==preferences.analytics
-  /! Font Awesome by Dave Gandy - http://fontawesome.io
+      #{{ENV["F_GA"]}}

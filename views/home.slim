@@ -1,21 +1,21 @@
 .row
-  .col-md-12
+  .col-md-6.col-sm-12
     h1
       span.brand Farhang
 .row
-  .col-md-6
+  .col-md-6.col-sm-12
     h4 Das freie deutsch-persische Lexikon
-    ' Mit #{count} Einträgen ist
-    span.brand Farhang
-    '  eines der größten
-      deutsch-persischen Wörterbücher, die online verfügbar sind. Dazu sind alle
-      Einträge frei zugänglich und können beliebig verwendet werden. Wenn sie
-      einen Eintrag sehen, der unvollständig ist oder sogar ein Eintrag fehlt,
-      können sie sich anmelden und haben vollen Schreibzugriff auf das Lexikon.
-  .col-md-6
+    'Mit #{count} Einträgen ist
+    span.brand<> Farhang
+    'eines der größten
+     deutsch-persischen Wörterbücher, die online verfügbar sind. Dazu sind alle
+     Einträge frei zugänglich und können beliebig verwendet werden. Wenn sie
+     einen Eintrag sehen, der unvollständig ist oder sogar ein Eintrag fehlt,
+     können sie sich anmelden und haben vollen Schreibzugriff auf das Lexikon.
+  .col-md-6.col-sm-12
     h4
-      ' Ein zufälliger Eintrag aus
+      'Ein zufälliger Eintrag aus
       span.brand Farhang
     .well.well-sm
-      ==partial :partial_lemma, :lemmas => Lemma.all(:limit => 1, :skip => rand(count)) if Lemma.count > 1
+      ==partial :partial_lemma, :lemmas => [Lemma[rand(1..count)]]
 

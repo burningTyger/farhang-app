@@ -1,4 +1,8 @@
 .newrelic.yml
-config.rb
 .sass-cache
 .rbx/
+farhang.db
+
+# Don't check in credentials
+config/env.yml
+config/puma.rb
