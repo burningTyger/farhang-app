@@ -77,6 +77,10 @@ module Farhang
       end
     end
 
+    before do
+      params.delete_if { |k, v| v.empty? }
+    end
+
     # sass style sheet generation
     get '/css/:file.css' do
       halt 404 unless File.exist?("views/#{params[:file]}.scss")
@@ -99,8 +103,8 @@ module Farhang
     end
 
     get '/search' do
-      redirect '/' unless params["term"]
-      term = params[:term].force_encoding("UTF-8")
+      redirect '/' unless params[:term]
+      term = params[:term].force_encoding("UTF-8") if params[:term]
       lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%"))
       slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
