@@ -96,7 +96,7 @@ module Farhang
     get '/search/autocomplete.json' do
       content_type :json
       term = params[:term].force_encoding("UTF-8")
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).limit(10)
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).limit(10).order(:lemma)
       lemmas = lemmas.map{ |l| { :value => l.lemma,
                                  :link => l.slug}}
       lemmas.to_json
@@ -105,16 +105,16 @@ module Farhang
     get '/search' do
       redirect '/' unless params[:term]
       term = params[:term].force_encoding("UTF-8") if params[:term]
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%"))
-      slim :search, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).eager(:translations).order(:lemma).all
+      slim :partial_lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
 
     get '/:slug' do
       slug = params[:slug].force_encoding("UTF-8")
       if lemma = Lemma.find(:slug => slug)
-        slim :search, :locals => { :lemmas => Array(lemma),
-                                   :title => lemma.lemma,
-                                   :description => lemma.translations.first }
+        slim :partial_lemma, :locals => { :lemmas => Array(lemma),
+                                          :title => lemma.lemma,
+                                          :description => lemma.translations.first }
       else
         redirect "/search?#{slug}"
       end
