@@ -54,7 +54,6 @@ module Farhang
 
   class Farhang < Sinatra::Application
     configure do
-      set :slim, :pretty => true
       use Rack::Cache,
         metastore:    'file:./tmp/rack/meta',
         entitystore:  'file:./tmp/rack/body',
@@ -78,7 +77,7 @@ module Farhang
     end
 
     before do
-      params.delete_if { |k, v| v.empty? }
+      params.delete_if { |k, v| v && v.empty? }
     end
 
     # sass style sheet generation
@@ -105,7 +104,7 @@ module Farhang
     get '/search' do
       redirect '/' unless params[:term]
       term = params[:term].force_encoding("UTF-8") if params[:term]
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).eager(:translations).order(:lemma).all
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
       slim :partial_lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
 
@@ -134,7 +133,6 @@ module Farhang
 
   class FarhangEditor < Sinatra::Application
     configure do
-      set :slim, :pretty => true
       use Rack::Auth::Basic, "Passwortgeschützter Bereich" do |username, password|
         username == ENV["F_USER"] && password == ENV["F_PASS"]
       end
@@ -144,14 +142,6 @@ module Farhang
         verbose:      false
       enable :sessions
       set :session_secret, ENV['F_SESSION_SECRET']
-    end
-
-    not_found do
-      'page not found'
-    end
-
-    error do
-      'error'
     end
 
     helpers do
@@ -166,6 +156,10 @@ module Farhang
 
     get '/new' do
       slim :lemma_new, :locals => { :title => "Neuen Eintrag anlegen" }
+    end
+
+    get '/search' do
+      redirect to('/new')
     end
 
     get '/:slug' do
