@@ -24,7 +24,7 @@ class Lemma < Sequel::Model
 
   def before_update
     super
-    set_slug if modified?(:lemma)
+    set_slug! if modified?(:lemma)
   end
 
   def before_destroy
