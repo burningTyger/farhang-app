@@ -16,6 +16,7 @@ at_exit {DB.disconnect; puts "Datenbank »#{ENV['F_DB']}« geschlossen"}
 
 class Lemma < Sequel::Model
   one_to_many :translations
+
   def before_create
     super
     self.lemma.strip!
@@ -24,6 +25,7 @@ class Lemma < Sequel::Model
 
   def before_update
     super
+    self.lemma.strip!
     set_slug! if modified?(:lemma)
   end
 
