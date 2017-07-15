@@ -62,18 +62,22 @@ module Farhang
       set :session_secret, ENV['F_SESSION_SECRET']
     end
 
+    helpers do
+      def partial(template, locals = {})
+        slim template, :layout => false, :locals => locals
+      end
+
+      def devowelize(str)
+        str.delete("\u064B-\u0655")
+      end
+    end
+
     not_found do
       redirect to('/')
     end
 
     error do
       'error'
-    end
-
-    helpers do
-      def partial(template, locals = {})
-        slim template, :layout => false, :locals => locals
-      end
     end
 
     before do
@@ -91,11 +95,13 @@ module Farhang
     get '/' do
       slim :home, :locals => { :count => Lemma.count, :count_translation => Translation.count, :title => "Startseite" }
     end
+  end
 
+  class FarhangClient < Farhang
     get '/search/autocomplete.json' do
       content_type :json
       term = params[:term].force_encoding("UTF-8")
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).limit(10).order(:lemma)
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).limit(10).order(:lemma)
       lemmas = lemmas.map{ |l| { :value => l.lemma,
                                  :link => l.slug}}
       lemmas.to_json
@@ -104,7 +110,7 @@ module Farhang
     get '/search' do
       redirect '/' unless params[:term]
       term = params[:term].force_encoding("UTF-8") if params[:term]
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{term}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
       slim :partial_lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
 
@@ -136,27 +142,11 @@ module Farhang
     end
   end
 
-  class FarhangEditor < Sinatra::Application
+  class FarhangEditor < Farhang
     configure do
-      use Rack::Auth::Basic, "Passwortgeschützter Bereich" do |username, password|
+      use Rack::Auth::Basic, "Passwortgeschuetzter Bereich" do |username, password|
         username == ENV["F_USER"] && password == ENV["F_PASS"]
       end
-      use Rack::Cache,
-        metastore:    'file:./tmp/rack/meta',
-        entitystore:  'file:./tmp/rack/body',
-        verbose:      false
-      enable :sessions
-      set :session_secret, ENV['F_SESSION_SECRET']
-    end
-
-    helpers do
-      def partial(template, locals = {})
-        slim template, :layout => false, :locals => locals
-      end
-    end
-
-    get '/' do
-      slim :home, :locals => { :count => Lemma.count, :count_translation => Translation.count, :title => "Startseite" }
     end
 
     get '/new' do
@@ -170,7 +160,7 @@ module Farhang
     get '/:slug' do
       slug = params[:slug].force_encoding("UTF-8")
       lemma = Lemma.find(:slug => slug)
-      slim :lemma_edit, :locals => { :lemmas => Array(lemma), :title => "#{lemma.lemma} bearbeiten"}
+      slim :lemma_edit, :locals => { :lemma => lemma, :title => "#{lemma.lemma} bearbeiten"}
     end
 
     post '/new' do
@@ -178,7 +168,7 @@ module Farhang
       redirect back if Lemma.find(:lemma => lemma)
       l = Lemma.create(:lemma => lemma)
       if params[:translations]
-        params[:translations].each_value do |t|
+        params[:translations].each do |t|
           next if t.values.any?{|v| v.nil? || v.empty?}
           l.add_translation Translation.create t
         end
@@ -193,7 +183,7 @@ module Farhang
       l.update(:lemma => params[:lemma]) if params[:lemma]
       if params[:translations]
         l.remove_all_translations
-        params[:translations].each_value do |t|
+        params[:translations].each do |t|
           next if t.values.any?{|v| v.nil? || v.empty?}
           l.add_translation Translation.create t
         end

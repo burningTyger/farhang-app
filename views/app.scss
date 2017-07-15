@@ -7,9 +7,6 @@ body {
   /* The html and body elements cannot have any padding or margin. */
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-
 .brand {
   font-family: 'Overlock', cursive;
   text-decoration: none;
@@ -25,10 +22,6 @@ body {
   margin: 10px auto -60px;
   /* Pad bottom by footer height */
   padding: 0 0 60px;
-  #help {
-    text-decoration: none;
-    float: right;
-  }
   .styled-list {
     dt {
       padding-top: 1em;

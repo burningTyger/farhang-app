@@ -1,11 +1,9 @@
-.row
-  .col-md-12
-    h3
-      | Eintrag neu anlegen
-    form action=url("/new") method="post" role="form"
-      .form-group.form-group-lg
-        label.control-label for="lemma" Lemma
-        input.form-control name="lemma" type="text"
-      ==partial :partial_translation, :translations => nil
-      .form-group.form-group-lg
-        input.btn.btn-lg.btn-success type="submit" value="Speichern"
+h3
+  | Eintrag neu anlegen
+form action=url("/new") method="post" role="form"
+  .form-group.form-group-lg
+    label.control-label for="lemma" Lemma
+    input.form-control name="lemma" type="text"
+  ==partial :partial_translation, :translations => nil
+  .form-group.form-group-lg
+    input.btn.btn-lg.btn-success type="submit" value="Speichern"

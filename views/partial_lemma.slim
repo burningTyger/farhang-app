@@ -1,16 +1,12 @@
-.styled-list
-  dl
-    - if !lemmas.empty?
-      - lemmas.each do |l|
+-if lemmas.empty?
+  h4.unsuccessful Keinen Eintrag gefunden
+-else
+  .styled-list
+    dl
+      -lemmas.each do |l|
         dt
-          a href=url("/#{l.slug}") = l.lemma
+          a href=url("/#{l.slug}") =l.lemma
         - l.translations.each do |t|
           dd
-            - if t.target
-              span dir="ltr"
-                =t.source
-              |  
-              span dir="rtl"
-                =t.target
-    - else
-      h4.unsuccessful Keinen Eintrag gefunden
+            span> dir="ltr" =t.source
+            span< dir="rtl" =t.target

@@ -1,5 +1,5 @@
 .row
-  .col-md-6.col-sm-12
+  .col-sm-12
     h1
       span.brand Farhang
 .row
@@ -15,5 +15,11 @@
       'Ein zufälliger Eintrag aus
       span.brand Farhang
     .well.well-sm
-      ==partial :partial_lemma, :lemmas => [Lemma[rand(1..count)]]
-
+      -l=Lemma[rand(1..count)]
+      dl
+        dt
+          a href=url("/#{l.slug}") =l.lemma
+        - l.translations.each do |t|
+          dd
+            span> dir="ltr" =t.source
+            span< dir="rtl" =t.target

@@ -1,15 +1,16 @@
-.row
-  .col-md-12
-    h3
-      | Eintrag bearbeiten
-    -l = lemmas.first
-    form action=url("/#{l.id}") method="post" role="form"
-      .form-group.form-group-lg
-        input name="_method" type="hidden" value="PUT"
-        label.control-label for="lemma" Lemma
-        input.form-control name="lemma" type="text" value=l.lemma
-      ==partial :partial_translation, :translations => l.translations
-      input.btn.btn-lg.btn-success style="float: left" type="submit" value="Speichern"
-    form action=url("/#{l.id}") method="post" name="deletion" role="form"
-      input name="_method" type="hidden" value="DELETE"
-      input.btn.btn-lg.btn-danger style="float: right" type="submit" value="Löschen"
+h3
+  | Eintrag bearbeiten
+form action=url("/#{lemma.id}") method="post" role="form"
+  .form-group.form-group-lg
+    input name="_method" type="hidden" value="PUT"
+    label.control-label for="lemma" Lemma
+    input.form-control name="lemma" type="text" value=lemma.lemma
+  .list-group#simpleList
+    ==partial :partial_translation, :translations => lemma.translations
+  input.btn.btn-lg.btn-success style="float: left" type="submit" value="Speichern"
+form action=url("/#{lemma.id}") method="post" name="deletion" role="form"
+  input name="_method" type="hidden" value="DELETE"
+  input.btn.btn-lg.btn-danger style="float: right" type="submit" value="Löschen"
+script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.6.0/Sortable.min.js"
+javascript:
+  Sortable.create(simpleList, {});
