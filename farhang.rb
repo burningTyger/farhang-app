@@ -109,25 +109,22 @@ module Farhang
 
     get '/search' do
       redirect '/' unless params[:term]
-      term = params[:term].force_encoding("UTF-8") if params[:term]
+      term = params[:term].force_encoding("UTF-8")
       lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
-      slim :partial_lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
+      slim :lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
 
     get '/:slug' do
       slug = params[:slug].force_encoding("UTF-8")
       if lemma = Lemma.find(:slug => slug)
-        slim :partial_lemma, :locals => { :lemmas => Array(lemma),
-                                          :title => lemma.lemma,
-                                          :description => lemma.translations.first }
+        slim :lemma, :locals => { :lemmas => Array(lemma),
+                                  :title => lemma.lemma}
       else
         redirect "/search?#{slug}"
       end
     end
 
-    get '/app/ping' do
-      halt 200
-    end
+    get('/app/ping'){}
 
     get '/app/sitemap' do
       attachment "sitemap.txt"
