@@ -154,7 +154,7 @@ module Farhang
     end
 
     get '/' do
-      slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
+      slim :home, :locals => { :count => Lemma.count, :count_translation => Translation.count, :title => "Startseite" }
     end
 
     get '/new' do
