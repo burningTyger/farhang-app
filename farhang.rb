@@ -50,8 +50,6 @@ class Translation < Sequel::Model
 end
 
 module Farhang
-  FARHANG_VERSION = "2"
-
   class Farhang < Sinatra::Application
     configure do
       use Rack::Cache,
@@ -63,7 +61,7 @@ module Farhang
     end
 
     not_found do
-      'page not found'
+      redirect to('/')
     end
 
     error do
@@ -89,7 +87,7 @@ module Farhang
     end
 
     get '/' do
-      slim :home, :locals => { :count => Lemma.count, :title => "Startseite" }
+      slim :home, :locals => { :count => Lemma.count, :count_translation => Translation.count, :title => "Startseite" }
     end
 
     get '/search/autocomplete.json' do
@@ -128,6 +126,11 @@ module Farhang
       lemmas = Lemma.select(:slug).all
       root = request.url.gsub('app/sitemap','')
       lemmas.map {|l| "#{root}#{l.slug}\n"} << root
+    end
+
+    get '/app/download/db' do
+      zip = `gzip --keep --force farhang.db`
+      attachment "farhang.db.gz"
     end
   end
 
