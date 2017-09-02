@@ -11,7 +11,10 @@ require 'newrelic_rpm' if production?
 newrelic_ignore '/ping' if production?
 
 Envyable.load('config/env.yml')
-DB = Sequel.connect("sqlite://#{ENV["F_DB"]}")
+DB = Sequel.connect("sqlite://#{ENV["F_DB"]}",
+                    :after_connect=>proc{|conn| conn.enable_load_extension(true);
+                                                conn.load_extension(File.expand_path File.dirname(__FILE__)+"/libSqliteIcu")}
+                   )
 at_exit {DB.disconnect; puts "Datenbank »#{ENV['F_DB']}« geschlossen"}
 
 class Lemma < Sequel::Model
