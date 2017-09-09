@@ -103,7 +103,7 @@ module Farhang
   class FarhangClient < Farhang
     get '/search/autocomplete.json' do
       content_type :json
-      term = params[:term].force_encoding("UTF-8").strip!
+      term = params[:term].strip.force_encoding("UTF-8")
       lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).limit(10).order(:lemma)
       lemmas = lemmas.map{ |l| { :value => l.lemma,
                                  :link => l.slug}}
@@ -112,7 +112,7 @@ module Farhang
 
     get '/search' do
       redirect '/' unless params[:term]
-      term = params[:term].force_encoding("UTF-8")
+      term = params[:term].strip.force_encoding("UTF-8")
       lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
       slim :lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
