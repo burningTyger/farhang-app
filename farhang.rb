@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'rack/cache'
-require 'slim'
 require 'sass'
 require 'sequel'
 require 'sqlite3'
