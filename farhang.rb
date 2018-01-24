@@ -112,8 +112,7 @@ module Farhang
     get '/search' do
       redirect '/' unless params[:term]
       term = params[:term].strip.force_encoding("UTF-8")
-      # lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).order(Sequel.lit('lemma COLLATE NOCASE ASC')).all
-      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).run("ORDER BY lemma COLLATE NOCASE ASC").all
+      lemmas = Lemma.where(Sequel.ilike(:lemma, "#{devowelize(term)}%")).eager(:translations).order(Sequel.lit('LOWER(lemma) ASC')).all
       slim :lemma, :locals => { :lemmas => lemmas, :title => "Suche nach #{Regexp.escape(term)}" }
     end
 
