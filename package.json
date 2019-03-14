@@ -1,0 +1,16 @@
+{
+  "name": "farhang-app",
+  "version": "1.0.0",
+  "description": "Farhang is a dictionary app written in Ruby with Sinatra and Sequel.",
+  "main": "farhang.js",
+  "scripts": {
+    "start": "polkadot"
+  },
+  "author": "burningTyger",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^5.4.0",
+    "polkadot": "^1.1.0-next.0",
+    "trouter": "^3.0.0"
+  }
+}
