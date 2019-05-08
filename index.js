@@ -4,12 +4,14 @@ db.loadExtension('./libicu.so');
 
 const Trouter = require('trouter');
 const router = new Trouter();
-router.get('/a/:term', (req, res) => {
-  return db.prepare('SELECT * FROM lemmas WHERE lemma LIKE ? ORDER BY lemma ').all(req.params.term + '%');
-});
-router.get('/g/:id', (req, res) => {
-  return db.prepare('SELECT * FROM translations WHERE lemma_id = ?').all(req.params.id);
-});
+router.get('/a/:term', req => db
+  .prepare('SELECT id, lemma FROM lemmas WHERE lemma LIKE ? ORDER BY lemma ')
+  .all(req.params.term + '%')
+);
+router.get('/g/:id', req => db
+  .prepare('SELECT source, target FROM translations WHERE lemma_id = ?')
+  .all(req.params.id)
+);
 
 function next(err) {
 	if (err) throw err;
